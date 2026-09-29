@@ -1972,7 +1972,7 @@ window.I18N={
         and the Escape key. The app always starts with its menus in sight, so nobody can get stuck.</p>
         <p>In the chart everything else lives behind the <b>&#9776;</b> menu, divided into four parts:
         <b>Root person</b>, <b>View</b>, <b>The selected person</b> and <b>Output</b>.</p>
-        <p class="muted">Version 2.9</p>
+        <p class="muted">Version 3.0</p>
       </section>
       </div>
       <div data-lang="de">
@@ -2290,7 +2290,7 @@ window.I18N={
         sichtbaren Men&uuml;s, damit niemand darin h&auml;ngenbleibt.</p>
         <p>In der Stammtafel steckt alles Weitere hinter dem <b>&#9776;</b>-Men&uuml;, in vier Teile gegliedert:
         <b>Wurzelperson</b>, <b>Ansicht</b>, <b>Die gew&auml;hlte Person</b> und <b>Ausgeben</b>.</p>
-        <p class="muted">Version 2.9</p>
+        <p class="muted">Version 3.0</p>
       </section>
       </div>
     </div>
@@ -5080,44 +5080,74 @@ function firstPassMulti(n){
   n.wL=boxWidthFor(n.bloodLines);
   n.marriages.forEach(function(m){ m.w = m.partnerLines? boxWidthFor(m.partnerLines) : 0; });
   n.primaryIdx=0;
-  var P=n.marriages[0];
-  var gap=SIB_GAP, couple=n.wL;
-  P.boxLeftLocal=couple; P.anchorLocal=couple;
-  var minLeft=Math.min(0, couple - P.childLeftFromCenter);
-  var cur=Math.max(couple + P.w, couple + P.childRightFromCenter);
-  for(var i=1;i<n.marriages.length;i++){
-    var m=n.marriages[i];
-    if(m.childNodes.length===0){ var bl=cur + gap; m.boxLeftLocal=bl; m.anchorLocal=bl + m.w/2; cur=bl + m.w; }
-    else {
-      var anchor=cur + gap + m.childLeftFromCenter;
-      m.anchorLocal=anchor; m.boxLeftLocal=anchor - m.w/2;
-      cur=Math.max(anchor + m.childRightFromCenter, anchor + m.w/2);
-    }
-  }
-  var rightMost=cur;
-  n.anchorRel=couple;
-  n.extL=couple - minLeft;
-  n.extR=rightMost - couple;
-  n.own_w=n.wL + n.marriages.reduce(function(a,m){return a+m.w;},0);
+
+  /* Somebody with several marriages used to be drawn spread across the whole
+     sheet: every partner was put above their own group of children, so the
+     person themselves ended up at the far left edge with a rail running a
+     thousand points to the right, and a partner without children was banished
+     to the far end for no reason at all.
+
+     Now the boxes stay together - the person, then every partner to their
+     right, in the order of the marriages - and the groups of children are laid
+     out side by side underneath. The person sits over the middle of what hangs
+     below them. Each group is joined to its own marriage by its own line, at
+     its own height, so two of those lines cannot run into one another. */
+  var cur=n.wL;
+  n.marriages.forEach(function(m,i){
+    m.boxLeftLocal=cur;
+    m.anchorLocal=cur + m.w/2;
+    /* where the descent belongs: the join between the two boxes for the first
+       marriage, the middle of that partner's own box for any later one */
+    m.linkLocal = (i===0) ? n.wL : m.anchorLocal;
+    cur += m.w;
+  });
+  var rowRight=cur;
+
+  var withKids=n.marriages.filter(function(m){ return m.childNodes.length; });
+  var bx=0;
+  withKids.forEach(function(m,i){
+    if(i) bx += SIB_GAP;
+    m.blockCenterLocal = bx + m.childLeftFromCenter;
+    bx = m.blockCenterLocal + m.childRightFromCenter;
+    m.lane = i;
+  });
+  var blockLeft  = withKids.length ? (withKids[0].blockCenterLocal - withKids[0].childLeftFromCenter) : 0;
+  var blockRight = withKids.length ? bx : 0;
+
+  /* the middle of the person's own box goes over the middle of the groups */
+  /* If only ONE of the marriages has children, that group hangs straight down
+     from its own marriage, exactly the way it does for somebody married once.
+     The line is then a plain vertical and nothing has to jog sideways. Only
+     when two or more marriages have children do the groups have to be packed
+     next to each other, and then the person's own box goes over their middle. */
+  var shift = !withKids.length ? 0
+    : withKids.length===1 ? (withKids[0].linkLocal - withKids[0].blockCenterLocal)
+    : (n.wL/2 - (blockLeft+blockRight)/2);
+  withKids.forEach(function(m){ m.blockCenterLocal += shift; });
+  blockLeft += shift; blockRight += shift;
+
+  n.anchorRel=n.wL;
+  n.extL=n.anchorRel - Math.min(0, blockLeft);
+  n.extR=Math.max(rowRight, blockRight) - n.anchorRel;
+  n.own_w=rowRight;
 }
 function layoutMarriageChildren(m, anchorAbs, depth){
   m.childNodes.forEach(function(c,i){ secondPass(c, anchorAbs + (m.childPos[i]-m.childCenter), depth+1); });
 }
 function secondPassMulti(n,aAbs,depth){
   n.anchor=aAbs; n.depth=depth;
-  var P=n.marriages[n.primaryIdx];
   var shift=aAbs - n.anchorRel;
   n.bloodLeft=shift;
-  n.sp1Left=P.boxLeftLocal + shift;
-  P.coupleCenter=n.sp1Left;
+  n.sp1Left=n.marriages[0].boxLeftLocal + shift;
   n.marriages.forEach(function(m){
     m.spouseLeft   = m.boxLeftLocal + shift;
     m.spouseCenter = m.anchorLocal  + shift;
-    m.descX = (m===P)? P.coupleCenter : m.spouseCenter;
+    m.linkX        = m.linkLocal    + shift;
+    m.descX = m.childNodes.length ? (m.blockCenterLocal + shift) : m.linkX;
     layoutMarriageChildren(m, m.descX, depth);
   });
   n.boxLeft=n.bloodLeft;
-  n.cx=P.coupleCenter-n.wL/2;
+  n.cx=n.bloodLeft + n.wL/2;
 }
 function firstPass(n){
   if(n.kind==='multi') return firstPassMulti(n);
@@ -5167,11 +5197,19 @@ function drawRefBox(g,x,ytop,lines,w){
 }
 function drawTree(root, svg, W, titleCx){
   var gLines=el('g',{},svg);
-  function drawDescend(px, depth, kids){
+  /* linkX is where the descent starts - the marriage itself. px is the middle
+     of the group of children. For a single couple the two are the same point
+     and this draws exactly what it always drew. Where a person has several
+     marriages they differ, and each marriage gets its own height (lane) for
+     the horizontal run, so two of them can never lie on top of each other. */
+  function drawDescend(px, depth, kids, linkX, lane){
     if(!kids.length) return;
-    var pb=yTop(depth)+BOX_H, mid=pb+LEVEL_GAP/2;
-    el('line',{x1:px,y1:pb,x2:px,y2:mid,stroke:'#000','stroke-width':0.7},gLines);
-    var xs=kids.map(function(c){return anchorX(c);}).concat([px]);
+    var pb=yTop(depth)+BOX_H;
+    var frac = lane ? Math.min(0.78, 0.30+0.20*lane) : (lane===0 ? 0.30 : 0.5);
+    var mid=pb+LEVEL_GAP*frac;
+    var lx=(linkX==null)? px : linkX;
+    el('line',{x1:lx,y1:pb,x2:lx,y2:mid,stroke:'#000','stroke-width':0.7},gLines);
+    var xs=kids.map(function(c){return anchorX(c);}).concat([lx]);
     el('line',{x1:Math.min.apply(null,xs),y1:mid,x2:Math.max.apply(null,xs),y2:mid,stroke:'#000','stroke-width':0.7},gLines);
     kids.forEach(function(c){ var ax=anchorX(c);
       el('line',{x1:ax,y1:mid,x2:ax,y2:yTop(c.depth),stroke:'#000','stroke-width':0.7},gLines); });
@@ -5184,7 +5222,7 @@ function drawTree(root, svg, W, titleCx){
       var yc=yTop(n.depth)+BOX_H/2, maxR=n.sp1Left;
       n.marriages.forEach(function(m){ maxR=Math.max(maxR, m.spouseLeft+m.w); });
       el('line',{x1:n.bloodLeft,y1:yc,x2:maxR,y2:yc,stroke:'#000','stroke-width':0.7},gLines);
-      n.marriages.forEach(function(m){ drawDescend(m.descX, n.depth, m.childNodes); });
+      n.marriages.forEach(function(m){ drawDescend(m.descX, n.depth, m.childNodes, m.linkX, m.lane); });
       childNodesOf(n).forEach(lines);
       return;
     }
