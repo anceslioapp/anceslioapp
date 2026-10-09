@@ -376,6 +376,16 @@ body.fullscreen #fullExit{display:flex}
 .onlylook{background:var(--notebg); border:1px solid var(--noteline); border-radius:10px;
   padding:9px 11px; font-size:12.5px; line-height:1.4; color:var(--ink); margin:0 0 12px}
 #toolbar .tnote{font-size:12.5px; color:var(--muted); line-height:1.35; margin:-2px 0 8px}
+#genNote{position:absolute; bottom:0; left:0; right:0; z-index:6;
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  padding:6px 12px; font-size:12.5px; line-height:1.3;
+  background:var(--field); color:var(--muted);
+  border-top:1px solid var(--line); box-shadow:0 -2px 10px rgba(60,45,20,.06);}
+#genNote .btn.small{padding:3px 10px; font-size:13px;}
+#genNote label{display:inline-flex; align-items:center; gap:5px; white-space:nowrap;}
+#genNote select{font-size:13px; padding:4px 6px; border:1px solid var(--line);
+  border-radius:7px; background:var(--field); color:var(--ink);}
+#genNoteText:empty{display:none}
 #emptyHint{display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
   max-width:min(430px,86%); text-align:center; color:var(--muted); font-size:15.5px; background:var(--field);
   border:1px solid var(--line); border-radius:12px; padding:18px 22px; box-shadow:0 4px 20px rgba(60,45,20,.07)}
@@ -912,6 +922,11 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
     </div>
     <div id="main">
       <div id="stageWrap">
+        <div id="genNote" style="display:none">
+          <select id="genLimit" data-i18n-title="How many generations of descendants to show" title="How many generations of descendants to show" aria-label="Generations"></select>
+          <button class="btn small" id="genFull" data-i18n="Show all">Show all</button>
+          <span id="genNoteText"></span>
+        </div>
         <svg id="stage" xmlns="http://www.w3.org/2000/svg"></svg>
         <div id="emptyHint">
           <span data-lang="en">Now choose a <b>root person</b>:<br>on a phone through the <b>&#9776; menu</b> (top left), on a computer through the search box above.</span>
@@ -1445,6 +1460,12 @@ var DE = {
 'Search root person (':'Wurzelperson suchen (',
 ' people)…':' Personen)…',
 'Chart title':'Titel der Tafel',
+'Show all':'Alles zeigen',
+'all generations':'alle Generationen',
+'%1 generations':'%1 Generationen',
+'How many generations of descendants to show':'Wie viele Generationen der Nachfahren gezeigt werden',
+'all':'alle',
+'Shortened so the chart stays readable.':'Gekürzt, damit die Tafel lesbar bleibt.',
 'Box width':'Kastenbreite','Text size':'Schriftgröße',
 'First given name only':'Nur der erste Vorname',
 'Children sorted by age':'Kinder nach Alter sortieren',
@@ -1842,6 +1863,11 @@ window.I18N={
           &bdquo;XIV 35&ldquo;. An empty field means: use the value from the data.</li>
           <li>Enter a <b>chart title</b> at the top of the edit panel, one line per line break. It is printed in
           large type at the top right.</li>
+          <li>Limit the <b>generations</b>: the selector <b>below the chart</b> decides how many generations
+          of descendants are drawn. For a large family the app picks a sensible number by itself the first time, so the
+          boxes stay big enough to read on the screen in front of you, and says so at the bottom. <b>Show all</b>, or
+          the value <b>all generations</b>, gives you the complete chart at any time. The choice is remembered per root person
+          and travels with the project file.</li>
           <li>Adjust the <b>presentation</b>: box width, text size, &bdquo;first given name only&ldquo; and
           &bdquo;children by age&ldquo;. The <b>&#128208; Print preset (A3)</b> button sets the compact, highly
           legible combination in one go.</li>
@@ -1972,7 +1998,7 @@ window.I18N={
         and the Escape key. The app always starts with its menus in sight, so nobody can get stuck.</p>
         <p>In the chart everything else lives behind the <b>&#9776;</b> menu, divided into four parts:
         <b>Root person</b>, <b>View</b>, <b>The selected person</b> and <b>Output</b>.</p>
-        <p class="muted">Version 3.1</p>
+        <p class="muted">Version 3.2</p>
       </section>
       </div>
       <div data-lang="de">
@@ -2138,6 +2164,12 @@ window.I18N={
           Notizzeile wie &bdquo;XIV 35&ldquo;. Ein leeres Feld bedeutet: Wert aus den Daten verwenden.</li>
           <li>Oben im Bearbeitungsfeld einen <b>Tafeltitel</b> eintragen, pro Zeilenumbruch eine Zeile. Er wird oben
           rechts gro&szlig; gedruckt.</li>
+          <li><b>Generationen</b> begrenzen: Das Auswahlfeld <b>unter der Tafel</b> bestimmt, wie viele
+          Generationen von Nachfahren gezeichnet werden. Bei einer gro&szlig;en Familie entscheidet die App beim ersten
+          &Ouml;ffnen selbst, wie viele noch auf den Bildschirm passen, ohne dass die K&auml;sten zu klein zum Lesen
+          werden, und sagt unten Bescheid. Mit <b>Alles zeigen</b> oder dem Wert <b>alle Generationen</b> bekommst Du
+          jederzeit die vollst&auml;ndige Tafel. Die Einstellung merkt sich die App je Wurzelperson und speichert sie mit in
+          die Projektdatei.</li>
           <li>Die <b>Darstellung</b> anpassen: Kastenbreite, Schriftgr&ouml;&szlig;e, &bdquo;nur erster Vorname&ldquo;
           und &bdquo;Kinder nach Alter&ldquo;. Die Schaltfl&auml;che <b>&#128208; Druckvorlage (A3)</b> setzt die
           kompakte, gut lesbare Kombination in einem Zug.</li>
@@ -2290,7 +2322,7 @@ window.I18N={
         sichtbaren Men&uuml;s, damit niemand darin h&auml;ngenbleibt.</p>
         <p>In der Nachfahrentafel steckt alles Weitere hinter dem <b>&#9776;</b>-Men&uuml;, in vier Teile gegliedert:
         <b>Wurzelperson</b>, <b>Ansicht</b>, <b>Die gew&auml;hlte Person</b> und <b>Ausgeben</b>.</p>
-        <p class="muted">Version 3.1</p>
+        <p class="muted">Version 3.2</p>
       </section>
       </div>
     </div>
@@ -4934,6 +4966,10 @@ var ROOT=null, SELECTED=null;
 var SET={};
 var SHEET_TITLE='';
 var Z=1, CUR_W=0, CUR_H=0, needFit=false, dirty=false;
+/* how many generations of descendants are drawn; 0 means all of them */
+var GEN_LIMIT=0;
+/* a box narrower than this on the actual screen cannot be read any more */
+var MIN_BOX_PX=58;
 
 var MON={JAN:1,FEB:2,MAR:3,APR:4,MAY:5,JUN:6,JUL:7,AUG:8,SEP:9,OCT:10,NOV:11,DEC:12};
 function fmtDate(s){ return FP.gedToText(s); }
@@ -5050,16 +5086,19 @@ function buildPersonNodes(id, depth, seen){
   allFams.filter(function(f){ return partnerOf(f,id)==null; }).forEach(function(f){
     (f.children||[]).forEach(function(c){ orphanKids.push(c); }); });
 
+  /* the chart only goes as deep as the person asked for */
+  var tiefer = !GEN_LIMIT || depth < GEN_LIMIT-1;
+
   if(partneredFams.length>1 && !s.collapsed){
     var marriages=partneredFams.map(function(f){
       var partnerId=partnerOf(f,id);
       return { partnerId:partnerId,
                partnerLines: personLines(partnerId, spouseOvr(s,partnerId)),
                marrNo: allFams.indexOf(f)+1,
-               childNodes: buildChildren(f.children||[], depth+1, seen, s.excluded) };
+               childNodes: tiefer ? buildChildren(f.children||[], depth+1, seen, s.excluded) : [] };
     });
     var primaryIdx=0;
-    if(orphanKids.length) marriages[primaryIdx].childNodes =
+    if(orphanKids.length && tiefer) marriages[primaryIdx].childNodes =
       marriages[primaryIdx].childNodes.concat(buildChildren(orphanKids, depth+1, seen, s.excluded));
     return [{ kind:'multi', bloodId:id, depth:depth, bloodLines:personLines(id,s.ovr),
               marriages:marriages, primaryIdx:primaryIdx }];
@@ -5068,7 +5107,7 @@ function buildPersonNodes(id, depth, seen){
   var partnerId2 = f2? partnerOf(f2,id) : null;
   var mergedKids = (f2?(f2.children||[]):[]).concat(orphanKids);
   var node=coupleNode(id, partnerId2, depth);
-  if(!s.collapsed && mergedKids.length) node.children=buildChildren(mergedKids, depth+1, seen, s.excluded);
+  if(!s.collapsed && mergedKids.length && tiefer) node.children=buildChildren(mergedKids, depth+1, seen, s.excluded);
   return [node];
 }
 
@@ -5401,6 +5440,70 @@ function setDrawer(open){ $('side').classList.toggle('open', open); }
 function selectNode(id){ SELECTED=id; safeRender(); openPanel(id); setDrawer(true); }
 function deselectNode(){ SELECTED=null; safeRender(); showDefaultPanel(); setDrawer(false); }
 
+/* Lay the chart out without drawing it, just to learn how big it would be.
+   Used to decide how many generations still fit on the screen in front of
+   the person, and nowhere else. */
+function vermessen(){
+  var roots=buildPersonNodes(ROOT,0,{});
+  if(!roots.length) return null;
+  var r = roots.length===1 ? roots[0] : {kind:'virtual', bloodId:null, depth:0, children:roots};
+  firstPass(r); secondPass(r, MARGIN+r.extL, 0);
+  var md=maxDepth(r);
+  return { w: MARGIN+r.extL+r.extR+MARGIN,
+           h: (md+1)*BOX_H+md*LEVEL_GAP+2*MARGIN,
+           tiefe: md+1 };
+}
+/* How many generations are worth showing at first sight: as many as keep the
+   boxes wide enough to read once the whole chart is fitted onto this screen.
+   A wide family is therefore cut back sooner than a narrow one, and on a big
+   screen nothing is cut at all. 0 means everything fits. */
+function autoGens(){
+  var wrap=$('stageWrap');
+  var bw=(wrap && wrap.clientWidth) || 360, bh=(wrap && wrap.clientHeight) || 560;
+  var merk=GEN_LIMIT, g, letzte=0;
+  try{
+    for(g=2; g<=14; g++){
+      GEN_LIMIT=g;
+      var m=vermessen();
+      if(!m) break;
+      var z=Math.min((bw-24)/m.w, (bh-24)/m.h);
+      if(z>1) z=1;
+      if(BOX_W*z < MIN_BOX_PX) return Math.max(2, letzte||g-1);
+      letzte=g;
+      if(m.tiefe<g) return 0;       /* the whole chart already fits */
+    }
+  } finally { GEN_LIMIT=merk; }
+  return letzte||0;
+}
+/* The selector carries its own wording, so it needs no label beside it and
+   the toolbar stays one row high. */
+function fuelleGenWahl(){
+  var sel=$('genLimit'); if(!sel) return;
+  var soll=T('all generations')+'|';
+  for(var n=2;n<=8;n++) soll+=T('%1 generations').replace('%1',n)+'|';
+  if(sel.dataset.stand===soll) return;
+  sel.dataset.stand=soll;
+  var html='<option value="0">'+T('all generations')+'</option>';
+  for(var k=2;k<=8;k++) html+='<option value="'+k+'">'+T('%1 generations').replace('%1',k)+'</option>';
+  sel.innerHTML=html;
+}
+function zeigeGenWahl(){
+  fuelleGenWahl();
+  var sel=$('genLimit'); if(sel) sel.value=String(GEN_LIMIT||0);
+  var note=$('genNote'), txt=$('genNoteText'), voll=$('genFull');
+  if(!note||!txt) return;
+  /* the bar belongs to the chart, so it is there whenever a chart is */
+  note.style.display = ROOT ? '' : 'none';
+  if(GEN_LIMIT){
+    txt.textContent=T('Shortened so the chart stays readable.');
+    if(voll) voll.style.display='';
+  } else { txt.textContent=''; if(voll) voll.style.display='none'; }
+}
+function setzeGens(n){
+  if(!ROOT) return;
+  settings(ROOT).gens = n;
+  needFit=true; safeRender(); fitZoom();
+}
 function render(){
   var svg=$('stage');
   svg.innerHTML='';
@@ -5411,6 +5514,10 @@ function render(){
     return;
   }
   if(hint) hint.style.display='none';
+  var sr=settings(ROOT);
+  if(sr.gens==null) sr.gens=autoGens();
+  GEN_LIMIT=sr.gens||0;
+  zeigeGenWahl();
   var roots=buildPersonNodes(ROOT,0,{});
   var root = roots.length===1 ? roots[0] : {kind:'virtual', bloodId:null, depth:0, children:roots};
   firstPass(root); secondPass(root, MARGIN+root.extL, 0);
@@ -5451,7 +5558,9 @@ function showRoot(){
   var wrap=$('stageWrap');
   if(wrap.clientWidth<60){ needFit=true; return; }
   var k=Math.min((wrap.clientWidth-24)/CUR_W, (wrap.clientHeight-24)/CUR_H);
-  setZoom(k>=0.85 ? Math.min(k,1) : 1);
+  /* With the generations limited, the whole point is to see the limited chart
+     at once, so it opens fitted rather than at the root. */
+  setZoom(GEN_LIMIT ? (k>0 ? Math.min(k,1) : 1) : (k>=0.85 ? Math.min(k,1) : 1));
   requestAnimationFrame(function(){ scrollToNode(ROOT); });
 }
 function fitZoom(){
@@ -5826,6 +5935,9 @@ $('boxWidth').onchange=function(e){
   else { AUTO_W=false; BOX_W=+e.target.value; REF_W=2*BOX_W; }
   applyMetrics(); safeRender();
 };
+
+$('genLimit').onchange=function(e){ setzeGens(+e.target.value||0); };
+$('genFull').onclick=function(){ setzeGens(0); };
 $('fontSize').onchange=function(e){ FONT_SZ=+e.target.value; applyMetrics(); safeRender(); };
 $('btnPreset').onclick=function(){
   AUTO_W=true; BOX_W=76; REF_W=2*BOX_W; FONT_SZ=11.3; applyMetrics();
