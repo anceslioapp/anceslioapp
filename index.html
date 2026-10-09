@@ -4492,7 +4492,13 @@ function goBackOne(){
   return false;
 }
 function selectPerson(id){
+  /* Tapping the box that is already selected lets go of it again and closes
+     the edit panel, the same way the descendant chart behaves. */
+  if(SEL===id){ deselectPerson(); return; }
   SEL=id; render(); openPanel(id); setDrawer(true);
+}
+function deselectPerson(){
+  SEL=null; render(); setDrawer(false);
 }
 var drawerMode=false;
 function isDrawer(){
@@ -4509,7 +4515,8 @@ function setDrawer(open){
     SHELL.closeOverlay('trSide');
   }
 }
-$('trDrawerClose').onclick=function(){ setDrawer(false); };
+/* closing also lets go of the person, so tapping that box opens it again */
+$('trDrawerClose').onclick=function(){ deselectPerson(); };
 $('trBtnPanel').onclick=function(){ setDrawer(true); if(!SEL&&FOCUS) openPanel(FOCUS); };
 
 /* ---------- search ---------- */
