@@ -4493,8 +4493,11 @@ function goBackOne(){
 }
 function selectPerson(id){
   /* Tapping the box that is already selected lets go of it again and closes
-     the edit panel, the same way the descendant chart behaves. */
-  if(SEL===id){ deselectPerson(); return; }
+     the edit panel, the same way the descendant chart behaves. It only lets
+     go when the panel is actually open: the person in the middle counts as
+     selected from the start, and the first tap on them has to OPEN the panel,
+     not close something that was never there. */
+  if(SEL===id && $('trSide').classList.contains('open')){ deselectPerson(); return; }
   SEL=id; render(); openPanel(id); setDrawer(true);
 }
 function deselectPerson(){
@@ -5415,7 +5418,7 @@ function drawTree(root, svg, W, titleCx){
       var hitR=n.sp1Left;
       n.marriages.forEach(function(m){ hitR=Math.max(hitR, m.spouseLeft+m.w); });
       el('rect',{x:n.bloodLeft,y:yt,width:hitR-n.bloodLeft,height:BOX_H,fill:'transparent','class':'unit-hit'},g);
-      g.addEventListener('click',function(){ if(SELECTED===n.bloodId) deselectNode(); else selectNode(n.bloodId); });
+      g.addEventListener('click',function(){ if(SELECTED===n.bloodId && $('side').classList.contains('open')) deselectNode(); else selectNode(n.bloodId); });
       childNodesOf(n).forEach(boxes);
       return;
     }
@@ -5426,7 +5429,7 @@ function drawTree(root, svg, W, titleCx){
     else if(n.kind==='person'){ drawPersonBox(g2,bx,yt2,n.bloodLines,n.wL); }
     else if(n.kind==='ref'){ drawRefBox(g2,bx,yt2,n.refLines,n.refW); }
     el('rect',{x:bx,y:yt2,width:n.own_w,height:BOX_H,fill:'transparent','class':'unit-hit'},g2);
-    g2.addEventListener('click',function(){ if(SELECTED===n.bloodId) deselectNode(); else selectNode(n.bloodId); });
+    g2.addEventListener('click',function(){ if(SELECTED===n.bloodId && $('side').classList.contains('open')) deselectNode(); else selectNode(n.bloodId); });
     (n.children||[]).forEach(boxes);
   })(root);
 
