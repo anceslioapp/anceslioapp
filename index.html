@@ -279,8 +279,9 @@ body.fullscreen #fullExit{display:flex}
 #trHint .hintor{font-size:14px; color:var(--muted)}
 #trStage text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 #trStage .unit{cursor:pointer}
-#trSide{width:340px; flex:0 0 340px; border-left:1px solid var(--line); background:var(--soft);
-  overflow:auto; padding:14px; font-size:14px}
+#trSide{display:none; width:340px; flex:0 0 340px; border-left:1px solid var(--line);
+  background:var(--soft); overflow:auto; padding:14px; font-size:14px}
+#trSide.open{display:block}
 #trSide h3{margin:2px 0 10px; font-size:17.5px; font-family:Georgia,serif; color:var(--accent)}
 #trSide .card{padding:12px; margin-bottom:12px; border-radius:11px}
 /* A section of the edit panel: the heading is the fold handle. */
@@ -342,6 +343,9 @@ body.fullscreen #fullExit{display:flex}
 #panelChart .zoom .zbtn{width:32px; justify-content:center; font-size:17.5px; padding:6px 0}
 #zoomLbl{min-width:46px; text-align:center; font-size:12.5px; color:var(--muted)}
 #main{flex:1 1 auto; display:flex; min-height:0}
+/* The chart scrolls, the bar underneath does not: it sits in a column of
+   its own beside the edit panel, so zooming in cannot push it out of view. */
+#stageCol{flex:1 1 auto; display:flex; flex-direction:column; min-width:0; min-height:0}
 #stageWrap{flex:1 1 auto; overflow:auto; background:#fff; position:relative}
 #stage{display:block; transform-origin:top left}
 #stage text{font-family:"Times New Roman",Times,serif}
@@ -355,8 +359,11 @@ body.fullscreen #fullExit{display:flex}
 :root[data-theme="dark"] #stage line{stroke:#9c917d}
 :root[data-theme="dark"] #stage text{fill:#ece4d5}
 :root[data-theme="dark"] #stage .unit.sel rect.pbox{stroke:var(--gold); stroke-width:1.8}
-#side{width:340px; flex:0 0 340px; border-left:1px solid var(--line); background:var(--soft);
-  overflow:auto; padding:14px; font-size:14px}
+/* The edit panel is not a fixture: it appears when a box is tapped and goes
+   away again, so the chart has the whole width until it is needed. */
+#side{display:none; width:340px; flex:0 0 340px; border-left:1px solid var(--line);
+  background:var(--soft); overflow:auto; padding:14px; font-size:14px}
+#side.open{display:block}
 #side h3{margin:.2em 0 .6em; font-size:15.5px; font-family:Georgia,serif; color:var(--accent)}
 #side .card{padding:11px; margin-bottom:12px; border-radius:11px}
 #side .field{margin-bottom:9px}
@@ -376,11 +383,10 @@ body.fullscreen #fullExit{display:flex}
 .onlylook{background:var(--notebg); border:1px solid var(--noteline); border-radius:10px;
   padding:9px 11px; font-size:12.5px; line-height:1.4; color:var(--ink); margin:0 0 12px}
 #toolbar .tnote{font-size:12.5px; color:var(--muted); line-height:1.35; margin:-2px 0 8px}
-#genNote{position:absolute; bottom:0; left:0; right:0; z-index:6;
-  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+#genNote{flex:0 0 auto; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
   padding:6px 12px; font-size:12.5px; line-height:1.3;
   background:var(--field); color:var(--muted);
-  border-top:1px solid var(--line); box-shadow:0 -2px 10px rgba(60,45,20,.06);}
+  border-top:1px solid var(--line);}
 #genNote .btn.small{padding:3px 10px; font-size:13px;}
 #genNote label{display:inline-flex; align-items:center; gap:5px; white-space:nowrap;}
 #genNote select{font-size:13px; padding:4px 6px; border:1px solid var(--line);
@@ -548,7 +554,7 @@ label.fld{display:block; font-size:12.5px; font-weight:600; color:var(--accent);
 
   /* family tree: side panel becomes a bottom drawer */
   #trBtnPanel{display:inline-flex}
-  #trSide{position:absolute; left:0; right:0; bottom:0; top:auto; width:auto; flex:none;
+  #trSide{display:block; position:absolute; left:0; right:0; bottom:0; top:auto; width:auto; flex:none;
     height:calc(66dvh + env(safe-area-inset-bottom)); border-left:none; border-top:1px solid var(--line);
     border-radius:14px 14px 0 0; box-shadow:0 -8px 30px rgba(60,45,20,.2);
     padding-bottom:calc(14px + env(safe-area-inset-bottom));
@@ -594,7 +600,7 @@ label.fld{display:block; font-size:12.5px; font-weight:600; color:var(--accent);
   #btnEdit{display:inline-flex}
   #toolbar #tgrpEdit{display:block}
   #stageWrap{touch-action:none}
-  #side{position:absolute; left:0; right:0; bottom:0; top:auto; width:auto; flex:none;
+  #side{display:block; position:absolute; left:0; right:0; bottom:0; top:auto; width:auto; flex:none;
     height:calc(64dvh + env(safe-area-inset-bottom)); border-left:none; border-top:1px solid var(--line);
     border-radius:14px 14px 0 0; box-shadow:0 -8px 30px rgba(60,45,20,.2);
     padding-bottom:calc(14px + env(safe-area-inset-bottom));
@@ -695,6 +701,8 @@ body.fullscreen #appbar,body.fullscreen #trBar,body.fullscreen #tabbar,
 body.fullscreen #btnMenu,body.fullscreen #btnFull{display:none !important}
 body.fullscreen #panels>.panel,body.fullscreen #welcome{bottom:0 !important}
 body.fullscreen #trSide,body.fullscreen #side{bottom:0}
+/* full screen means the drawing and nothing else */
+body.fullscreen #genNote{display:none !important}
 body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
 
 /* ===================================================================
@@ -921,16 +929,20 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
 
     </div>
     <div id="main">
+      <div id="stageCol">
       <div id="stageWrap">
-        <div id="genNote" style="display:none">
-          <select id="genLimit" data-i18n-title="How many generations of descendants to show" title="How many generations of descendants to show" aria-label="Generations"></select>
-          <button class="btn small" id="genFull" data-i18n="Show all">Show all</button>
-          <span id="genNoteText"></span>
-        </div>
         <svg id="stage" xmlns="http://www.w3.org/2000/svg"></svg>
         <div id="emptyHint">
           <span data-lang="en">Now choose a <b>root person</b>:<br>on a phone through the <b>&#9776; menu</b> (top left), on a computer through the search box above.</span>
           <span data-lang="de">Jetzt eine <b>Wurzelperson</b> w&auml;hlen:<br>auf dem Handy &uuml;ber das <b>&#9776;&nbsp;Men&uuml;</b> oben links, am Rechner &uuml;ber das Suchfeld oben.</span>
+        </div>
+      </div>
+
+        <div id="genNote" style="display:none">
+          <select id="genLimit" data-i18n-title="How many generations of descendants to show" title="How many generations of descendants to show" aria-label="Generations"></select>
+          <button class="btn small" id="genFull" data-i18n="Show all">Show all</button>
+          <button class="btn small" id="btnTitle" data-i18n="Chart title">Chart title</button>
+          <span id="genNoteText"></span>
         </div>
       </div>
       <div id="side" class="noprint">
@@ -5610,6 +5622,9 @@ $('stageWrap').addEventListener('wheel',function(e){
 })();
 
 $('drawerClose').onclick=function(){ deselectNode(); };
+/* the panel is no longer standing open, so there has to be a way in that
+   does not go through tapping somebody's box */
+$('btnTitle').onclick=function(){ SELECTED=null; showDefaultPanel(); setDrawer(true); safeRender(); };
 $('btnEdit').onclick=function(){ setDrawer(true); closeMenu(); };
 var _tb=$('toolbar'), _bd=$('menuBackdrop');
 function closeMenu(){ _tb.classList.remove('open'); _bd.classList.remove('show'); }
@@ -5739,7 +5754,8 @@ function openPanel(id){
     bind('sp'+fi+'Surname',so,'surname'); bind('sp'+fi+'Given',so,'given'); bind('sp'+fi+'Birth',so,'birth');
     bind('sp'+fi+'Death',so,'death'); bind('sp'+fi+'Code',so,'code'); });
 }
-$('sheetTitle').oninput=function(e){ SHEET_TITLE=e.target.value; safeRender(); };
+$('sheetTitle').oninput=function(e){ SHEET_TITLE=e.target.value;
+  if(ROOT) settings(ROOT).title=SHEET_TITLE; safeRender(); };
 
 /* ---------------- root person search ---------------- */
 function personLabel(id){
@@ -5783,10 +5799,17 @@ function topOfLine(id){
   return cur;
 }
 function chooseRoot(id){
+  /* The title belongs to the chart of one person. Picking a new root person
+     therefore starts with an empty title, and coming back to a person brings
+     their own title back. */
+  if(ROOT && ROOT!==id) settings(ROOT).title=SHEET_TITLE||'';
   ROOT=id; SELECTED=null; dropHi=-1; dirty=false;
+  SHEET_TITLE=settings(id).title||'';
+  $('sheetTitle').value=SHEET_TITLE;
   $('rootSearch').value=personLabel(id);
   toggleRootClear();
   $('rootDrop').style.display='none';
+  setDrawer(false);
   showDefaultPanel();
   safeRender(); showRoot();
   closeMenu();
@@ -6022,6 +6045,7 @@ $('projFile').addEventListener('change', function(e){
       if(proj.ged) FP.loadText(proj.ged);       /* fires 'load' – resets SET/ROOT */
       SET=proj.settings||{};
       SHEET_TITLE=proj.title||''; $('sheetTitle').value=SHEET_TITLE;
+      if(proj.root && SHEET_TITLE && !(SET[proj.root]||{}).title) settings(proj.root).title=SHEET_TITLE;
       $('optFirstName').checked=!!proj.firstName;
       $('optAgeSort').checked=proj.ageSort!==false;
       if(proj.pdfFormat) $('pdfFormat').value=proj.pdfFormat;
