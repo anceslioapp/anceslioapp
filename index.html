@@ -767,7 +767,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   </div>
   <nav id="tabbar">
     <button class="tab active" data-tab="tree"><span class="ico">&#127795;</span> <span data-i18n="Tree">Tree</span></button>
-    <button class="tab" data-tab="chart"><span class="ico">&#128203;</span> <span data-i18n="Chart">Chart</span></button>
+    <button class="tab" data-tab="chart"><span class="ico">&#128203;</span> <span data-i18n="Descendants">Descendants</span></button>
     <button class="tab" data-tab="rel"><span class="ico">&#128101;</span> <span data-i18n="Kinship">Kinship</span></button>
   </nav>
 </header>
@@ -1068,7 +1068,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
       <h2>Anceslio</h2>
       <p>
         <span data-lang="en">Three tools in one file: family tree, descendant chart, kinship finder.</span>
-        <span data-lang="de">Drei Werkzeuge in einer Datei: Stammbaum, Stammtafel, Verwandtschaftsrechner.</span>
+        <span data-lang="de">Drei Werkzeuge in einer Datei: Stammbaum, Nachfahrentafel, Verwandtschaftsrechner.</span>
       </p>
       <div class="card">
         <!-- Two ways in, side by side and of equal weight. Before, the file was
@@ -1100,12 +1100,12 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
       </div>
       <ul data-lang="en">
         <li><b>Tree</b> &ndash; walk through the family and edit the details.</li>
-        <li><b>Chart</b> &ndash; the classic descendant chart to print, as PDF, SVG or PNG.</li>
+        <li><b>Descendants</b> &ndash; the classic descendant chart to print, as PDF, SVG or PNG.</li>
         <li><b>Kinship</b> &ndash; pick two people, the app names the relationship.</li>
       </ul>
       <ul data-lang="de">
         <li><b>Stammbaum</b> &ndash; durch die Familie wandern und Angaben bearbeiten.</li>
-        <li><b>Stammtafel</b> &ndash; die klassische Nachkommentafel zum Ausdrucken, als PDF, SVG oder PNG.</li>
+        <li><b>Nachfahrentafel</b> &ndash; die klassische Nachkommentafel zum Ausdrucken, als PDF, SVG oder PNG.</li>
         <li><b>Verwandtschaft</b> &ndash; zwei Personen w&auml;hlen, die App benennt die Beziehung.</li>
       </ul>
       <p class="muted">
@@ -1234,7 +1234,7 @@ var DE = {
 '❔ Guide':'❔ Anleitung',
 'Open the user guide':'Anleitung öffnen',
 'Language and appearance':'Sprache und Darstellung',
-'Tree':'Stammbaum','Chart':'Stammtafel','Kinship':'Verwandtschaft',
+'Tree':'Stammbaum','Descendants':'Nachfahrentafel','Kinship':'Verwandtschaft',
 'no data loaded':'keine Daten geladen',
 '1 person':'1 Person',
 ' people':' Personen',
@@ -1252,7 +1252,7 @@ var DE = {
 'Close':'Schließen',
 
 /* ---- welcome screen ---- */
-'Family tree, descendant chart and kinship':'Stammbaum, Stammtafel und Verwandtschaft',
+'Family tree, descendant chart and kinship':'Stammbaum, Nachfahrentafel und Verwandtschaft',
 'Everything runs on this device. No account, no server, no internet connection.':
   'Alles läuft auf diesem Gerät. Kein Konto, kein Server, keine Internetverbindung.',
 'Open a GEDCOM file':'GEDCOM-Datei öffnen',
@@ -1263,7 +1263,7 @@ var DE = {
 'Walk through the family one person at a time, and edit everything as you go.':
   'Sich Person für Person durch die Familie bewegen und dabei alles bearbeiten.',
 'Build the classic descendant chart and print or export it.':
-  'Die klassische Stammtafel aufbauen, drucken oder exportieren.',
+  'Die klassische Nachfahrentafel aufbauen, drucken oder exportieren.',
 'Work out how any two people are related.':
   'Herausfinden, wie zwei Personen miteinander verwandt sind.',
 'Your data never leaves this device and is stored here automatically.':
@@ -1556,7 +1556,7 @@ var DE = {
 'Show the text':'Text anzeigen',
 'Question':'Frage',
 'Search by name or year…':'Nach Name oder Jahr suchen…',
-'📋 Show in the chart':'📋 In der Stammtafel zeigen',
+'📋 Show in Descendants':'📋 In der Nachfahrentafel zeigen',
 'That person is not in the file.':'Diese Person ist nicht in der Datei.',
 'Put this person in the centre':'Diese Person in die Mitte stellen',
 'Undo this link (the person stays)':'Diese Verbindung lösen (die Person bleibt)',
@@ -1705,7 +1705,7 @@ window.I18N={
         <button data-go="h2">First steps</button>
         <button data-go="h3">GEDCOM</button>
         <button data-go="h4">Tree</button>
-        <button data-go="h5">Chart</button>
+        <button data-go="h5">Descendants</button>
         <button data-go="h6">Kinship</button>
         <button data-go="h7">Saving</button>
         <button data-go="h8">Privacy</button>
@@ -1719,7 +1719,7 @@ window.I18N={
         can actually look at, work with and print. It holds three tools that all share the same data:</p>
         <p><b>Tree</b> puts one person at the centre and shows their parents, partners and children. This is where
         you edit: change names and dates, add people, connect them.<br>
-        <b>Chart</b> builds the classic descendant chart in the style of a printed family book, ready to export as
+        <b>Descendants</b> builds the classic descendant chart in the style of a printed family book, ready to export as
         PDF, SVG or PNG.<br>
         <b>Kinship</b> answers the question &bdquo;how are these two related?&ldquo; in plain words.</p>
         <p>There is no account and no sign-in, and the app works without an internet connection. Nothing is uploaded:
@@ -1775,8 +1775,8 @@ window.I18N={
         <p>With <b>&#65291;&nbsp;Grandchildren</b> switched on, every child who has children of their own is drawn
         <b>together with the partner those children come from</b>, and each set of grandchildren hangs under its own
         couple. Children without descendants stay single boxes, so the row does not grow for nothing.</p>
-        <p>The edit panel has a <b>&#128203; Show in the chart</b> button: it takes the person you are looking at
-        straight into the Chart tab as the root of a descendant chart.</p>
+        <p>The edit panel has a <b>&#128203; Show in Descendants</b> button: it takes the person you are looking at
+        straight into the Descendants tab as the root of a descendant chart.</p>
         <p>The edit panel is divided into <b>Details</b>, <b>Parents</b> and <b>Partners &amp; children</b>. Tapping a
         heading folds that part away, and the app remembers it: if you mostly correct dates, fold the relatives once
         and they stay folded. The number beside a folded heading still tells you what is inside.</p>
@@ -1829,7 +1829,7 @@ window.I18N={
       </section>
 
       <section class="sec" id="h5">
-        <h4>The Chart tab</h4>
+        <h4>The Descendants tab</h4>
         <p>This is where the classic <b>descendant chart</b> is built: a root person at the top, all descendants
         below, in plain black-and-white boxes like a printed family book. This tab never changes your data, only the
         way it is <b>presented</b> &ndash; real corrections belong in the Tree tab.</p>
@@ -1972,7 +1972,7 @@ window.I18N={
         and the Escape key. The app always starts with its menus in sight, so nobody can get stuck.</p>
         <p>In the chart everything else lives behind the <b>&#9776;</b> menu, divided into four parts:
         <b>Root person</b>, <b>View</b>, <b>The selected person</b> and <b>Output</b>.</p>
-        <p class="muted">Version 3.0</p>
+        <p class="muted">Version 3.1</p>
       </section>
       </div>
       <div data-lang="de">
@@ -1981,7 +1981,7 @@ window.I18N={
         <button data-go="d2">Erste Schritte</button>
         <button data-go="d3">GEDCOM</button>
         <button data-go="d4">Stammbaum</button>
-        <button data-go="d5">Stammtafel</button>
+        <button data-go="d5">Nachfahrentafel</button>
         <button data-go="d6">Verwandtschaft</button>
         <button data-go="d7">Speichern</button>
         <button data-go="d8">Datenschutz</button>
@@ -1996,7 +1996,7 @@ window.I18N={
         sich dieselben Daten teilen:</p>
         <p><b>Stammbaum</b> stellt eine Person in die Mitte und zeigt ihre Eltern, Partner und Kinder. Hier wird
         bearbeitet: Namen und Daten &auml;ndern, Personen anlegen, Verwandtschaften kn&uuml;pfen.<br>
-        <b>Stammtafel</b> baut die klassische Nachkommentafel im Stil gedruckter Familienb&uuml;cher, fertig zum Export
+        <b>Nachfahrentafel</b> baut die klassische Nachkommentafel im Stil gedruckter Familienb&uuml;cher, fertig zum Export
         als PDF, SVG oder PNG.<br>
         <b>Verwandtschaft</b> beantwortet die Frage &bdquo;wie sind diese beiden verwandt?&ldquo; in klaren Worten.</p>
         <p>Es gibt kein Konto und keine Anmeldung, und die App funktioniert ohne Internetverbindung. Nichts wird
@@ -2056,8 +2056,8 @@ window.I18N={
         <p>Ist <b>&#65291;&nbsp;Enkel</b> eingeschaltet, wird jedes Kind, das selbst Kinder hat, <b>zusammen mit dem
         Partner gezeigt, von dem diese Kinder stammen</b>, und jede Enkelgruppe h&auml;ngt unter ihrem eigenen Paar.
         Kinder ohne Nachkommen bleiben einzelne K&auml;sten, damit die Reihe nicht unn&ouml;tig breit wird.</p>
-        <p>Im Bearbeitungsfeld gibt es die Schaltfl&auml;che <b>&#128203; In der Stammtafel zeigen</b>: Sie
-        &uuml;bernimmt die gerade angesehene Person direkt als Wurzelperson in den Reiter Stammtafel.</p>
+        <p>Im Bearbeitungsfeld gibt es die Schaltfl&auml;che <b>&#128203; In der Nachfahrentafel zeigen</b>: Sie
+        &uuml;bernimmt die gerade angesehene Person direkt als Wurzelperson in den Reiter Nachfahrentafel.</p>
         <p>Das Bearbeitungsfeld ist in <b>Angaben</b>, <b>Eltern</b> und <b>Partner und Kinder</b> geteilt. Ein Tipp
         auf eine &Uuml;berschrift klappt den Teil zu, und die App merkt es sich: Wer meist nur Daten berichtigt, klappt
         die Verwandten einmal weg und hat sie dann weg. Die Zahl neben einer zugeklappten &Uuml;berschrift sagt
@@ -2120,11 +2120,11 @@ window.I18N={
         kehrt die App zu der Person zur&uuml;ck, von der man gekommen ist, und schlie&szlig;t das Bearbeitungsfeld
         &ndash; man bleibt also nie in einer Maske h&auml;ngen.</p>
         <div class="note"><b>Gut zu wissen:</b> Jede &Auml;nderung wirkt sofort auch in den anderen beiden Reitern.
-        Wird hier ein Geburtsdatum korrigiert, rechnen Stammtafel und Verwandtschaftsrechner sofort damit.</div>
+        Wird hier ein Geburtsdatum korrigiert, rechnen Nachfahrentafel und Verwandtschaftsrechner sofort damit.</div>
       </section>
 
       <section class="sec" id="d5">
-        <h4>Der Reiter Stammtafel</h4>
+        <h4>Der Reiter Nachfahrentafel</h4>
         <p>Hier entsteht die klassische <b>Nachkommentafel</b>: eine Wurzelperson oben, darunter alle Nachkommen, in
         schlichten schwarzwei&szlig;en K&auml;sten wie in einem gedruckten Familienbuch. Dieser Reiter ver&auml;ndert
         nie die Daten selbst, sondern nur ihre <b>Darstellung</b> &ndash; echte Korrekturen geh&ouml;ren in den Reiter
@@ -2207,7 +2207,7 @@ window.I18N={
         &ouml;ffnet eine neue, leere neben den anderen, die man Person f&uuml;r Person aufbaut. Was schon da ist,
         bleibt unber&uuml;hrt.</p>
         <p>Jede Datei merkt sich ihren eigenen Stand: die Person in der Mitte des Stammbaums, die Wurzel der
-        Stammtafel, die beiden Personen im Verwandtschaftsrechner. Im Bearbeitungsfeld legt
+        Nachfahrentafel, die beiden Personen im Verwandtschaftsrechner. Im Bearbeitungsfeld legt
         <b>&#9873; Als Startperson merken</b> fest, bei wem genau diese Datei k&uuml;nftig &ouml;ffnet &ndash;
         praktisch, wenn eine Datei die eigene Linie betrifft und eine andere einen fremden Zweig. Noch einmal
         dr&uuml;cken l&ouml;scht die Festlegung wieder.</p>
@@ -2267,7 +2267,7 @@ window.I18N={
         trotzdem.</p>
         <p>Die App merkt sich auch, <b>wo man war</b>: die Person in der Mitte des Stammbaums, die Schalter
         <b>&#65291;&nbsp;Gro&szlig;eltern</b> und <b>&#65291;&nbsp;Enkel</b>, die Wurzelperson und jede Bearbeitung
-        der Stammtafel &ndash; ausgeblendete Zweige, Verweisk&auml;sten, &uuml;berschriebene Zeilen, den Tafeltitel und die
+        der Nachfahrentafel &ndash; ausgeblendete Zweige, Verweisk&auml;sten, &uuml;berschriebene Zeilen, den Tafeltitel und die
         Darstellungseinstellungen &ndash; sowie die beiden Personen im Verwandtschaftsrechner. Die App schlie&szlig;en
         und wieder &ouml;ffnen f&uuml;hrt dorthin zur&uuml;ck, wo man aufgeh&ouml;rt hat. Wird eine <b>andere</b>
         Datei geladen, f&auml;ngt alles sauber von vorne an, denn diese Einstellungen geh&ouml;rten zur alten Datei.
@@ -2284,13 +2284,13 @@ window.I18N={
         <b>am unteren Bildschirmrand</b>, am Rechner, auf dem Tablet und beim quer gehaltenen Handy
         <b>unter dem Titel</b>.</p>
         <p>Die Schaltfl&auml;che <b>&#9974;</b> gibt dem Bild den ganzen Bildschirm: Kopfzeile, Suchleiste und
-        Reiter verschwinden. Sie wirkt im Stammbaum und in der Stammtafel gleich &ndash; in der Stammtafel sitzt sie
+        Reiter verschwinden. Sie wirkt im Stammbaum und in der Nachfahrentafel gleich &ndash; in der Nachfahrentafel sitzt sie
         direkt neben dem <b>&#9776;</b>-Men&uuml;. Das <b>&#10005;</b>, das &uuml;ber dem Bild schwebt, holt alles
         zur&uuml;ck, ebenso die Zur&uuml;ck-Taste des Handys und die Escape-Taste. Die App startet immer mit
         sichtbaren Men&uuml;s, damit niemand darin h&auml;ngenbleibt.</p>
-        <p>In der Stammtafel steckt alles Weitere hinter dem <b>&#9776;</b>-Men&uuml;, in vier Teile gegliedert:
+        <p>In der Nachfahrentafel steckt alles Weitere hinter dem <b>&#9776;</b>-Men&uuml;, in vier Teile gegliedert:
         <b>Wurzelperson</b>, <b>Ansicht</b>, <b>Die gew&auml;hlte Person</b> und <b>Ausgeben</b>.</p>
-        <p class="muted">Version 3.0</p>
+        <p class="muted">Version 3.1</p>
       </section>
       </div>
     </div>
@@ -4104,16 +4104,63 @@ function render(){
     el('rect',{x:x-w/2, y:y-9, width:w, height:16, rx:5, fill:C('--thalo')}, gL);
     txt(x, y+3.5, s, 12, gL, {'text-anchor':'middle', fill:C('--tmarr')});
   }
-  /* A later marriage is routed above the row; a straight line would otherwise
-     run right through the earlier partner's box. */
-  function marrOver(aBox, bBox, rowY, yUp, lbl){
-    var ax=aBox.x+BW-22, bx=bBox.x+BW/2;
-    el('path',{d:'M'+ax+' '+rowY+' L'+ax+' '+yUp+' L'+bx+' '+yUp+' L'+bx+' '+rowY,
-               fill:'none', stroke:C('--tline'), 'stroke-width':1.4,
-               'stroke-linejoin':'round', 'stroke-linecap':'round'}, gL);
-    markMarr((ax+bx)/2, yUp, lbl);
+  /* Later marriages are routed above the row, because a straight line would
+     run right through the earlier partner's box. All of them share ONE bar.
+     Before, every marriage got a path of its own, and since they all started
+     at the same point on the person's box, two or three lines lay exactly on
+     top of each other. Now there is a single line with a short drop onto each
+     partner, and the number of the marriage sits directly above that partner
+     instead of somewhere in the middle of a long line. */
+  function marrBar(ownerBox, partners, rowY, yUp){
+    if(!partners.length) return;
+    var ax=ownerBox.x+BW-22;
+    var xs=partners.map(function(q){ return q.box.x+BW/2; });
+    var alle=xs.concat([ax]);
+    line(ax, rowY, ax, yUp, gL);
+    line(Math.min.apply(null,alle), yUp, Math.max.apply(null,alle), yUp, gL);
+    partners.forEach(function(q,k){
+      line(xs[k], yUp, xs[k], rowY, gL);
+      markMarr(xs[k], rowY-9, q.label);
+    });
   }
 
+  /* Which bus line sits at which height.
+     A bus that has to reach across another one's starting point must lie
+     BELOW that other one, otherwise the other one's line drops straight
+     through it. Numbering them by the order of the marriages does not do
+     that, which is why lines crossed as soon as somebody had three or more
+     marriages with children. The order worked out here cannot contain a
+     loop, because the boxes and the groups of children both run from left to
+     right. Every group then gets a height of its own, evenly spread over the
+     gap between the two rows, so two lines can never share one. */
+  function busHoehen(gruppen){
+    var k=gruppen.length, a, b2, i2;
+    if(!k) return [];
+    var span=gruppen.map(function(g){
+      var lo=g.link, hi=g.link;
+      g.punkte.forEach(function(x){ if(x<lo) lo=x; if(x>hi) hi=x; });
+      return {lo:lo, hi:hi};
+    });
+    var innen=function(x,sp){ return x>sp.lo+0.6 && x<sp.hi-0.6; };
+    var unter=[]; for(a=0;a<k;a++) unter.push([]);
+    for(a=0;a<k;a++) for(b2=0;b2<k;b2++){
+      if(a===b2) continue;
+      if(innen(gruppen[b2].link, span[a]) ||
+         gruppen[a].punkte.some(function(x){ return innen(x, span[b2]); }))
+        unter[a].push(b2);
+    }
+    var lane=[], offen=[];
+    for(i2=0;i2<k;i2++){ lane.push(-1); offen.push(i2); }
+    var naechste=0, schutz=0;
+    while(offen.length && schutz++<=k+2){
+      var frei=offen.filter(function(x){ return unter[x].every(function(y){ return lane[y]>=0; }); });
+      if(!frei.length) frei=[offen[0]];
+      frei.forEach(function(x){ lane[x]=naechste++; });
+      offen=offen.filter(function(x){ return lane[x]<0; });
+    }
+    offen.forEach(function(x){ lane[x]=naechste++; });
+    return lane.map(function(l){ return k<2 ? 0.5 : 0.26 + l*(0.56/(k-1)); });
+  }
   /* grandparents -> parent
      A couple's drop starts at the couple line itself. Starting it at the bottom
      of the boxes would leave a visible gap, because the midpoint between two
@@ -4142,33 +4189,36 @@ function render(){
   }
   /* marriage line – a second or third marriage is routed above the row,
      otherwise its line would run straight through the earlier partner */
+  var spaet=[], fbox=boxOf(f, mid);
   for(i=0;i<marr.length;i++){
     if(!marr[i].partner) continue;
-    var pb=boxOf(marr[i].partner, mid), fb=boxOf(f, mid);
-    if(!pb||!fb) continue;
+    var pb=boxOf(marr[i].partner, mid);
+    if(!pb||!fbox) continue;
     var yc=Y.mid+BH/2, lbl='⚭'+(marr.length>1?(i+1):'');
     if(i===0){
-      line(fb.x+BW, yc, pb.x, yc, gL);
+      line(fbox.x+BW, yc, pb.x, yc, gL);
       /* the symbol sits above the line, so the descent line below stays clean */
-      markMarr((fb.x+BW+pb.x)/2, yc-12, lbl);
-    } else {
-      marrOver(fb, pb, Y.mid, Math.max(10, Y.mid-27-(i-1)*11), lbl);
-    }
+      markMarr((fbox.x+BW+pb.x)/2, yc-12, lbl);
+    } else spaet.push({box:pb, label:lbl});
   }
+  if(fbox) marrBar(fbox, spaet, Y.mid, Math.max(10, Y.mid-28));
   /* marriage -> children */
+  var kinderXs=groups.map(function(g2){
+    var xs=[]; for(var q=0;q<kidsRow.length;q++)
+      if(g2.ids.indexOf(kidsRow[q].id)>=0) xs.push(kidsRow[q].x+BW/2);
+    return xs; });
+  var hoehen3=busHoehen(groups.map(function(g2,q){
+    return {link:marr[g2.marrIdx].anchor, punkte:kinderXs[q]}; }));
   for(i=0;i<groups.length;i++){
     var g2=groups[i], a=marr[g2.marrIdx].anchor;
     /* the first marriage hangs from the marriage line between the two boxes,
        any later one from the middle of that partner's own box */
     var yb3=(g2.marrIdx===0 && marr[0].partner) ? Y.mid+BH/2 : Y.mid+BH;
-    var bus3=Y.mid+BH+Math.min(GAPY-20, GAPY/2+i*10);
+    var bus3=Y.mid+BH+GAPY*hoehen3[i];
     line(a, yb3, a, bus3, gL);
     var lo=Math.min(a, g2.first+BW/2), hi=Math.max(a, g2.last+BW/2);
     line(lo, bus3, hi, bus3, gL);
-    for(j=0;j<kidsRow.length;j++){
-      if(g2.ids.indexOf(kidsRow[j].id)<0) continue;
-      line(kidsRow[j].x+BW/2, bus3, kidsRow[j].x+BW/2, Y.kid, gL);
-    }
+    for(j=0;j<kinderXs[i].length;j++) line(kinderXs[i][j], bus3, kinderXs[i][j], Y.kid, gL);
   }
   /* sibling -> their own children.
      Every one of these sits in a block of its own, so they can all share the
@@ -4186,26 +4236,36 @@ function render(){
     }
   }
   /* a child and the partner their own children come from */
+  var spaetKid={};
   for(i=0;i<units.length;i++){
     var u3=units[i]; if(!u3.partnerBox) continue;
     var lbl3='⚭'+(u3.total>1?u3.no:'');
     if(u3.no===1) { coupleLine(kidsRow, u3.kidBox.x, u3.partnerBox.x, Y.kid+BH/2);
                     markMarr((u3.kidBox.x+BW+u3.partnerBox.x)/2, Y.kid+BH/2-12, lbl3); }
-    else marrOver(u3.kidBox, u3.partnerBox, Y.kid, Y.kid-30-(u3.no-2)*11, lbl3);
+    else {
+      var kk=String(u3.kidBox.x);
+      if(!spaetKid[kk]) spaetKid[kk]={box:u3.kidBox, list:[]};
+      spaetKid[kk].list.push({box:u3.partnerBox, label:lbl3});
+    }
   }
+  Object.keys(spaetKid).forEach(function(kk){
+    marrBar(spaetKid[kk].box, spaetKid[kk].list, Y.kid, Math.max(10, Y.kid-28)); });
   /* couple -> their children (each branch gets its own bus line) */
+  var enkelXs=gcGroups.map(function(cg2){
+    var xs=[]; for(var q=0;q<gcRow.length;q++)
+      if(cg2.ids.indexOf(gcRow[q].id)>=0) xs.push(gcRow[q].x+BW/2);
+    return xs; });
+  var hoehen4=busHoehen(gcGroups.map(function(cg2,q){
+    return {link:unitAnchor(cg2.unit), punkte:enkelXs[q]}; }));
   for(i=0;i<gcGroups.length;i++){
     var cg2=gcGroups[i], u4=cg2.unit;
     var kcx=unitAnchor(u4);
     var yb4=(u4.no===1 && u4.partnerBox) ? Y.kid+BH/2 : Y.kid+BH;
-    var bus4=Y.kid+BH+Math.min(GAPY-20, GAPY/2+(u4.no-1)*12);
+    var bus4=Y.kid+BH+GAPY*hoehen4[i];
     line(kcx, yb4, kcx, bus4, gL);
     var lo2=Math.min(kcx, cg2.first+BW/2), hi2=Math.max(kcx, cg2.last+BW/2);
     line(lo2, bus4, hi2, bus4, gL);
-    for(j=0;j<gcRow.length;j++){
-      if(cg2.ids.indexOf(gcRow[j].id)<0) continue;
-      line(gcRow[j].x+BW/2, bus4, gcRow[j].x+BW/2, Y.gc, gL);
-    }
+    for(j=0;j<enkelXs[i].length;j++) line(enkelXs[i][j], bus4, enkelXs[i][j], Y.gc, gL);
   }
 
   /* --- boxes --- */
@@ -4546,7 +4606,7 @@ function openPanel(id){
   h+='<div class="addrow" style="margin:0 0 12px">'+
      (trail.length?'<button class="btn small" id="pBack">'+L('↩ Back')+'</button>':'')+
      (id===FOCUS?'':'<button class="btn small" id="pFocus">'+L('⌖ Centre on this person')+'</button>')+
-     '<button class="btn small" id="pChart">'+L('📋 Show in the chart')+'</button>'+
+     '<button class="btn small" id="pChart">'+L('📋 Show in Descendants')+'</button>'+
      '<button class="btn small'+(FP.startPerson()===id?' on':'')+'" id="pStart">'+
        (FP.startPerson()===id ? L('⚑ Start person') : L('⚑ Make start person'))+'</button>'+
      '<button class="btn small danger" id="pDel">'+L('🗑 Delete person')+'</button></div>';
@@ -5109,7 +5169,6 @@ function firstPassMulti(n){
     if(i) bx += SIB_GAP;
     m.blockCenterLocal = bx + m.childLeftFromCenter;
     bx = m.blockCenterLocal + m.childRightFromCenter;
-    m.lane = i;
   });
   var blockLeft  = withKids.length ? (withKids[0].blockCenterLocal - withKids[0].childLeftFromCenter) : 0;
   var blockRight = withKids.length ? bx : 0;
@@ -5125,6 +5184,51 @@ function firstPassMulti(n){
     : (n.wL/2 - (blockLeft+blockRight)/2);
   withKids.forEach(function(m){ m.blockCenterLocal += shift; });
   blockLeft += shift; blockRight += shift;
+
+  /* Which marriage gets which height for its horizontal run.
+     A run that passes over another marriage's starting point has to lie BELOW
+     that marriage's own run, otherwise the other marriage's line drops right
+     through it. Ordering them by index does not do that, which is why lines
+     crossed each other whenever a middle marriage reached past a later one.
+     So the marriages are sorted first: whoever has to reach across somebody
+     else goes deeper. The order this produces cannot contain a loop, because
+     the boxes and the groups of children both run left to right. */
+  (function assignLanes(){
+    var k=withKids.length;
+    if(!k) return;
+    /* how far the horizontal run really reaches: from the marriage itself to
+       the outermost child of that marriage, not merely to the middle of the
+       group */
+    var span=withKids.map(function(m){
+      var lo=m.linkLocal, hi=m.linkLocal;
+      m.childPos.forEach(function(x){
+        var ax=m.blockCenterLocal + (x - m.childCenter);
+        if(ax<lo) lo=ax; if(ax>hi) hi=ax;
+      });
+      return {lo:lo, hi:hi};
+    });
+    var inside=function(x,sp){ return x>sp.lo+0.6 && x<sp.hi-0.6; };
+    /* tiefer[i] = how many others marriage i has to stay below */
+    var deeper=[], a, b2;
+    for(a=0;a<k;a++) deeper.push([]);
+    for(a=0;a<k;a++) for(b2=0;b2<k;b2++){
+      if(a===b2) continue;
+      if(inside(withKids[b2].linkLocal, span[a]) || inside(withKids[a].blockCenterLocal, span[b2]))
+        deeper[a].push(b2);           /* a must lie below b2 */
+    }
+    var lane=[], offen=[], i2;
+    for(i2=0;i2<k;i2++){ lane.push(-1); offen.push(i2); }
+    var next=0, schutz=0;
+    while(offen.length && schutz++<=k+2){
+      var frei=offen.filter(function(x){
+        return deeper[x].every(function(y){ return lane[y]>=0; }); });
+      if(!frei.length){ frei=[offen[0]]; }   /* cannot happen, but never hang */
+      frei.forEach(function(x){ lane[x]=next++; });
+      offen=offen.filter(function(x){ return lane[x]<0; });
+    }
+    offen.forEach(function(x){ lane[x]=next++; });
+    withKids.forEach(function(m,i3){ m.lane=lane[i3]; m.laneCount=k; });
+  })();
 
   n.anchorRel=n.wL;
   n.extL=n.anchorRel - Math.min(0, blockLeft);
@@ -5202,10 +5306,14 @@ function drawTree(root, svg, W, titleCx){
      and this draws exactly what it always drew. Where a person has several
      marriages they differ, and each marriage gets its own height (lane) for
      the horizontal run, so two of them can never lie on top of each other. */
-  function drawDescend(px, depth, kids, linkX, lane){
+  function drawDescend(px, depth, kids, linkX, lane, laneCount){
     if(!kids.length) return;
     var pb=yTop(depth)+BOX_H;
-    var frac = lane ? Math.min(0.78, 0.30+0.20*lane) : (lane===0 ? 0.30 : 0.5);
+    /* one height per marriage, spread evenly over the gap between the rows */
+    var frac;
+    if(lane==null) frac=0.5;
+    else if(!laneCount || laneCount<2) frac=0.30;
+    else frac=0.26 + lane*(0.56/(laneCount-1));
     var mid=pb+LEVEL_GAP*frac;
     var lx=(linkX==null)? px : linkX;
     el('line',{x1:lx,y1:pb,x2:lx,y2:mid,stroke:'#000','stroke-width':0.7},gLines);
@@ -5222,7 +5330,7 @@ function drawTree(root, svg, W, titleCx){
       var yc=yTop(n.depth)+BOX_H/2, maxR=n.sp1Left;
       n.marriages.forEach(function(m){ maxR=Math.max(maxR, m.spouseLeft+m.w); });
       el('line',{x1:n.bloodLeft,y1:yc,x2:maxR,y2:yc,stroke:'#000','stroke-width':0.7},gLines);
-      n.marriages.forEach(function(m){ drawDescend(m.descX, n.depth, m.childNodes, m.linkX, m.lane); });
+      n.marriages.forEach(function(m){ drawDescend(m.descX, n.depth, m.childNodes, m.linkX, m.lane, m.laneCount); });
       childNodesOf(n).forEach(lines);
       return;
     }
@@ -5576,11 +5684,13 @@ function chooseRoot(id){
 }
 function slugify(s){ return String(s||'').trim().replace(/\s+/g,'_').replace(/[^0-9A-Za-zÄÖÜäöüß._-]/g,'').slice(0,40); }
 function baseName(){
-  if(!ROOT || !DB.indi[ROOT]) return 'DescendantChart';
+  /* the exported file carries the name of the tab in the language in use */
+  var wort=slugify(T('Descendants'))||'Descendants';
+  if(!ROOT || !DB.indi[ROOT]) return wort;
   var p=DB.indi[ROOT];
   var g=(p.given||'').split(/\s+/)[0], sn=(p.surname||'');
   var nm=slugify((g+'_'+sn).replace(/^_|_$/g,''));
-  return nm ? 'Chart_'+nm : 'DescendantChart';
+  return nm ? wort+'_'+nm : wort;
 }
 var rs=$('rootSearch');
 function toggleRootClear(){ $('rootClear').classList.toggle('show', !rs.disabled && !!rs.value); }
