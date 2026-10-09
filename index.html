@@ -2010,7 +2010,7 @@ window.I18N={
         and the Escape key. The app always starts with its menus in sight, so nobody can get stuck.</p>
         <p>In the chart everything else lives behind the <b>&#9776;</b> menu, divided into four parts:
         <b>Root person</b>, <b>View</b>, <b>The selected person</b> and <b>Output</b>.</p>
-        <p class="muted">Version 3.2</p>
+        <p class="muted">Version 3.3</p>
       </section>
       </div>
       <div data-lang="de">
@@ -2334,7 +2334,7 @@ window.I18N={
         sichtbaren Men&uuml;s, damit niemand darin h&auml;ngenbleibt.</p>
         <p>In der Nachfahrentafel steckt alles Weitere hinter dem <b>&#9776;</b>-Men&uuml;, in vier Teile gegliedert:
         <b>Wurzelperson</b>, <b>Ansicht</b>, <b>Die gew&auml;hlte Person</b> und <b>Ausgeben</b>.</p>
-        <p class="muted">Version 3.2</p>
+        <p class="muted">Version 3.3</p>
       </section>
       </div>
     </div>
@@ -2399,7 +2399,10 @@ function parseGedcom(text){
     var raw=lines[i]; if(!raw.trim()) continue;
     var m=raw.match(/^\s*(\d+)\s+(?:(@[^@]+@)\s+)?(\S+)(?:\s+([\s\S]*))?$/);
     if(!m) continue;
-    var lvl=+m[1], xref=m[2]||null, tag=m[3], val=(m[4]||'').trim();
+    /* The standard writes tags in capitals, but files edited by hand or
+       written by old programs sometimes do not. Only the tag is folded, never
+       the value beside it. */
+    var lvl=+m[1], xref=m[2]||null, tag=m[3].toUpperCase(), val=(m[4]||'').trim();
 
     if(lvl===0){
       pushBlock(); l1=null; ev=null;
@@ -5634,7 +5637,12 @@ $('stageWrap').addEventListener('wheel',function(e){
 $('drawerClose').onclick=function(){ deselectNode(); };
 /* the panel is no longer standing open, so there has to be a way in that
    does not go through tapping somebody's box */
-$('btnTitle').onclick=function(){ SELECTED=null; showDefaultPanel(); setDrawer(true); safeRender(); };
+$('btnTitle').onclick=function(){
+  /* the same button closes it again, as long as it is showing the title and
+     not somebody's data */
+  if(SELECTED==null && $('side').classList.contains('open')){ setDrawer(false); return; }
+  SELECTED=null; showDefaultPanel(); setDrawer(true); safeRender();
+};
 $('btnEdit').onclick=function(){ setDrawer(true); closeMenu(); };
 var _tb=$('toolbar'), _bd=$('menuBackdrop');
 function closeMenu(){ _tb.classList.remove('open'); _bd.classList.remove('show'); }
