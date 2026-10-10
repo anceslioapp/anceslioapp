@@ -199,6 +199,42 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 
 /* --- user guide --- */
 #mdHelp .modalbox{width:min(840px,96vw); max-height:92dvh}
+/* ---------- Dubletten pruefen ---------- */
+#mdDupe .modalbox{width:min(900px,96vw); max-height:92dvh}
+#dupeBody p{margin:0 0 12px; line-height:1.5}
+.dupebusy{margin-left:10px; color:var(--muted); font-size:13.5px}
+.dupesum{font-size:13.5px; color:var(--muted); margin:0 0 10px; line-height:1.45}
+.dupetabs{display:flex; gap:6px; margin:0 0 12px; flex-wrap:wrap}
+.dupetabs .btn.on{background:var(--accent); color:#fff; border-color:var(--accent)}
+.dupenone{color:var(--muted); font-size:14.5px; padding:10px 0}
+.dupecard{border:1px solid var(--line); border-radius:12px; padding:11px 12px; margin:0 0 12px;
+  background:var(--field)}
+.dupecard.weg{opacity:.5}
+.dupehead{display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; margin:0 0 7px}
+.dupescore{font-weight:700; color:var(--accent); font-size:14.5px}
+.dupewhy{font-size:12.5px; color:var(--muted); line-height:1.45}
+.dupewhy b{color:var(--ink); font-weight:600}
+/* Die Eintraege nebeneinander, auf dem Handy untereinander. Mehr als zwei
+   kommt vor: in der Pruefdatei gab es eine Dreiergruppe. */
+.duperecs{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:9px; margin:8px 0}
+.duperec{border:1px solid var(--line); border-radius:9px; padding:8px 10px; background:var(--panel);
+  font-size:13.5px; line-height:1.5}
+.duperec .nm{font-weight:600; color:var(--ink)}
+.duperec .id{font-size:11.5px; color:var(--muted); float:right}
+.duperec .zz{color:var(--muted); font-size:12.5px}
+.dupeacts{display:flex; gap:7px; flex-wrap:wrap; margin-top:8px}
+.dupefields{margin:10px 0 0; border-top:1px dashed var(--line); padding-top:9px}
+.dupefields table{width:100%; border-collapse:collapse; font-size:13px}
+.dupefields td,.dupefields th{text-align:left; padding:3px 6px 3px 0; vertical-align:top}
+.dupefields th{font-weight:600; color:var(--muted); font-size:12px}
+.dupefields tr.konflikt td{background:var(--notebg)}
+.dupefields label{display:inline-flex; gap:5px; align-items:baseline; cursor:pointer}
+.dupeflag{font-size:11.5px; color:var(--accent)}
+.dupedone{font-size:13.5px; color:var(--accent); font-weight:600}
+@media (max-width:860px){
+  .duperecs{grid-template-columns:1fr}
+  .dupeacts .btn{flex:1 1 auto}
+}
 .help{font-size:15.5px; line-height:1.6; padding-bottom:14px}
 .helpnav{position:sticky; top:0; z-index:3; background:var(--panel); display:flex; flex-wrap:wrap; gap:6px;
   padding:8px 0 10px; margin:0 0 14px; border-bottom:1px solid var(--line)}
@@ -779,6 +815,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
           <button id="miFiles" data-i18n="✎ Rename or remove files…">&#9998; Rename or remove files&hellip;</button>
         </div>
         <hr>
+        <button id="miDupe" data-i18n="⧉ Check for duplicates">&#10697; Check for duplicates</button>
+        <hr>
         <button id="miExport" data-i18n="💾 Export GEDCOM (.ged)">&#128190; Export GEDCOM (.ged)</button>
         <hr>
         <button id="miSettings" data-i18n="⚙ Settings">&#9881; Settings</button>
@@ -1244,6 +1282,55 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   </div>
 </div>
 
+<!-- ===================== Dubletten pruefen =====================
+     Ein eigenes Fenster statt eines vierten Reiters: Man raeumt nicht
+     taeglich auf, und ein vierter Reiter waere auf dem Handy rund 100 px
+     breit bei einer Beschriftung von sechzehn Zeichen. -->
+<div class="modal" id="mdDupe">
+  <div class="modalbox">
+    <h3><span data-lang="en">Check for duplicates</span><span data-lang="de">Dubletten pr&uuml;fen</span></h3>
+    <div class="modalbody" id="dupeBody">
+
+      <div id="dupeStart">
+        <p>
+          <span data-lang="en">The app compares every person in this file with every other and lists
+          those that might be the same person twice. It judges by name, dates, parents, spouse and
+          children, and it shows for each pair what it went by.</span>
+          <span data-lang="de">Die App vergleicht jede Person in dieser Datei mit jeder anderen und
+          listet auf, wer zweimal erfasst sein k&ouml;nnte. Beurteilt wird nach Name, Daten, Eltern,
+          Ehepartner und Kindern, und zu jedem Paar steht dabei, worauf sie sich st&uuml;tzt.</span>
+        </p>
+        <p class="onlylook">
+          <span data-lang="en">Nothing is changed without you. Records are merged only when you press
+          the button for it, and the last ten steps can be undone. Even so, export the file first,
+          then nothing can go wrong.</span>
+          <span data-lang="de">Ohne Dich wird nichts ge&auml;ndert. Zusammengelegt wird nur, was Du
+          selbst best&auml;tigst, und die letzten zehn Schritte lassen sich zur&uuml;cknehmen.
+          Trotzdem: vorher die Datei exportieren, dann kann nichts passieren.</span>
+        </p>
+        <button class="btn primary" id="dupeGo" data-i18n="Search now">Search now</button>
+        <span id="dupeBusy" class="dupebusy" hidden></span>
+      </div>
+
+      <div id="dupeResult" hidden>
+        <div class="dupesum" id="dupeSum"></div>
+        <div class="dupetabs">
+          <button class="btn small on" id="dupeTabA"></button>
+          <button class="btn small" id="dupeTabB"></button>
+        </div>
+        <div id="dupeList"></div>
+        <div id="dupeNone" class="dupenone" hidden></div>
+      </div>
+
+    </div>
+    <div class="modalfoot">
+      <button class="btn small" id="dupeUndo" hidden></button>
+      <button class="btn small" id="dupeSave" hidden data-i18n="Save list">Save list</button>
+      <button class="btn" id="dupeClose" data-i18n="Close">Close</button>
+    </div>
+  </div>
+</div>
+
 <button id="fullExit" class="noprint" hidden data-i18n-title="Leave full screen"
         title="Leave full screen" aria-label="Leave full screen">&#10005;</button>
 <div id="toast"></div>
@@ -1482,6 +1569,10 @@ var DE = {
 ' people)…':' Personen)…',
 'Chart title':'Titel der Tafel',
 'Show all':'Alles zeigen',
+/* Dubletten pruefen */
+'⧉ Check for duplicates':'⧉ Dubletten prüfen',
+'Search now':'Jetzt suchen',
+'Save list':'Liste speichern',
 'all generations':'alle Generationen',
 '%1 generations':'%1 Generationen',
 'How many generations of descendants to show':'Wie viele Generationen der Nachfahren gezeigt werden',
@@ -1964,6 +2055,27 @@ window.I18N={
         agreed to it.</p>
       </section>
 
+      <section class="sec" id="h8b">
+        <h4>Checking for duplicates</h4>
+        <p>Files that grew over the years, or that were imported twice, often hold the same person more than once.
+        <b>Data &rsaquo; Check for duplicates</b> compares every person in the open file with every other and lists
+        who might be a double entry. For each suggestion it shows what it went by, so you can judge it instead of
+        having to trust a number.</p>
+        <p>The results come in two bands. <b>Strong suspicion</b> is the band to work through; <b>to review</b>
+        contains the weaker cases, where the greater part will not be duplicates at all. Nothing is ever merged on
+        its own: a record changes only when you press the button for it, and the last ten steps can be undone.</p>
+        <p>When you confirm a pair, nothing is deleted. The merged person takes <b>everything from both</b> records
+        &ndash; children, marriages, dates, occupation, and any tags the app does not use itself. You only decide
+        where the two genuinely contradict each other, and even then the app suggests one: a full date beats a bare
+        year, the written-out form beats the abbreviation. The identifier that is given up is written into the
+        surviving record, so the step stays traceable. If two families end up describing the same couple, they are
+        merged too and keep all the children of both.</p>
+        <p>A group can hold more than two records, and a chain is not proof: that A matches B and B matches C does
+        not make A and C the same person. The app shows the group and leaves the decision to you.</p>
+        <p><b>Save list</b> writes the findings to a text file. That is the way to go if the real master data lives
+        somewhere else &ndash; in a spreadsheet, say &ndash; and the corrections have to be made there.</p>
+      </section>
+
       <section class="sec" id="h9">
         <h4>If something does not work</h4>
         <p><b>Choosing a file does nothing.</b> Some devices restrict the file picker. Copy the .ged file into a
@@ -2277,6 +2389,30 @@ window.I18N={
         <p>Stammb&auml;ume enthalten personenbezogene Daten lebender Menschen. Eine exportierte .ged-Datei sollte man
         mit derselben Sorgfalt behandeln wie eine Adressliste, und zweimal &uuml;berlegen, bevor man eine Tafel
         weitergibt, auf der Geburtsdaten von Personen stehen, die dem nicht zugestimmt haben.</p>
+      </section>
+
+      <section class="sec" id="d8b">
+        <h4>Dubletten pr&uuml;fen</h4>
+        <p>In Dateien, die &uuml;ber Jahre gewachsen sind oder zweimal importiert wurden, steht dieselbe Person oft
+        mehrfach. <b>Daten &rsaquo; Dubletten pr&uuml;fen</b> vergleicht jede Person der ge&ouml;ffneten Datei mit
+        jeder anderen und listet auf, wer doppelt erfasst sein k&ouml;nnte. Zu jedem Vorschlag steht dabei, worauf
+        er sich st&uuml;tzt, damit man ihn beurteilen kann, statt einer Zahl glauben zu m&uuml;ssen.</p>
+        <p>Die Treffer kommen in zwei B&auml;ndern. <b>Starker Verdacht</b> ist das Band zum Abarbeiten,
+        <b>zum Pr&uuml;fen</b> enth&auml;lt die schw&auml;cheren F&auml;lle, von denen der gr&ouml;&szlig;ere Teil
+        keine Dublette ist. Von selbst wird nie etwas zusammengelegt: Ein Eintrag &auml;ndert sich nur, wenn Du den
+        Knopf daf&uuml;r dr&uuml;ckst, und die letzten zehn Schritte lassen sich zur&uuml;cknehmen.</p>
+        <p>Beim Best&auml;tigen wird nichts gel&ouml;scht. Die zusammengelegte Person bekommt <b>alles aus beiden</b>
+        Eintr&auml;gen &ndash; Kinder, Ehen, Daten, Beruf und auch die Kennzeichen, die die App selbst nicht
+        auswertet. Zu entscheiden ist nur, wo sich die beiden wirklich widersprechen, und selbst dort macht die App
+        einen Vorschlag: Ein vollst&auml;ndiges Datum schl&auml;gt ein blo&szlig;es Jahr, die ausgeschriebene Form
+        schl&auml;gt die Abk&uuml;rzung. Die aufgegebene Kennung wird im bleibenden Eintrag vermerkt, damit der
+        Schritt nachvollziehbar bleibt. Beschreiben danach zwei Familien dasselbe Paar, werden auch sie verschmolzen
+        und behalten die Kinder von beiden.</p>
+        <p>Eine Gruppe kann mehr als zwei Eintr&auml;ge umfassen, und eine Kette ist kein Beweis: Dass A zu B passt
+        und B zu C, macht A und C noch nicht zu derselben Person. Die App zeigt die Gruppe und &uuml;berl&auml;sst
+        Dir die Entscheidung.</p>
+        <p><b>Liste speichern</b> schreibt die Funde in eine Textdatei. Das ist der Weg, wenn die eigentlichen
+        Stammdaten woanders liegen, etwa in einer Tabelle, und die Korrekturen dort gemacht werden m&uuml;ssen.</p>
       </section>
 
       <section class="sec" id="d9">
@@ -3133,6 +3269,15 @@ window.FP = {
   person:person, fullName:fullName, label:label,
   famcOf:famcOf, famsOf:famsOf, parentsOf:parentsOf, childrenOf:childrenOf, siblingsOf:siblingsOf,
   partnerOfFam:partnerOfFam, sortByAge:sortByAge, birthKey:birthKey,
+  /* Fuer das Zusammenlegen von Dubletten: den ganzen Bestand auf einen
+     Schlag ersetzen (Rueckgaengig), und nach einem Eingriff von aussen
+     Index, Anzeige und Speicher nachziehen. Beides laesst die Dateiliste
+     unberuehrt - es entsteht keine neue Datei. */
+  applyGedcom:function(text){
+    var parsed=parseGedcom(text||'');
+    D=parsed; hasData=true; rebuildIndex(); emit('edit'); scheduleSave();
+  },
+  touchAll:function(){ changed(); },
   addPerson:addPerson, updatePerson:updatePerson, deletePerson:deletePerson,
   setParent:setParent, removeParent:removeParent,
   addPartner:addPartner, removePartner:removePartner, setMarriage:setMarriage,
@@ -3728,6 +3873,7 @@ window.SHELL = {
   ask:ask, pickPerson:pickPerson, splitName:splitName,
   download:download, copyText:copyText, exportGed:exportGed,
   openModal:openModal, closeModal:closeModal,
+  closeDataMenu:closeDataMenu,
   openOverlay:openOverlay, closeOverlay:closeOverlay, setStatus:setStatus, loadText:loadText, toast:toast,
   setFull:setFull, isFull:function(){ return FULLSCREEN; }, onFull:function(fn){ fullCbs.push(fn); },
   onChartRoot:function(fn){ chartRootCb=fn; },
@@ -6671,7 +6817,891 @@ refresh();
 })();
 </script>
 <script>
+/* ===================================================================
+   Dubletten finden und zusammenlegen
+   -------------------------------------------------------------------
+   Das Verfahren ist nicht ausgedacht, sondern an einer echten Datei mit
+   8.661 Personen gemessen. Alles, was hier als Regel steht, hat einen
+   Fund dahinter; die Fundstellen stehen in den Kommentaren, damit
+   niemand sie spaeter "aufraeumt".
+   =================================================================== */
+var DUPE=(function(){
+var $=FP.$, T=I18N.L;
+function de(){ return I18N.lang()==='de'; }
+
+/* ---------------- Normalisierung ---------------- */
+var PARTIKEL={von:1,van:1,de:1,du:1,del:1,della:1,di:1,da:1,zu:1,zur:1,of:1,
+              le:1,la:1,den:1,der:1,ten:1,ter:1};
+
+function entfalte(s){
+  s=String(s||'').toLowerCase()
+    .replace(/ß/g,'ss').replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue');
+  if(s.normalize) s=s.normalize('NFD').replace(/[̀-ͯ]/g,'');
+  return s;
+}
+function nachnameKern(surn){
+  var roh=entfalte(surn).replace(/[^a-z\s\-]/g,' ');
+  var w=roh.split(/[\s\-]+/).filter(Boolean);
+  while(w.length && PARTIKEL[w[0]]) w.shift();
+  return w.join('');
+}
+/* Koelner Phonetik, nicht Soundex: Soundex ist fuer englische Namen
+   gebaut und trennt Meyer von Maier. Die Koelner legt alle vier
+   Schreibweisen auf 67 und Mueller/Muller/Muehler auf 657. */
+function koelner(wort){
+  var w=String(wort||'').replace(/[^a-z]/g,''); if(!w) return '';
+  var code='', i, c, davor, danach, k;
+  for(i=0;i<w.length;i++){
+    c=w.charAt(i); davor=i>0?w.charAt(i-1):''; danach=i+1<w.length?w.charAt(i+1):'';
+    if('aeijouy'.indexOf(c)>=0) k='0';
+    else if(c==='b') k='1';
+    else if(c==='p') k=(danach==='h')?'3':'1';
+    else if(c==='d'||c==='t') k=('csz'.indexOf(danach)>=0)?'8':'2';
+    else if('fvw'.indexOf(c)>=0) k='3';
+    else if('gkq'.indexOf(c)>=0) k='4';
+    else if(c==='c'){
+      if(i===0) k=('sz'.indexOf(danach)>=0)?'8':(('ahkloqrux'.indexOf(danach)>=0)?'4':'8');
+      else if('sz'.indexOf(davor)>=0) k='8';
+      else k=('ahkoqux'.indexOf(danach)>=0)?'4':'8';
+    }
+    else if(c==='x') k=('ckq'.indexOf(davor)>=0)?'8':'48';
+    else if(c==='l') k='5';
+    else if(c==='m'||c==='n') k='6';
+    else if(c==='r') k='7';
+    else if(c==='s'||c==='z') k='8';
+    else k='';
+    code+=k;
+  }
+  var aus='';
+  for(i=0;i<code.length;i++) if(aus.charAt(aus.length-1)!==code.charAt(i)) aus+=code.charAt(i);
+  return aus ? aus.charAt(0)+aus.slice(1).replace(/0/g,'') : '';
+}
+
+/* Kurz- und Nebenformen. Wird nie vollstaendig sein, muss nur die
+   haeufigsten decken. */
+var VAR={};
+function v(){ var kopf=arguments[0]; for(var i=0;i<arguments.length;i++) VAR[arguments[i]]=kopf; }
+v('johann','hans','johannes','jan','hanns','johan','hannes','joh');
+v('johanna','hanna','hanne','johanne');
+v('friedrich','fritz','fried','friederich','frieder');
+v('wilhelm','willem','wilm','willi');
+v('heinrich','heinz','hinrich','henrich','hein');
+v('katharina','catharina','katarina','catarina','kathrin','catrin','trine','kaethe');
+v('elisabeth','elisabet','else','elise','lisbeth','liesbeth','elsbeth','ilse');
+v('margarethe','margarete','margaretha','grete','greta','margret','marga');
+v('anna','anne','anneke'); v('maria','marie','mary');
+v('georg','joerg','juergen','george');
+v('karl','carl','charles','karel');
+v('ludwig','ludewig','louis');
+v('christian','carsten','karsten','kersten');
+v('christoph','christof','christopher');
+v('albrecht','albert','albertus');
+v('august','augustin','augustus');
+v('ernst','ernest'); v('theodor','theo');
+v('gottfried','godfried'); v('sophie','sophia','sofie','sofia');
+v('dorothea','dorothee','dora'); v('magdalena','magdalene','lena');
+v('charlotte','lotte','charlotta'); v('wilhelmine','wilhelmina','minna');
+v('friederike','frederike','frieda','frida'); v('juliane','julia','julie');
+v('eleonore','eleonora','leonore'); v('agnes','agnese');
+v('hedwig','hedi'); v('gertrud','gertrude','gertraud','trude');
+v('bernhard','bernard','bernd'); v('joachim','jochen','achim');
+v('matthias','mathias','matis','matthes'); v('andreas','andres','andre');
+v('philipp','philip','filip'); v('werner','wernher');
+
+var MON={JAN:1,FEB:2,MAR:3,APR:4,MAY:5,JUN:6,JUL:7,AUG:8,SEP:9,OCT:10,NOV:11,DEC:12,
+         MRZ:3,MAI:5,OKT:10,DEZ:12};
+
+/* Ein Datum als Zeitraum [frueh, spaet] in Jahren. Vergleiche laufen
+   ueber Ueberschneidung, nicht ueber Gleichheit. */
+function zeitraum(d){
+  if(!d) return null;
+  var s=String(d).toUpperCase().trim();
+  var j=s.match(/\b(\d{3,4})\b/g); if(!j) return null;
+  j=j.map(Number);
+  var lo=Math.min.apply(null,j), hi=Math.max.apply(null,j);
+  if(/^BET/.test(s) && j.length>1) return [lo,hi];
+  if(/^(ABT|CAL|EST|CA)/.test(s)) return [j[0]-5,j[0]+5];
+  if(/^BEF/.test(s)) return [j[0]-30,j[0]];
+  if(/^AFT/.test(s)) return [j[0],j[0]+30];
+  if(/^FROM/.test(s) && j.length>1) return [lo,hi];
+  return [j[0],j[0]];
+}
+/* Taggenau - mit einer Ausnahme. In echten Bestaenden traegt ein grosser
+   Teil der Daten den 1. Januar, weil Programme ein blosses Jahr so
+   ablegen: in der Pruefdatei 4.299 von 14.224 Angaben, das 111-Fache des
+   Erwartbaren. Wer das als Datum nimmt, haelt zwei Menschen fuer
+   dieselbe Person, nur weil von beiden das Jahr bekannt ist. */
+function genau(d){
+  if(!d) return null;
+  var m=String(d).toUpperCase().trim().match(/^(\d{1,2})\s+([A-Z]{3})\s+(\d{3,4})$/);
+  if(!m) return null;
+  var mo=MON[m[2]]; if(!mo) return null;
+  var tag=+m[1];
+  if(tag===1 && mo===1) return null;
+  return [+m[3], mo, tag];
+}
+function tagNr(g){ return g ? Date.UTC(g[0],g[1]-1,g[2])/86400000 : null; }
+function kleiner(a,b){
+  if(!a||!b) return false;
+  return a[0]!==b[0] ? a[0]<b[0] : (a[1]!==b[1] ? a[1]<b[1] : a[2]<b[2]);
+}
+function lev(a,b,grenze){
+  if(Math.abs(a.length-b.length)>grenze) return grenze+1;
+  var vor=[],akt=[],i,j;
+  for(j=0;j<=b.length;j++) vor[j]=j;
+  for(i=1;i<=a.length;i++){
+    akt=[i]; var min=i;
+    for(j=1;j<=b.length;j++){
+      akt[j]=Math.min(vor[j]+1, akt[j-1]+1, vor[j-1]+(a.charAt(i-1)!==b.charAt(j-1)?1:0));
+      if(akt[j]<min) min=akt[j];
+    }
+    vor=akt; if(min>grenze) return grenze+1;
+  }
+  return vor[b.length];
+}
+
+var PLATZ=/^(unbekannt|unknown|n\.?n\.?|nn|\?+)$/;
+
+/* Alles, was je Person einmal berechnet und dann wiederverwendet wird. */
+function ruesten(P){
+  var out={};
+  for(var id in P){
+    var p=P[id];
+    var roh=entfalte(p.given).replace(/\(.*?\)/g,' ').replace(/[^a-z\s\-]/g,' ')
+             .split(/[\s\-]+/).filter(function(t){ return t.length>1; });
+    var set={}, i;
+    for(i=0;i<roh.length;i++) set[VAR[roh[i]]||roh[i]]=1;
+    var kern=nachnameKern(p.surname);
+    var zahl=String(p.given||'').match(/(?:^|\s)(\d{1,2})(?:\s|$)/);
+    out[id]={
+      id:id, p:p,
+      kern:kern, code:koelner(kern),
+      vset:set, vroh:roh,
+      verst: roh.length ? (VAR[roh[0]]||roh[0]) : '',
+      zahl: zahl ? zahl[1] : '',
+      platz: PLATZ.test(String(p.given||'').trim().toLowerCase()),
+      zb:zeitraum(p.birthDate), zd:zeitraum(p.deathDate),
+      gb:genau(p.birthDate),    gd:genau(p.deathDate),
+      ort:entfalte(p.birthPlace).trim(),
+      stamm:(p.stamm||'').trim()
+    };
+  }
+  return out;
+}
+function mitte(z){ return z ? (z[0]+z[1])/2 : null; }
+function ueber(a,b){ return !!(a&&b&&a[0]<=b[1]&&b[0]<=a[1]); }
+function schnitt(a,b){ var n=0; for(var k in a) if(b[k]) n++; return n; }
+function groesse(o){ var n=0; for(var k in o) n++; return n; }
+function teilmenge(a,b){ for(var k in a) if(!b[k]) return false; return true; }
+
+/* ---------------- Punkte ---------------- */
+var GRUND={
+  nachGleich:['same surname','Nachname gleich'],
+  nachLaut:['surname sounds the same','Nachname lautgleich'],
+  nachAehn:['surname similar','Nachname ähnlich'],
+  vorErst:['same first given name','erster Vorname gleich'],
+  vorAlle:['all given names match','alle Vornamen gleich'],
+  vorMeist:['given names largely match','Vornamen weitgehend gleich'],
+  vorEin:['one given name in common','ein Vorname gemeinsam'],
+  vorBuch:['same initial','gleicher Anfangsbuchstabe'],
+  gebGleich:['same date of birth','Geburtsdatum taggenau gleich'],
+  gebUeber:['dates of birth overlap','Geburtszeiträume überschneiden sich'],
+  gebNah:['born within a few years','Geburt wenige Jahre auseinander'],
+  gebFern:['born years apart','Geburt weit auseinander'],
+  todGleich:['same date of death','Sterbedatum gleich'],
+  todUeber:['dates of death overlap','Sterbezeiträume überschneiden sich'],
+  vater:['father matches','Vater passt'],
+  mutter:['mother matches','Mutter passt'],
+  partner:['spouse matches','Ehepartner passt'],
+  ort:['same place of birth','Geburtsort gleich'],
+  stammWeg:['different branch','verschiedener Stamm']
+};
+function g(k){ return GRUND[k][de()?1:0]; }
+
+/* Zwei Eltern gelten nur dann als dieselbe Person, wenn Rufname und
+   Lautcode stimmen UND die Geburtsdaten sich nicht widersprechen. Mit der
+   lockeren Fassung galten Busso Hubertus (*1951) und Busso Ludolf
+   (*1957) als derselbe Vater, und zwei Cousinen wurden zur Dublette. */
+function elternPassen(a,b){
+  if(!a||!b) return false;
+  if(a.code!==b.code) return false;
+  if(!a.verst || a.verst!==b.verst) return false;
+  if(a.zb && b.zb && !ueber(a.zb,b.zb) && Math.abs(mitte(a.zb)-mitte(b.zb))>2) return false;
+  return true;
+}
+function elternVon(r,R,F){
+  var v=null,m=null;
+  (r.p.famc||[]).forEach(function(fid){
+    var f=F[fid]; if(!f) return;
+    if(f.husb && R[f.husb]) v=R[f.husb];
+    if(f.wife && R[f.wife]) m=R[f.wife];
+  });
+  return {v:v,m:m};
+}
+function partnerVon(r,R,F){
+  var out=[];
+  (r.p.fams||[]).forEach(function(fid){
+    var f=F[fid]; if(!f) return;
+    var o=(f.husb===r.id)?f.wife:(f.wife===r.id?f.husb:null);
+    if(o && R[o]) out.push(R[o]);
+  });
+  return out;
+}
+function kinderVon(r,R,F){
+  var out=[];
+  (r.p.fams||[]).forEach(function(fid){
+    var f=F[fid]; if(!f) return;
+    (f.children||[]).forEach(function(c){ if(R[c]) out.push(R[c]); });
+  });
+  return out;
+}
+function namensKey(r){ return r.code+'|'+r.verst; }
+
+function punkte(a,b,R,F,bestaetigt,intern){
+  var gr=[], s=0;
+  if(a.p.sex && b.p.sex && 'MF'.indexOf(a.p.sex)>=0 && 'MF'.indexOf(b.p.sex)>=0 && a.p.sex!==b.p.sex)
+    return {s:0, aus:de()?'Geschlecht verschieden':'different sex', gruende:[]};
+  if(a.platz || b.platz)
+    return {s:0, aus:de()?'Platzhaltername':'placeholder name', gruende:[]};
+  /* Zaehlnummern aus einer Stammliste: Gebhard 16 ist nicht Gebhard 18.
+     Nur wenn beide eine tragen - 'Ludwig 1' und 'Friedrich Ludewig' sind
+     sehr wohl dieselbe Person, und dort fehlt sie auf einer Seite. */
+  if(a.zahl && b.zahl && a.zahl!==b.zahl)
+    return {s:0, aus:(de()?'Zählnummern ':'ordinals ')+a.zahl+(de()?' und ':' and ')+b.zahl, gruende:[]};
+
+  if(intern){
+    var famcA=a.p.famc||[], famcB=b.p.famc||[], gemeinsam=false, i;
+    for(i=0;i<famcA.length;i++) if(famcB.indexOf(famcA[i])>=0) gemeinsam=true;
+    /* Eltern-Kind oder Ehe schliessen sich aus */
+    var kids=kinderVon(a,R,F).map(function(x){return x.id;});
+    if(kids.indexOf(b.id)>=0) return {s:0, aus:de()?'Eltern-Kind-Beziehung':'parent and child', gruende:[]};
+    kids=kinderVon(b,R,F).map(function(x){return x.id;});
+    if(kids.indexOf(a.id)>=0) return {s:0, aus:de()?'Eltern-Kind-Beziehung':'parent and child', gruende:[]};
+    if(partnerVon(a,R,F).some(function(x){ return x.id===b.id; }))
+      return {s:0, aus:de()?'miteinander verheiratet':'married to each other', gruende:[]};
+    if(gemeinsam){
+      /* Geschwister. Eine Dublette unterscheidet sich durch WEGLASSEN
+         ("Gustav" gegen "Gustav Ferdinand"), Geschwister durch
+         WIDERSPRUCH ("Marie Catherine" gegen "Marie Joseph"). */
+      if(a.verst!==b.verst || !(teilmenge(a.vset,b.vset)||teilmenge(b.vset,a.vset)))
+        return {s:0, aus:de()?'Geschwister, Vornamen widersprechen sich':'siblings, given names contradict', gruende:[]};
+      if(a.zb && b.zb && Math.abs(mitte(a.zb)-mitte(b.zb))>1)
+        return {s:0, aus:de()?'Geschwister gleichen Namens, verschiedene Geburtsjahre':'siblings of the same name, different years of birth', gruende:[]};
+      if(a.gb && b.gb && Math.abs(tagNr(a.gb)-tagNr(b.gb))>300)
+        return {s:0, aus:de()?'Geschwister gleichen Namens, Geburten weit auseinander':'siblings of the same name, births far apart', gruende:[]};
+    }
+  }
+  /* Lebensspannen, die sich ausschliessen */
+  var paar=[[a,b],[b,a]];
+  for(var q=0;q<2;q++){
+    var x=paar[q][0], y=paar[q][1];
+    if(x.zd && y.zb && x.zd[1] < y.zb[0])
+      return {s:0, aus:de()?'die eine war tot, bevor die andere geboren wurde':'one had died before the other was born', gruende:[]};
+    if(x.gd && y.gb && kleiner(x.gd,y.gb))
+      return {s:0, aus:de()?'die eine war tot, bevor die andere geboren wurde':'one had died before the other was born', gruende:[]};
+  }
+  if(a.zd && b.zd && !ueber(a.zd,b.zd) && Math.abs(mitte(a.zd)-mitte(b.zd))>2)
+    return {s:0, aus:de()?'Sterbejahre weit auseinander':'years of death far apart', gruende:[]};
+
+  /* Nachname */
+  if(a.kern && a.kern===b.kern){ s+=35; gr.push(g('nachGleich')); }
+  else if(a.code && a.code===b.code){ s+=30; gr.push(g('nachLaut')); }
+  else if(a.kern && b.kern && lev(a.kern,b.kern,2)<=2){ s+=15; gr.push(g('nachAehn')); }
+  /* Vornamen: der Rufname zaehlt mehr als ein geteilter Mittelname. In
+     diesen Familien traegt jedes Kind vier Namen, und jedes zehnte
+     Geschwisterpaar teilt sich einen davon. */
+  var gem=schnitt(a.vset,b.vset), ver=groesse(a.vset)+groesse(b.vset)-gem;
+  var jac=ver?gem/ver:0;
+  if(a.verst && a.verst===b.verst){
+    s+=30; gr.push(g('vorErst'));
+    if(jac>=0.8){ s+=10; gr.push(g('vorAlle')); }
+  } else if(gem && jac>=0.6){ s+=22; gr.push(g('vorMeist')); }
+  else if(gem){ s+=10; gr.push(g('vorEin')); }
+  else if(a.vroh.length && b.vroh.length && a.vroh[0].charAt(0)===b.vroh[0].charAt(0)){
+    s+=5; gr.push(g('vorBuch'));
+  }
+  /* Geburt */
+  if(a.gb && b.gb && tagNr(a.gb)===tagNr(b.gb)){ s+=35; gr.push(g('gebGleich')); }
+  else if(ueber(a.zb,b.zb)){ s+=25; gr.push(g('gebUeber')); }
+  else if(a.zb && b.zb){
+    var d=Math.abs(mitte(a.zb)-mitte(b.zb));
+    if(d<=3){ s+=15; gr.push(g('gebNah')); }
+    else if(d>5){ s-=25; gr.push(g('gebFern')); }
+  }
+  /* Tod */
+  if(a.gd && b.gd && tagNr(a.gd)===tagNr(b.gd)){ s+=15; gr.push(g('todGleich')); }
+  else if(ueber(a.zd,b.zd)){ s+=10; gr.push(g('todUeber')); }
+  /* Eltern */
+  var pa=elternVon(a,R,F), pb=elternVon(b,R,F);
+  function elternPunkt(qa,qb,key,pkt){
+    if(!qa||!qb) return;
+    if(bestaetigt && (bestaetigt[qa.id+'|'+qb.id]||bestaetigt[qb.id+'|'+qa.id])){ s+=pkt; gr.push(g(key)); }
+    else if(elternPassen(qa,qb)){ s+=pkt; gr.push(g(key)); }
+  }
+  elternPunkt(pa.v,pb.v,'vater',30);
+  elternPunkt(pa.m,pb.m,'mutter',30);
+  /* Partner */
+  var na={}, nb={};
+  partnerVon(a,R,F).forEach(function(x){ na[namensKey(x)]=1; });
+  partnerVon(b,R,F).forEach(function(x){ nb[namensKey(x)]=1; });
+  if(schnitt(na,nb)){ s+=20; gr.push(g('partner')); }
+  /* Kinder */
+  var ka={}, kb={};
+  kinderVon(a,R,F).forEach(function(x){ ka[namensKey(x)]=1; });
+  kinderVon(b,R,F).forEach(function(x){ kb[namensKey(x)]=1; });
+  var tr=schnitt(ka,kb);
+  if(tr){ s+=Math.min(24,8*tr); gr.push(tr+(de()?' Kind(er) passen':' child(ren) match')); }
+  /* Ort */
+  if(a.ort && a.ort===b.ort){ s+=10; gr.push(g('ort')); }
+  /* Stamm. Kein Ausschluss, weil dieselbe Person durchaus unter zwei
+     Staemmen stehen kann, etwa wenn jemand eingeheiratet hat. Aber ein
+     harter Abzug: Unter den starken Kandidaten der Pruefdatei waren
+     11 von 11 Paaren mit verschiedenem Stamm zwei verschiedene Personen. */
+  if(a.stamm && b.stamm && a.stamm!==b.stamm){ s-=60; gr.push(g('stammWeg')); }
+
+  return {s:s, aus:null, gruende:gr};
+}
+
+/* ---------------- Suche ---------------- */
+var SCHWELLE={sicher:120, pruefen:70};
+
+/* Vorsortierung in Koerbe. 8.661 Personen gegen alle waeren 37 Millionen
+   Vergleiche; nach Lautcode des Nachnamens bleiben rund 670.000, also das
+   56-Fache gespart, ohne dass ein Treffer verlorengeht - ausser bei
+   Namenswechsel durch Heirat, dafuer der zweite Korb nach Geburtsdatum. */
+function koerbe(R){
+  var k={}, id;
+  for(id in R){
+    var c=R[id].code||'?';
+    (k[c]=k[c]||[]).push(id);
+  }
+  return k;
+}
+function suchen(opt){
+  opt=opt||{};
+  var P=FP.indi(), F=FP.fam(), R=ruesten(P);
+  var ab=opt.ab||SCHWELLE.pruefen;
+  var treffer=[], gesehen={}, vergleiche=0;
+  var k=koerbe(R), c, ids, i, j;
+  for(c in k){
+    ids=k[c];
+    for(i=0;i<ids.length;i++) for(j=i+1;j<ids.length;j++){
+      var key=ids[i]<ids[j] ? ids[i]+'|'+ids[j] : ids[j]+'|'+ids[i];
+      if(gesehen[key]) continue;
+      gesehen[key]=1; vergleiche++;
+      var r=punkte(R[ids[i]],R[ids[j]],R,F,null,true);
+      if(!r.aus && r.s>=ab) treffer.push({s:r.s, a:ids[i], b:ids[j], gruende:r.gruende});
+    }
+  }
+  /* zweiter Korb: gleiches taggenaues Geburtsdatum, anderer Nachname */
+  var nachDatum={};
+  for(var id2 in R) if(R[id2].gb){
+    var d=R[id2].gb.join('-');
+    (nachDatum[d]=nachDatum[d]||[]).push(id2);
+  }
+  for(var dd in nachDatum){
+    ids=nachDatum[dd];
+    for(i=0;i<ids.length;i++) for(j=i+1;j<ids.length;j++){
+      var key2=ids[i]<ids[j] ? ids[i]+'|'+ids[j] : ids[j]+'|'+ids[i];
+      if(gesehen[key2]) continue;
+      gesehen[key2]=1; vergleiche++;
+      var r2=punkte(R[ids[i]],R[ids[j]],R,F,null,true);
+      if(!r2.aus && r2.s>=ab) treffer.push({s:r2.s, a:ids[i], b:ids[j], gruende:r2.gruende});
+    }
+  }
+  treffer.sort(function(x,y){ return y.s-x.s; });
+  return {treffer:treffer, vergleiche:vergleiche, personen:Object.keys(P).length};
+}
+
+/* Gruppen bilden - aber nur aus STARKEN Paaren.
+
+   Beim ersten Lauf gegen die echte Datei wurden aus 206 Treffern 29
+   Gruppen mit mehr als zwei Eintraegen, darunter eine mit fuenfzehn
+   Marie Urbain. Der Grund: Bei 70 Punkten reicht "Nachname gleich,
+   Vorname Marie" als Kettenglied, und eine Kette aus lauter schwachen
+   Gliedern verbindet am Ende eine halbe Familie. Uebertragbarkeit gilt
+   schon bei starken Paaren nicht - in der Pruefdatei gab es eine
+   Dreiergruppe, bei der A=B und B=C erkannt wurden, A=C aber nicht -,
+   bei schwachen ist sie Unsinn. Also: Gruppen nur aus dem starken Band,
+   schwache Paare bleiben Paare. */
+function gruppen(treffer){
+  var stark=treffer.filter(function(t){ return t.s>=SCHWELLE.sicher; });
+  var schwach=treffer.filter(function(t){ return t.s<SCHWELLE.sicher; });
+  var el={}, f=function(x){ while(el[x]!==x) x=el[x]; return x; };
+  stark.forEach(function(t){
+    if(el[t.a]===undefined) el[t.a]=t.a;
+    if(el[t.b]===undefined) el[t.b]=t.b;
+    var ra=f(t.a), rb=f(t.b); if(ra!==rb) el[ra]=rb;
+  });
+  var bu={}, out=[];
+  for(var x in el){ var r=f(x); (bu[r]=bu[r]||[]).push(x); }
+  for(var r2 in bu){
+    var m=bu[r2];
+    var paare=stark.filter(function(t){ return m.indexOf(t.a)>=0 && m.indexOf(t.b)>=0; });
+    out.push({ids:m, paare:paare,
+              best:Math.max.apply(null, paare.map(function(p){ return p.s; })),
+              vollstaendig: paare.length === m.length*(m.length-1)/2});
+  }
+  /* Schwache Paare einzeln, und nur, wenn sie nicht ohnehin schon in
+     einer starken Gruppe stecken. */
+  schwach.forEach(function(t){
+    if(el[t.a]!==undefined && el[t.b]!==undefined && f(t.a)===f(t.b)) return;
+    out.push({ids:[t.a,t.b], paare:[t], best:t.s, vollstaendig:true});
+  });
+  out.sort(function(a,b){ return b.best-a.best; });
+  return out;
+}
+
+/* ---------------- Zusammenlegen ---------------- */
+/* Es wird nichts geloescht. Gemessen an der Pruefdatei hatten 37 von 44
+   Paaren Angaben, die nur auf EINER Seite standen - Kinder bei 18, die
+   Ehe bei 14, das Sterbedatum bei 11. Wer den "besseren" Eintrag behaelt,
+   verliert in vier von fuenf Faellen etwas. Der zusammengelegte Eintrag
+   nimmt die Vereinigung. */
+var FELDER=[
+  {k:'given',      t:['Given names','Vornamen']},
+  {k:'surname',    t:['Surname','Nachname']},
+  {k:'sex',        t:['Sex','Geschlecht']},
+  {k:'birthDate',  t:['Date of birth','Geburtsdatum'], datum:true},
+  {k:'birthPlace', t:['Place of birth','Geburtsort']},
+  {k:'deathDate',  t:['Date of death','Sterbedatum'], datum:true},
+  {k:'deathPlace', t:['Place of death','Sterbeort']},
+  {k:'occ',        t:['Occupation','Beruf']},
+  {k:'stamm',      t:['Branch','Stamm']}
+];
+function feldName(f){ return f.t[de()?1:0]; }
+
+/* Welche Kennung ueberlebt: die mit den meisten Verweisen darauf. Nicht
+   weil sie "besser" waere, sondern weil jeder Verweis auf die andere
+   umgeschrieben werden muss und jede Umschreibung schiefgehen kann. */
+function verweise(id){
+  var F=FP.fam(), n=0;
+  for(var fid in F){
+    var f=F[fid];
+    if(f.husb===id||f.wife===id) n++;
+    if(f.children.indexOf(id)>=0) n++;
+  }
+  return n;
+}
+function datenZahl(p){
+  var n=0; FELDER.forEach(function(f){ if(p[f.k]) n++; });
+  return n;
+}
+function hauptEintrag(ids){
+  var best=null, bv=-1, bd=-1;
+  ids.forEach(function(id){
+    var p=FP.indi()[id]; if(!p) return;
+    var v=verweise(id), d=datenZahl(p);
+    if(v>bv || (v===bv && d>bd)){ best=id; bv=v; bd=d; }
+  });
+  return best;
+}
+/* Ein Vorschlag je Feld. Genauer schlaegt ungenauer, ausgeschrieben
+   schlaegt abgekuerzt, sonst gewinnt der Haupteintrag. */
+function feldVorschlag(f, werte){
+  var da=werte.filter(function(w){ return w.wert; });
+  if(!da.length) return {wert:'', quelle:null, konflikt:false};
+  var erste=da[0].wert;
+  var alleGleich=da.every(function(w){ return w.wert===erste; });
+  if(alleGleich) return {wert:erste, quelle:da[0].id, konflikt:false};
+  if(f.datum){
+    var mitGenau=da.filter(function(w){ return genau(w.wert); });
+    if(mitGenau.length===1) return {wert:mitGenau[0].wert, quelle:mitGenau[0].id, konflikt:false,
+      grund:de()?'taggenau statt nur Jahr':'day-precise rather than year only'};
+  }
+  /* enthaelt einer den anderen? dann der laengere */
+  var sortiert=da.slice().sort(function(x,y){ return y.wert.length-x.wert.length; });
+  var lang=sortiert[0].wert.toLowerCase().replace(/[^a-z0-9]/g,'');
+  var alleDrin=da.every(function(w){
+    return lang.indexOf(w.wert.toLowerCase().replace(/[^a-z0-9]/g,''))>=0; });
+  if(alleDrin) return {wert:sortiert[0].wert, quelle:sortiert[0].id, konflikt:false,
+    grund:de()?'die vollständigere Schreibweise':'the fuller spelling'};
+  return {wert:erste, quelle:da[0].id, konflikt:true};
+}
+function planen(ids){
+  var P=FP.indi();
+  var haupt=hauptEintrag(ids);
+  var sortiert=[haupt].concat(ids.filter(function(i){ return i!==haupt; }));
+  var felder=FELDER.map(function(f){
+    var werte=sortiert.map(function(id){ return {id:id, wert:(P[id]&&P[id][f.k])||''}; });
+    var v=feldVorschlag(f, werte);
+    return {feld:f, werte:werte, wahl:v.quelle, wert:v.wert, konflikt:v.konflikt, grund:v.grund};
+  });
+  return {haupt:haupt, ids:sortiert, felder:felder,
+          konflikte:felder.filter(function(x){ return x.konflikt; }).length};
+}
+
+/* Der eigentliche Eingriff. Alles laeuft ueber FP, damit Index, Speicher
+   und die drei Reiter mitbekommen, was passiert. */
+function ringFrei(start){
+  /* Laeuft eine Abstammungskette auf sich selbst zurueck? */
+  var P=FP.indi(), F=FP.fam();
+  function eltern(id){
+    var out=[], p=P[id]; if(!p) return out;
+    (p.famc||[]).forEach(function(fid){
+      var f=F[fid]; if(!f) return;
+      if(f.husb) out.push(f.husb);
+      if(f.wife) out.push(f.wife);
+    });
+    return out;
+  }
+  var stapel=[start], gesehen={}, schutz=0;
+  gesehen[start]=1;
+  while(stapel.length && schutz++<20000){
+    var cur=stapel.pop();
+    var es=eltern(cur);
+    for(var i=0;i<es.length;i++){
+      if(es[i]===start) return false;
+      if(!gesehen[es[i]]){ gesehen[es[i]]=1; stapel.push(es[i]); }
+    }
+  }
+  return true;
+}
+
+function zusammenlegen(plan){
+  var P=FP.indi(), F=FP.fam();
+  var haupt=plan.haupt, weg=plan.ids.filter(function(i){ return i!==haupt; });
+  var vorher=FP.serialize();
+  var zielP=P[haupt];
+  if(!zielP) return {ok:false, grund:'Hauptperson fehlt'};
+
+  /* 1. Felder setzen */
+  plan.felder.forEach(function(fz){
+    var q=fz.wahl && P[fz.wahl] ? P[fz.wahl][fz.feld.k] : '';
+    if(q) zielP[fz.feld.k]=q;
+  });
+  if(zielP.deathDate) zielP.dead=true;
+
+  /* 2. Unbekannte Kennzeichen uebernehmen, die es im Ziel nicht gibt.
+     Das Versprechen der App ist, dass nichts verlorengeht, was sie
+     selbst nicht auswertet - beim Zusammenlegen erst recht. */
+  var vorhanden={};
+  (zielP.extra||[]).forEach(function(bl){ vorhanden[(bl[0]||'').replace(/^\s*\d+\s+/,'').split(/\s/)[0]]=1; });
+  weg.forEach(function(id){
+    var q=P[id]; if(!q) return;
+    (q.extra||[]).forEach(function(bl){
+      var tag=(bl[0]||'').replace(/^\s*\d+\s+/,'').split(/\s/)[0];
+      if(!vorhanden[tag]){ zielP.extra.push(bl); vorhanden[tag]=1; }
+    });
+    ['birtSub','deatSub'].forEach(function(k){
+      (q[k]||[]).forEach(function(z){ if(zielP[k].indexOf(z)<0) zielP[k].push(z); });
+    });
+  });
+
+  /* 3. Die aufgegebenen Kennungen festhalten, damit der Weg
+     nachvollziehbar bleibt und ein zweiter Durchgang sie wiedererkennt. */
+  weg.forEach(function(id){ zielP.extra.push(['1 REFN '+id]); });
+
+  /* 4. Alle Verweise umhaengen */
+  weg.forEach(function(id){
+    for(var fid in F){
+      var f=F[fid];
+      if(f.husb===id) f.husb=haupt;
+      if(f.wife===id) f.wife=haupt;
+      var k=f.children.indexOf(id);
+      if(k>=0){ if(f.children.indexOf(haupt)>=0) f.children.splice(k,1); else f.children[k]=haupt; }
+    }
+    var q=P[id]; if(!q) return;
+    (q.famc||[]).forEach(function(x){ if(zielP.famc.indexOf(x)<0) zielP.famc.push(x); });
+    (q.fams||[]).forEach(function(x){ if(zielP.fams.indexOf(x)<0) zielP.fams.push(x); });
+  });
+
+  /* 5. Die alten Personen entfernen - aber ohne FP.deletePerson, das
+     wuerde die gerade umgehaengten Verweise wieder kappen. */
+  weg.forEach(function(id){
+    delete P[id];
+    var ord=FP.data().order.indi, k=ord.indexOf(id);
+    if(k>=0) ord.splice(k,1);
+  });
+
+  /* 6. Familien, die jetzt dasselbe Paar beschreiben, verschmelzen.
+     Gemessen: nach dem Zusammenlegen der Personen haetten in der
+     Pruefdatei 8 Ehepaare je zwei FAM-Saetze. Kinder als Vereinigung. */
+  var nach={}, weggefallen=[];
+  FP.data().order.fam.slice().forEach(function(fid){
+    var f=F[fid]; if(!f) return;
+    var key=(f.husb||'-')+'|'+(f.wife||'-');
+    if(key==='-|-') return;
+    if(!nach[key]){ nach[key]=f; return; }
+    var ziel=nach[key];
+    f.children.forEach(function(c){ if(ziel.children.indexOf(c)<0) ziel.children.push(c); });
+    if(!ziel.marrDate && f.marrDate) ziel.marrDate=f.marrDate;
+    if(!ziel.marrPlace && f.marrPlace) ziel.marrPlace=f.marrPlace;
+    (f.extra||[]).forEach(function(bl){ ziel.extra.push(bl); });
+    /* Personen umhaengen */
+    for(var pid in P){
+      var pp=P[pid];
+      var i1=pp.famc.indexOf(fid); if(i1>=0){ pp.famc.splice(i1,1); if(pp.famc.indexOf(ziel.id)<0) pp.famc.push(ziel.id); }
+      var i2=pp.fams.indexOf(fid); if(i2>=0){ pp.fams.splice(i2,1); if(pp.fams.indexOf(ziel.id)<0) pp.fams.push(ziel.id); }
+    }
+    delete F[fid];
+    var of=FP.data().order.fam, k2=of.indexOf(fid); if(k2>=0) of.splice(k2,1);
+    weggefallen.push(fid);
+  });
+
+  /* 7. Verwaiste Verweise aufraeumen */
+  for(var pid2 in P){
+    var pp2=P[pid2];
+    pp2.famc=pp2.famc.filter(function(x){ return !!F[x]; });
+    pp2.fams=pp2.fams.filter(function(x){ return !!F[x]; });
+  }
+
+  /* 8. Ringprobe. Lieber zurueckrollen als eine Datei hinterlassen, in
+     der jemand sein eigener Vorfahr ist. */
+  if(!ringFrei(haupt)){
+    FP.applyGedcom(vorher);
+    return {ok:false, grund:de()?'Dabei würde jemand sein eigener Vorfahr. Der Schritt wurde zurückgenommen.'
+                               :'That would make somebody their own ancestor. The step was rolled back.'};
+  }
+  FP.touchAll();
+  return {ok:true, haupt:haupt, entfernt:weg.length, familien:weggefallen.length, vorher:vorher};
+}
+
+/* ---------------- Liste ausgeben ---------------- */
+function alsText(gruppen2){
+  var P=FP.indi(), z=[];
+  z.push(de()?'DUBLETTENVERDACHT':'POSSIBLE DUPLICATES');
+  z.push((FP.fileName()||'')+'  —  '+Object.keys(P).length+(de()?' Personen':' people'));
+  z.push(new Date().toLocaleDateString(de()?'de-DE':'en-GB'));
+  z.push('');
+  z.push(de()?'Vorschläge eines Rechners, keine Feststellungen. Nichts wurde geändert.'
+             :'Suggestions from a program, not findings. Nothing has been changed.');
+  z.push('');
+  gruppen2.forEach(function(gr,i){
+    z.push('--- '+(i+1)+'. '+gr.best+(de()?' Punkte':' points')+
+           (gr.ids.length>2 ? (de()?'  ('+gr.ids.length+' Einträge)':'  ('+gr.ids.length+' records)') : ''));
+    gr.paare.forEach(function(p){ z.push('    '+p.gruende.join(', ')); });
+    gr.ids.forEach(function(id){
+      var p=P[id]; if(!p) return;
+      z.push('    '+id+'  '+FP.fullName(p));
+      z.push('        * '+(p.birthDate||'—')+'   + '+(p.deathDate||'—')+
+             (p.birthPlace?('   '+p.birthPlace):'')+(p.stamm?('   ['+p.stamm+']'):''));
+    });
+    z.push('');
+  });
+  return z.join('\n');
+}
+
+/* ---------------- Oberflaeche ---------------- */
+var GEFUNDEN=[], ANSICHT='sicher', RUECK=[], ERLEDIGT={};
+
+function esc(x){ return FP.esc(String(x==null?'':x)); }
+function kurz(p){
+  var t=[];
+  if(p.birthDate) t.push('* '+p.birthDate);
+  if(p.deathDate) t.push('+ '+p.deathDate);
+  return t.join('   ');
+}
+function umfeld(id){
+  var P=FP.indi(), F=FP.fam(), p=P[id], z=[];
+  if(!p) return z;
+  var el=[];
+  (p.famc||[]).forEach(function(fid){
+    var f=F[fid]; if(!f) return;
+    if(f.husb&&P[f.husb]) el.push(FP.fullName(P[f.husb]));
+    if(f.wife&&P[f.wife]) el.push(FP.fullName(P[f.wife]));
+  });
+  if(el.length) z.push((de()?'Eltern: ':'Parents: ')+el.join(', '));
+  var pa=[], ki=[];
+  (p.fams||[]).forEach(function(fid){
+    var f=F[fid]; if(!f) return;
+    var o=(f.husb===id)?f.wife:f.husb;
+    if(o&&P[o]) pa.push(FP.fullName(P[o]));
+    (f.children||[]).forEach(function(c){ if(P[c]) ki.push(P[c].given||FP.fullName(P[c])); });
+  });
+  if(pa.length) z.push((de()?'Ehe: ':'Spouse: ')+pa.join(', '));
+  if(ki.length) z.push((de()?'Kinder: ':'Children: ')+ki.join(', '));
+  if(p.occ) z.push(p.occ);
+  if(p.stamm) z.push((de()?'Stamm ':'Branch ')+p.stamm);
+  return z;
+}
+function schluessel(gr){ return gr.ids.slice().sort().join('+'); }
+
+function zeichneListe(){
+  var box=$('dupeList'), leer=$('dupeNone');
+  var liste=GEFUNDEN.filter(function(gr){
+    return ANSICHT==='sicher' ? gr.best>=SCHWELLE.sicher
+                              : (gr.best<SCHWELLE.sicher && gr.best>=SCHWELLE.pruefen);
+  });
+  box.innerHTML='';
+  if(!liste.length){
+    leer.hidden=false;
+    leer.textContent = ANSICHT==='sicher'
+      ? (de()?'Kein starker Verdacht in dieser Datei.':'No strong suspicion in this file.')
+      : (de()?'Nichts im Prüfband.':'Nothing in the review band.');
+    return;
+  }
+  leer.hidden=true;
+  var P=FP.indi();
+  liste.forEach(function(gr){
+    var k=schluessel(gr), st=ERLEDIGT[k];
+    var d=document.createElement('div');
+    d.className='dupecard'+(st?' weg':'');
+    var kopf='<div class="dupehead"><span class="dupescore">'+gr.best+
+      (de()?' Punkte':' points')+'</span>'+
+      (gr.ids.length>2 ? '<span class="dupeflag">'+gr.ids.length+(de()?' Einträge':' records')+
+        (gr.vollstaendig?'':(de()?', als Kette erkannt':', recognised as a chain'))+'</span>' : '')+
+      (st ? '<span class="dupedone">'+(st==='merged'
+              ? (de()?'zusammengelegt':'merged')
+              : (de()?'als verschieden abgehakt':'marked as different'))+'</span>' : '')+
+      '</div>';
+    var why='<div class="dupewhy">'+gr.paare.map(function(p){
+      return esc(p.gruende.join(', ')); }).join('<br>')+'</div>';
+    var recs='<div class="duperecs">'+gr.ids.map(function(id){
+      var p=P[id];
+      if(!p) return '<div class="duperec"><span class="zz">'+(de()?'entfernt':'removed')+'</span></div>';
+      return '<div class="duperec"><span class="id">'+esc(id)+'</span>'+
+             '<div class="nm">'+esc(FP.fullName(p))+'</div>'+
+             '<div class="zz">'+esc(kurz(p)||'—')+'</div>'+
+             umfeld(id).map(function(z){ return '<div class="zz">'+esc(z)+'</div>'; }).join('')+
+             '</div>';
+    }).join('')+'</div>';
+    var acts = st ? '' :
+      '<div class="dupeacts">'+
+      '<button class="btn small primary" data-tun="gleich">'+(de()?'dieselbe Person':'the same person')+'</button>'+
+      '<button class="btn small" data-tun="anders">'+(de()?'verschieden':'different')+'</button>'+
+      '</div><div class="dupefields" hidden></div>';
+    d.innerHTML=kopf+why+recs+acts;
+    d.dataset.key=k;
+    box.appendChild(d);
+    if(st) return;
+    d.querySelector('[data-tun="anders"]').onclick=function(){
+      ERLEDIGT[k]='different'; zeichneListe(); fassen();
+    };
+    d.querySelector('[data-tun="gleich"]').onclick=function(){ felderZeigen(d, gr); };
+  });
+}
+
+function felderZeigen(karte, gr){
+  var vorhandene=gr.ids.filter(function(id){ return !!FP.indi()[id]; });
+  if(vorhandene.length<2) return;
+  var plan=planen(vorhandene);
+  var P=FP.indi();
+  var box=karte.querySelector('.dupefields');
+  var kopf='<table><tr><th></th>'+plan.ids.map(function(id,i){
+    return '<th>'+esc(id)+(i===0?(' '+(de()?'(bleibt)':'(kept)')):'')+'</th>'; }).join('')+'</tr>';
+  var zeilen=plan.felder.map(function(fz,ri){
+    var leer=fz.werte.every(function(w){ return !w.wert; });
+    if(leer) return '';
+    return '<tr'+(fz.konflikt?' class="konflikt"':'')+'><td><b>'+esc(feldName(fz.feld))+'</b>'+
+      (fz.konflikt?'<br><span class="dupeflag">'+(de()?'bitte wählen':'please choose')+'</span>':
+        (fz.grund?'<br><span class="dupeflag">'+esc(fz.grund)+'</span>':''))+'</td>'+
+      fz.werte.map(function(w){
+        if(!w.wert) return '<td class="zz">—</td>';
+        return '<td><label><input type="radio" name="f'+ri+'" value="'+esc(w.id)+'"'+
+               (w.id===fz.wahl?' checked':'')+'> '+esc(w.wert)+'</label></td>';
+      }).join('')+'</tr>';
+  }).join('');
+  var fuss='</table><div class="dupeacts">'+
+    '<button class="btn small primary" data-tun="los">'+(de()?'zusammenlegen':'merge')+'</button>'+
+    '<button class="btn small" data-tun="ab">'+(de()?'abbrechen':'cancel')+'</button></div>'+
+    '<div class="dupewhy" style="margin-top:7px">'+
+    (de()?'Angaben, die nur auf einer Seite stehen, werden immer übernommen. Zu entscheiden ist nur, wo sich beide widersprechen.'
+        :'Anything present on only one side is always kept. You only decide where the two contradict each other.')+
+    '</div>';
+  box.innerHTML=kopf+zeilen+fuss;
+  box.hidden=false;
+  box.querySelector('[data-tun="ab"]').onclick=function(){ box.hidden=true; box.innerHTML=''; };
+  box.querySelector('[data-tun="los"]').onclick=function(){
+    plan.felder.forEach(function(fz,ri){
+      var sel=box.querySelector('input[name="f'+ri+'"]:checked');
+      if(sel) fz.wahl=sel.value;
+    });
+    var r=zusammenlegen(plan);
+    if(!r.ok){ SHELL.toast(r.grund); return; }
+    RUECK.push({text:r.vorher, was:FP.fullName(P[r.haupt]||{})});
+    if(RUECK.length>10) RUECK.shift();
+    ERLEDIGT[schluessel(gr)]='merged';
+    SHELL.toast((de()?'Zusammengelegt: ':'Merged: ')+r.entfernt+
+      (de()?' Eintrag/Einträge entfernt':' record(s) removed')+
+      (r.familien?(de()?', '+r.familien+' Familie(n) verschmolzen':', '+r.familien+' famil(y/ies) merged'):''));
+    zeichneListe(); fassen();
+  };
+}
+
+function fassen(){
+  var ges=GEFUNDEN.length;
+  var sicher=GEFUNDEN.filter(function(g2){ return g2.best>=SCHWELLE.sicher; }).length;
+  var pruef=ges-sicher;
+  var fertig=0; for(var k in ERLEDIGT) fertig++;
+  $('dupeTabA').textContent=(de()?'starker Verdacht':'strong suspicion')+' ('+sicher+')';
+  $('dupeTabB').textContent=(de()?'zum Prüfen':'to review')+' ('+pruef+')';
+  $('dupeSum').innerHTML = esc(
+    (de()?'Geprüft: ':'Checked: ')+LETZT.personen+(de()?' Personen, ':' people, ')+
+    LETZT.vergleiche.toLocaleString(de()?'de-DE':'en-GB')+(de()?' Vergleiche. ':' comparisons. ')+
+    ges+(de()?' Verdachtsfälle, davon ':' suspected cases, of which ')+sicher+
+    (de()?' stark. Bearbeitet: ':' strong. Handled: ')+fertig+'.');
+  $('dupeUndo').hidden = !RUECK.length;
+  $('dupeUndo').textContent = (de()?'Rückgängig':'Undo')+(RUECK.length>1?(' ('+RUECK.length+')'):'');
+}
+
+var LETZT={personen:0, vergleiche:0};
+function starten(){
+  $('dupeGo').disabled=true;
+  $('dupeBusy').hidden=false;
+  $('dupeBusy').textContent=de()?'wird gesucht …':'searching …';
+  setTimeout(function(){
+    var r=suchen({ab:SCHWELLE.pruefen});
+    LETZT={personen:r.personen, vergleiche:r.vergleiche};
+    GEFUNDEN=gruppen(r.treffer);
+    ERLEDIGT={};
+    $('dupeStart').hidden=true;
+    $('dupeResult').hidden=false;
+    $('dupeSave').hidden=!GEFUNDEN.length;
+    ANSICHT = GEFUNDEN.some(function(g2){ return g2.best>=SCHWELLE.sicher; }) ? 'sicher' : 'pruefen';
+    $('dupeTabA').classList.toggle('on', ANSICHT==='sicher');
+    $('dupeTabB').classList.toggle('on', ANSICHT!=='sicher');
+    fassen(); zeichneListe();
+    $('dupeGo').disabled=false; $('dupeBusy').hidden=true;
+  }, 40);
+}
+
+function aufsetzen(){
+  var mi=$('miDupe');
+  if(mi) mi.onclick=function(){
+    SHELL.closeDataMenu && SHELL.closeDataMenu();
+    if(!FP.hasData() || !FP.count()){
+      SHELL.toast(de()?'Erst eine Datei öffnen.':'Open a file first.'); return;
+    }
+    $('dupeStart').hidden=false; $('dupeResult').hidden=true;
+    $('dupeSave').hidden=true; $('dupeUndo').hidden=!RUECK.length;
+    SHELL.openModal('mdDupe');
+  };
+  $('dupeGo').onclick=starten;
+  $('dupeClose').onclick=function(){ SHELL.closeModal('mdDupe'); };
+  $('dupeTabA').onclick=function(){ ANSICHT='sicher';
+    this.classList.add('on'); $('dupeTabB').classList.remove('on'); zeichneListe(); };
+  $('dupeTabB').onclick=function(){ ANSICHT='pruefen';
+    this.classList.add('on'); $('dupeTabA').classList.remove('on'); zeichneListe(); };
+  $('dupeSave').onclick=function(){
+    var txt=alsText(GEFUNDEN);
+    SHELL.download((de()?'dubletten_':'duplicates_')+
+      (FP.fileName()||'').replace(/[^\w\-]+/g,'_').slice(0,30)+'.txt', txt, 'text/plain');
+  };
+  $('dupeUndo').onclick=function(){
+    var z=RUECK.pop(); if(!z) return;
+    FP.applyGedcom(z.text);
+    /* was zurueckgenommen wurde, ist wieder offen */
+    var neu={}; for(var k in ERLEDIGT) if(ERLEDIGT[k]!=='merged') neu[k]=ERLEDIGT[k];
+    ERLEDIGT=neu;
+    SHELL.toast(de()?'Zurückgenommen.':'Step undone.');
+    fassen(); zeichneListe();
+  };
+}
+
+return {
+  suchen:suchen, gruppen:gruppen, planen:planen, zusammenlegen:zusammenlegen,
+  alsText:alsText, SCHWELLE:SCHWELLE, FELDER:FELDER, feldName:feldName,
+  boot:aufsetzen,
+  /* nur fuer die Testreihe */
+  _koelner:koelner, _zeitraum:zeitraum, _genau:genau, _ruesten:ruesten, _punkte:punkte,
+  _stand:function(){ return {gefunden:GEFUNDEN, erledigt:ERLEDIGT, rueck:RUECK.length}; }
+};
+})();
+</script>
+<script>
 /* Stored data is loaded only once all three tabs are ready. */
+DUPE.boot();
 SHELL.boot();
 </script>
 </body>
