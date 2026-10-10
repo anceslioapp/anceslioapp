@@ -7674,9 +7674,15 @@ function aufsetzen(){
   $('dupeTabB').onclick=function(){ ANSICHT='pruefen';
     this.classList.add('on'); $('dupeTabA').classList.remove('on'); zeichneListe(); };
   $('dupeSave').onclick=function(){
+    /* SHELL.download nimmt einen Blob und DANN den Namen. Die erste Fassung
+       hier übergab den Namen zuerst und einen String statt eines Blobs;
+       URL.createObjectURL warf daraufhin, und der Nutzer bekam die Meldung
+       "Speichern ist hier nicht möglich" zu sehen, die eigentlich für
+       App-Hüllen ohne Downloads gedacht ist. */
     var txt=alsText(GEFUNDEN);
-    SHELL.download((de()?'dubletten_':'duplicates_')+
-      (FP.fileName()||'').replace(/[^\w\-]+/g,'_').slice(0,30)+'.txt', txt, 'text/plain');
+    var name=(de()?'dubletten_':'duplicates_')+
+      (FP.fileName()||'').replace(/[^\w\-]+/g,'_').slice(0,30)+'.txt';
+    SHELL.download(new Blob([txt],{type:'text/plain;charset=utf-8'}), name);
   };
   $('dupeUndo').onclick=function(){
     var z=RUECK.pop(); if(!z) return;
