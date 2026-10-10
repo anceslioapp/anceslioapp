@@ -136,6 +136,11 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 #tabbar .tab:hover{background:var(--hl); color:var(--accent)}
 #tabbar .tab.active{color:var(--accent); border-bottom-color:var(--gold); background:var(--hl)}
 #tabbar .tab:disabled{opacity:.4; cursor:default; background:none}
+/* Die drei Reiter tragen schlichte Strichsymbole statt Emoji: ein Emoji wird
+   von jedem System anders und meist bunt gezeichnet, ein Pfad in currentColor
+   nimmt die Farbe des Reiters an und wird im aktiven Zustand mit ihm golden. */
+#tabbar .tab .ico svg{width:17px; height:17px; vertical-align:-3.5px}
+#tabbar .tab .ico{color:inherit}
 
 /* ===================================================================
    2) Panels (tab content)
@@ -675,14 +680,18 @@ label.fld{display:block; font-size:12.5px; font-weight:600; color:var(--accent);
    top, because there the scarce thing is height, not reach.
    =================================================================== */
 @media (max-width:860px) and (min-height:521px){
-  :root{--navh:64px}
+  /* Wie hoch die Leiste wirklich ist, haengt am Geraet: die Gestenleiste
+     ganz unten kommt dazu, und eine groessere Systemschrift auch. Der Wert
+     hier ist nur der Notnagel - gemessen wird er in SHELL.boot(). */
+  :root{--navh:calc(64px + env(safe-area-inset-bottom))}
   #tabbar{position:fixed; left:0; right:0; bottom:0; z-index:45; max-width:none; gap:0;
     background:var(--panel); border-top:1px solid var(--line);
     box-shadow:0 -2px 12px var(--shadow);
     padding:4px 6px calc(4px + env(safe-area-inset-bottom))}
   #tabbar .tab{flex-direction:column; gap:1px; padding:7px 2px 6px; font-size:12.5px;
     border-bottom:none; border-radius:12px; min-height:52px}
-  #tabbar .tab .ico{display:block; font-size:19px; line-height:1.15}
+  #tabbar .tab .ico{display:block; line-height:0; margin:0 0 3px}
+  #tabbar .tab .ico svg{width:21px; height:21px; margin:0 auto; vertical-align:top}
   #tabbar .tab.active{background:var(--hl); border-bottom-color:transparent}
   /* The panels are positioned against the padding box, so padding would not
      move them: they have to end above the bar themselves. */
@@ -784,9 +793,9 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
     <span id="dataInfo"><span id="dataCount">no data loaded</span><span id="dataTick" aria-hidden="true">&#10003;</span></span>
   </div>
   <nav id="tabbar">
-    <button class="tab active" data-tab="tree"><span class="ico">&#127795;</span> <span data-i18n="Tree">Tree</span></button>
-    <button class="tab" data-tab="chart"><span class="ico">&#128203;</span> <span data-i18n="Descendants">Descendants</span></button>
-    <button class="tab" data-tab="rel"><span class="ico">&#128101;</span> <span data-i18n="Kinship">Kinship</span></button>
+    <button class="tab active" data-tab="tree"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="2.4" width="6" height="4.4" rx="1.1"/><rect x="2.3" y="17.2" width="6" height="4.4" rx="1.1"/><rect x="15.7" y="17.2" width="6" height="4.4" rx="1.1"/><path d="M12 6.8v6.6M5.3 13.4h13.4M5.3 13.4v3.8M18.7 13.4v3.8"/></svg></span> <span data-i18n="Tree">Tree</span></button>
+    <button class="tab" data-tab="chart"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4.2" y="2.6" width="15.6" height="18.8" rx="2.2"/><path d="M7.6 8h8.8M9.8 12.3h6.6M12 16.6h4.4"/></svg></span> <span data-i18n="Descendants">Descendants</span></button>
+    <button class="tab" data-tab="rel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="7.4" cy="8.1" r="3.1"/><circle cx="16.6" cy="8.1" r="3.1"/><path d="M2.4 19.6c0-2.9 2.2-4.6 5-4.6s5 1.7 5 4.6"/><path d="M11.6 19.6c0-2.9 2.2-4.6 5-4.6s5 1.7 5 4.6"/></svg></span> <span data-i18n="Kinship">Kinship</span></button>
   </nav>
 </header>
 
@@ -1754,7 +1763,7 @@ window.I18N={
         you edit: change names and dates, add people, connect them.<br>
         <b>Descendants</b> builds the classic descendant chart in the style of a printed family book, ready to export as
         PDF, SVG or PNG.<br>
-        <b>Kinship</b> answers the question &bdquo;how are these two related?&ldquo; in plain words.</p>
+        <b>Kinship</b> works out how any two people in the file are related, and shows how that follows.</p>
         <p>There is no account and no sign-in, and the app works without an internet connection. Nothing is uploaded:
         your family data stays on the device you are using.</p>
       </section>
@@ -1901,7 +1910,7 @@ window.I18N={
         <p>The small badges add the details: the <b>degree of kinship</b> (the number of births counted up to the
         common ancestor and down again &ndash; the civil-law method used in inheritance law in many countries), the
         number of <b>&bdquo;great&ldquo;</b> steps for distant ancestors, and <b>half blood</b> when only one parent
-        is shared. The green <b>In plain words</b> box explains the same relationship without jargon, and the
+        is shared. The green <b>Derivation</b> box retraces the same relationship step by step, and the
         <b>chain of descent</b> underneath lists every person on the path from one to the other, with the common
         ancestor highlighted.</p>
         <p>When two people are related through several branches at once &ndash; common in large families &ndash; the
@@ -2036,7 +2045,7 @@ window.I18N={
         bearbeitet: Namen und Daten &auml;ndern, Personen anlegen, Verwandtschaften kn&uuml;pfen.<br>
         <b>Nachfahrentafel</b> baut die klassische Nachkommentafel im Stil gedruckter Familienb&uuml;cher, fertig zum Export
         als PDF, SVG oder PNG.<br>
-        <b>Verwandtschaft</b> beantwortet die Frage &bdquo;wie sind diese beiden verwandt?&ldquo; in klaren Worten.</p>
+        <b>Verwandtschaft</b> ermittelt zu zwei Personen aus der Datei das Verwandtschaftsverh&auml;ltnis und wie es sich ergibt.</p>
         <p>Es gibt kein Konto und keine Anmeldung, und die App funktioniert ohne Internetverbindung. Nichts wird
         hochgeladen: Die Familiendaten bleiben auf dem Ger&auml;t, das gerade benutzt wird.</p>
       </section>
@@ -2208,8 +2217,8 @@ window.I18N={
         <p>Die kleinen Abzeichen liefern die Einzelheiten: den <b>Verwandtschaftsgrad</b> (die Zahl der Geburten
         hinauf zum gemeinsamen Vorfahren und wieder hinunter &ndash; die zivilrechtliche Z&auml;hlweise, wie sie im
         Erbrecht verwendet wird), die Anzahl der <b>&bdquo;Ur&ldquo;</b>-Stufen bei entfernten Vorfahren und
-        <b>halbb&uuml;rtig</b>, wenn nur ein Elternteil gemeinsam ist. Der gr&uuml;ne Kasten <b>In klaren Worten</b>
-        erkl&auml;rt dieselbe Beziehung ohne Fachbegriffe, und die <b>Abstammungskette</b> darunter f&uuml;hrt jede
+        <b>halbb&uuml;rtig</b>, wenn nur ein Elternteil gemeinsam ist. Der gr&uuml;ne Kasten <b>Herleitung</b>
+        f&uuml;hrt dieselbe Beziehung Schritt f&uuml;r Schritt auf den gemeinsamen Vorfahren zur&uuml;ck, und die <b>Abstammungskette</b> darunter f&uuml;hrt jede
         Person auf dem Weg von der einen zur anderen auf, mit hervorgehobenem gemeinsamem Vorfahren.</p>
         <p>Sind zwei Personen &uuml;ber mehrere Zweige zugleich verwandt &ndash; in gro&szlig;en Familien h&auml;ufig
         &ndash;, wird die n&auml;chste Beziehung zuerst gezeigt, die weiteren Linien lassen sich darunter aufklappen.
@@ -3726,9 +3735,43 @@ window.SHELL = {
   uiGet:uiGet, uiSet:uiSet, uiForget:uiForget
 };
 
+/* ---------------- how tall the bottom tab bar really is --------------
+   On a phone the three tabs sit fixed at the bottom edge, and everything
+   above them is told to end at --navh. That was a fixed 64 px, which is
+   wrong on any device that draws a gesture bar underneath, and wrong again
+   when the system font is turned up: the bar grew, --navh did not, and the
+   last row of the bar under the chart vanished behind it. So the height is
+   measured rather than assumed. */
+function messeNav(){
+  var bar=document.getElementById('tabbar');
+  if(!bar) return;
+  if(getComputedStyle(bar).position!=='fixed'){
+    document.documentElement.style.removeProperty('--navh'); return;
+  }
+  var h=bar.getBoundingClientRect().height;
+  /* zero means hidden (full screen) - then the old value stays, and the
+     observer below sets the right one again the moment it comes back */
+  if(h>0) document.documentElement.style.setProperty('--navh', Math.round(h)+'px');
+}
+function navWacht(){
+  messeNav();
+  var bar=document.getElementById('tabbar');
+  if(bar && window.ResizeObserver){
+    var ro=new ResizeObserver(messeNav);
+    /* the border box, not the content box: the gesture bar at the bottom of
+       the device is padding on this element, and a content-box observer
+       would never notice it */
+    try{ ro.observe(bar,{box:'border-box'}); }catch(e){ try{ ro.observe(bar); }catch(e2){} }
+  }
+  if(window.visualViewport) window.visualViewport.addEventListener('resize', messeNav);
+  window.addEventListener('resize', messeNav);
+  window.addEventListener('orientationchange', function(){ setTimeout(messeNav,250); });
+}
+
 /* ---------------- start (called at the very end of the page) ---------- */
 SHELL.boot=function(){
   I18N.boot();
+  navWacht();
   var restored=FP.restore();
   if(!restored) refreshShell();
   /* back to the tab that was open last time, but only with the same file */
@@ -6516,7 +6559,7 @@ function render(){
       return '<span class="badge"'+(b.title?' title="'+b.title+'"':'')+'>'+b.t+'</span>'; }).join('')+'</div>';
     var pb=plainBox(rAB,selA,selB);
     if(rAB.half) pb+=de()?' <b>Hinweis:</b> Das ist eine halbbürtige Beziehung – auf dieser Stufe teilen sie nur einen Vorfahren, nicht ein Paar.':' <b>Note:</b> this is a half relationship – at that level they share only one ancestor, not a couple.';
-    if(pb) html+='<div class="plainbox"><div class="pbttl">'+(de()?'In klaren Worten':'In plain words')+'</div>'+pb+'</div>';
+    if(pb) html+='<div class="plainbox"><div class="pbttl">'+(de()?'Herleitung':'Derivation')+'</div>'+pb+'</div>';
     if(rAB.lines && rAB.lines.length>1){
       var items='';
       rAB.lines.slice(1).forEach(function(L){
