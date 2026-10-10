@@ -91,7 +91,51 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 #brand{font-family:Georgia,"Times New Roman",serif; font-size:17.5px; font-weight:600; color:var(--accent); white-space:nowrap}
 #dataInfo{font-size:12.5px; color:var(--muted); margin-left:auto; display:flex; align-items:baseline;
   gap:4px; min-width:0}
-#dataCount{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+/* Der Zaehler ist jetzt ein Knopf: Er sagt ohnehin, wie viele Personen in
+   der Datei sind, also ist er der natuerliche Weg zu der Liste dieser
+   Personen. Aussehen soll er trotzdem wie vorher - ein zweiter grosser
+   Knopf neben Daten und Anleitung waere genau die Ueberladung, die hier
+   vermieden werden soll. Nur ein feiner Unterstrich beim Zeigen verraet,
+   dass man ihn druecken kann. */
+#dataCount{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  border:none; background:none; color:inherit; font:inherit; padding:2px 0;
+  cursor:pointer; border-bottom:1px dotted transparent; max-width:100%}
+#dataCount:hover,#dataCount:focus-visible{color:var(--accent); border-bottom-color:currentColor}
+#dataCount:disabled{cursor:default; color:inherit; border-bottom-color:transparent}
+/* Als Knopf braucht er auch ein Tippziel. Die Zeile ist ohnehin 44 px hoch,
+   weil Daten und Anleitung so hoch sind - der Zaehler wird also nur so hoch
+   wie seine Nachbarn und die Kopfzeile waechst dadurch nicht. Gemessen bei
+   360 px: apptop bleibt bei 50 px. */
+@media (max-width:860px), (max-height:520px){
+  #dataInfo{align-items:center}
+  #dataCount{min-height:44px; display:inline-flex; align-items:center}
+}
+
+/* ---------- Personen und Familien ---------- */
+#mdList .modalbox{width:min(760px,96vw); max-height:92dvh}
+#mdList .modalbody{display:flex; flex-direction:column; min-height:0}
+.listsearch{display:flex; gap:8px; margin:0 0 9px; flex-wrap:wrap}
+.listfield{position:relative; flex:1 1 220px; min-width:0}
+.listfield input{width:100%; padding:9px 38px 9px 11px; border:1px solid var(--line);
+  border-radius:9px; font-size:15.5px; background:var(--field); color:var(--ink)}
+#listStamm{flex:0 1 auto; max-width:50%; padding:8px 9px; border:1px solid var(--line);
+  border-radius:9px; background:var(--field); color:var(--ink); font-size:13.5px}
+.listcount{font-size:12.5px; color:var(--muted); margin:0 0 8px}
+.listmore{text-align:center; padding:4px 0 2px}
+.lrow{border-bottom:1px solid var(--line); padding:8px 2px; cursor:pointer}
+.lrow:last-child{border-bottom:none}
+.lrow:hover{background:var(--hl)}
+.lrow.auf{background:var(--hl); cursor:default}
+.lnm{font-size:15px; color:var(--ink)}
+.lnm b{font-weight:600}
+.lmeta{font-size:12.5px; color:var(--muted); margin-top:1px}
+.lacts{display:flex; gap:6px; flex-wrap:wrap; margin:9px 0 3px}
+.lacts .btn.small{font-size:13px}
+.lempty{color:var(--muted); font-size:14.5px; padding:14px 0}
+@media (max-width:860px){
+  #listStamm{max-width:100%; flex:1 1 100%}
+  .lacts .btn{flex:1 1 auto; justify-content:center}
+}
 /* The tick keeps its place whether it is showing or not. */
 #dataTick{flex:0 0 auto; width:10px; text-align:center; color:var(--ok); visibility:hidden}
 #dataTick.on{visibility:visible}
@@ -273,7 +317,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
   cursor:pointer; border-radius:50%; line-height:1; padding:0; z-index:5}
 .clearbtn:hover{background:var(--hl); color:var(--accent)}
 .clearbtn.show{display:flex; align-items:center; justify-content:center}
-#trSearchWrap input, #toolbar .combo input{padding-right:38px}
+#trSearchWrap input, #toolbar .combo input, #panelRel .combo input{padding-right:38px}
 #trBtnFilter{position:relative; padding-left:11px; padding-right:11px}
 #trBtnFilter svg{display:block}
 #trFilter .filyears{display:flex; align-items:center; gap:8px; flex-wrap:nowrap}
@@ -815,6 +859,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
           <button id="miFiles" data-i18n="✎ Rename or remove files…">&#9998; Rename or remove files&hellip;</button>
         </div>
         <hr>
+        <button id="miList" data-i18n="☰ People and families">&#9776; People and families</button>
         <button id="miDupe" data-i18n="⧉ Check for duplicates">&#10697; Check for duplicates</button>
         <hr>
         <button id="miExport" data-i18n="💾 Export GEDCOM (.ged)">&#128190; Export GEDCOM (.ged)</button>
@@ -828,7 +873,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
     <!-- The tick has a slot of its own that is always there, only sometimes
          empty. That way saving cannot change the width of this line, and the
          header cannot grow a second row while somebody is typing. -->
-    <span id="dataInfo"><span id="dataCount">no data loaded</span><span id="dataTick" aria-hidden="true">&#10003;</span></span>
+    <span id="dataInfo"><button type="button" id="dataCount" data-i18n-title="Show all people and families"
+        title="Show all people and families">no data loaded</button><span id="dataTick" aria-hidden="true">&#10003;</span></span>
   </div>
   <nav id="tabbar">
     <button class="tab active" data-tab="tree"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="2.4" width="6" height="4.4" rx="1.1"/><rect x="2.3" y="17.2" width="6" height="4.4" rx="1.1"/><rect x="15.7" y="17.2" width="6" height="4.4" rx="1.1"/><path d="M12 6.8v6.6M5.3 13.4h13.4M5.3 13.4v3.8M18.7 13.4v3.8"/></svg></span> <span data-i18n="Tree">Tree</span></button>
@@ -1027,11 +1073,13 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <div class="grid">
           <div>
             <label class="fld" for="inA" data-i18n="Person A">Person A</label>
-            <div class="combo"><input type="text" id="inA" data-i18n-ph="Name or year, e.g. Thomas 1986" placeholder="Name or year, e.g. Thomas 1986" autocomplete="off"><div class="list" id="listA"></div></div>
+            <div class="combo"><input type="text" id="inA" data-i18n-ph="Name or year, e.g. Thomas 1986" placeholder="Name or year, e.g. Thomas 1986" autocomplete="off"><button type="button" class="clearbtn" id="clearA" data-i18n-title="Clear the field"
+                    title="Clear the field" aria-label="Clear">&#10005;</button><div class="list" id="listA"></div></div>
           </div>
           <div>
             <label class="fld" for="inB" data-i18n="Person B">Person B</label>
-            <div class="combo"><input type="text" id="inB" data-i18n-ph="Name or year, e.g. Clara 1955" placeholder="Name or year, e.g. Clara 1955" autocomplete="off"><div class="list" id="listB"></div></div>
+            <div class="combo"><input type="text" id="inB" data-i18n-ph="Name or year, e.g. Clara 1955" placeholder="Name or year, e.g. Clara 1955" autocomplete="off"><button type="button" class="clearbtn" id="clearB" data-i18n-title="Clear the field"
+                    title="Clear the field" aria-label="Clear">&#10005;</button><div class="list" id="listB"></div></div>
           </div>
         </div>
         <div class="swaprow">
@@ -1278,6 +1326,39 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
     <div class="modalfoot">
       <button class="btn" id="askNo" data-i18n="Cancel">Cancel</button>
       <button class="btn primary" id="askYes">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Personen und Familien =====================
+     Kein vierter Reiter: gemessen bei 360 px Bildschirmbreite fehlten
+     "Nachfahrentafel" dann 8 px und "Verwandtschaft" 6 px, bei 320 px
+     18 und 16 px. Also ein Fenster, erreichbar aus dem Datenmenue und
+     durch einen Klick auf den Personenzaehler oben rechts - zwei Wege
+     hinein, kein einziges neues Bedienelement in der Kopfzeile. -->
+<div class="modal" id="mdList">
+  <div class="modalbox">
+    <h3><span data-lang="en">People and families</span><span data-lang="de">Personen und Familien</span></h3>
+    <div class="modalbody" id="listBody">
+      <div class="dupetabs">
+        <button class="btn small on" id="listTabP"></button>
+        <button class="btn small" id="listTabF"></button>
+      </div>
+      <div class="listsearch">
+        <div class="listfield">
+          <input type="text" id="listQ" autocomplete="off"
+                 data-i18n-ph="Search by name, year or place" placeholder="Search by name, year or place">
+          <button type="button" class="clearbtn" id="listClear" data-i18n-title="Clear the search field"
+                  title="Clear the search field" aria-label="Clear">&#10005;</button>
+        </div>
+        <select id="listStamm" aria-label="Branch"></select>
+      </div>
+      <div class="listcount" id="listCount"></div>
+      <div id="listRows"></div>
+      <div class="listmore"><button class="btn small" id="listMore" hidden></button></div>
+    </div>
+    <div class="modalfoot">
+      <button class="btn" id="listClose" data-i18n="Close">Close</button>
     </div>
   </div>
 </div>
@@ -1572,6 +1653,11 @@ var DE = {
 /* Dubletten pruefen */
 '⧉ Check for duplicates':'⧉ Dubletten prüfen',
 'Search now':'Jetzt suchen',
+/* Personen und Familien */
+'\u2630 People and families':'\u2630 Personen und Familien',
+'Show all people and families':'Alle Personen und Familien anzeigen',
+'Search by name, year or place':'Nach Name, Jahr oder Ort suchen',
+'Clear the field':'Feld leeren',
 'Save list':'Liste speichern',
 'all generations':'alle Generationen',
 '%1 generations':'%1 Generationen',
@@ -2055,6 +2141,20 @@ window.I18N={
         agreed to it.</p>
       </section>
 
+      <section class="sec" id="h8a">
+        <h4>The list of people and families</h4>
+        <p>The number at the top right says how many people are in the open file. It is also a button: press it,
+        or take <b>Data &rsaquo; People and families</b>, and the whole file appears as a list. Search by name,
+        year or place, narrow it down by branch, and switch between people and families.</p>
+        <p>Tap a row and it opens, with everything you can do with that person: put them at the centre of the
+        <b>tree</b>, make them the root of a <b>descendant chart</b>, carry them into the <b>kinship</b> tab, mark
+        them as the person this file should open on, or delete them. A family row shows the couple and how many
+        children; the names appear when the row is opened.</p>
+        <p>In a large file not everything is drawn at once &ndash; the list would take a second to appear on a
+        phone. It shows the first few hundred and says how many there are in total; <b>Show all</b> brings the rest
+        whenever you want it.</p>
+      </section>
+
       <section class="sec" id="h8b">
         <h4>Checking for duplicates</h4>
         <p>Files that grew over the years, or that were imported twice, often hold the same person more than once.
@@ -2389,6 +2489,22 @@ window.I18N={
         <p>Stammb&auml;ume enthalten personenbezogene Daten lebender Menschen. Eine exportierte .ged-Datei sollte man
         mit derselben Sorgfalt behandeln wie eine Adressliste, und zweimal &uuml;berlegen, bevor man eine Tafel
         weitergibt, auf der Geburtsdaten von Personen stehen, die dem nicht zugestimmt haben.</p>
+      </section>
+
+      <section class="sec" id="d8a">
+        <h4>Die Liste aller Personen und Familien</h4>
+        <p>Oben rechts steht, wie viele Personen in der ge&ouml;ffneten Datei sind. Das ist zugleich ein Knopf:
+        darauf dr&uuml;cken, oder &uuml;ber <b>Daten &rsaquo; Personen und Familien</b> gehen, und die ganze Datei
+        erscheint als Liste. Gesucht wird nach Name, Jahr oder Ort, eingegrenzt nach Stamm, und zwischen Personen
+        und Familien l&auml;sst sich umschalten.</p>
+        <p>Eine Zeile antippen, und sie klappt auf, mit allem, was sich mit dieser Person tun l&auml;sst: sie in
+        die Mitte des <b>Stammbaums</b> holen, sie zur Wurzel einer <b>Nachfahrentafel</b> machen, sie in die
+        <b>Verwandtschaft</b> mitnehmen, sie als die Person merken, bei der diese Datei k&uuml;nftig &ouml;ffnet,
+        oder sie l&ouml;schen. Eine Familienzeile nennt das Paar und die Zahl der Kinder; die Namen stehen da,
+        sobald die Zeile offen ist.</p>
+        <p>Bei einer gro&szlig;en Datei wird nicht alles auf einmal gezeichnet &ndash; die Liste br&auml;uchte auf
+        dem Handy sonst eine Sekunde, bis sie da ist. Gezeigt werden die ersten paar hundert, dazu steht, wie viele
+        es insgesamt sind; <b>Alle zeigen</b> holt den Rest, wann immer man ihn braucht.</p>
       </section>
 
       <section class="sec" id="d8b">
@@ -3347,7 +3463,16 @@ function openModal(id, onClose){
   var el=$(id);
   if(!el || el.classList.contains('show')) return;
   el.classList.add('show');
-  pushOverlay({id:id, close:function(){ el.classList.remove('show'); if(onClose) onClose(); }});
+  /* Ein Fenster, das aus einem anderen heraus geoeffnet wird, muss darueber
+     liegen - und zwar unabhaengig davon, in welcher Reihenfolge die beiden
+     im Dokument stehen. Alle .modal teilen sich z-index 90, also entschied
+     bisher die Dokumentreihenfolge. Aufgefallen ist es, als die Rueckfrage
+     vor dem Loeschen hinter der Personenliste erschien: Sie war sichtbar,
+     aber ihre Knoepfe liessen sich nicht druecken, weil die Liste die
+     Klicks abfing. */
+  el.style.zIndex = 90 + ovStack.length*2;
+  pushOverlay({id:id, close:function(){
+    el.classList.remove('show'); el.style.zIndex=''; if(onClose) onClose(); }});
 }
 /* Panels that are not .modal dialogs (the edit drawers) can join the same
    stack, so the Android back button closes them as well. */
@@ -3386,7 +3511,7 @@ function closeModal(id){
   var el=$(id);
   if(!el || !el.classList.contains('show')) return;
   if(ovStack.length && ovStack[ovStack.length-1].id===id){ requestClose(); return; }
-  el.classList.remove('show');
+  el.classList.remove('show'); el.style.zIndex='';
   for(var i=ovStack.length-1;i>=0;i--) if(ovStack[i].id===id){ ovStack.splice(i,1); break; }
 }
 document.querySelectorAll('.modal').forEach(function(m){
@@ -3865,7 +3990,7 @@ document.addEventListener('visibilitychange', function(){
   if(document.visibilityState==='hidden' && uiTimer) uiFlush(); });
 
 /* ---------------- shared interface for the tabs ---------------- */
-var treeFocusId=null, chartRootCb=null;
+var treeFocusId=null, chartRootCb=null, treeGoCb=null, relGoCb=null;
 window.SHELL = {
   showTab:showTab, currentTab:function(){ return current; },
   noteFocus:function(id){ treeFocusId=id; }, treeFocus:function(){ return treeFocusId; },
@@ -3878,6 +4003,12 @@ window.SHELL = {
   setFull:setFull, isFull:function(){ return FULLSCREEN; }, onFull:function(fn){ fullCbs.push(fn); },
   onChartRoot:function(fn){ chartRootCb=fn; },
   showInChart:function(id){ if(chartRootCb) chartRootCb(id); },
+  /* Dieselbe Bauart fuer die beiden anderen Reiter, damit die Liste sie
+     ansteuern kann, ohne in ihren Innereien zu wuehlen. */
+  onTreeGo:function(fn){ treeGoCb=fn; },
+  treeGo:function(id){ if(treeGoCb) treeGoCb(id); },
+  onRelGo:function(fn){ relGoCb=fn; },
+  relGo:function(id){ if(relGoCb) relGoCb(id); },
   uiGet:uiGet, uiSet:uiSet, uiForget:uiForget
 };
 
@@ -4665,6 +4796,8 @@ wrap.addEventListener('wheel', function(e){
 /* Where the centre person came from, so there is always a way back –
    especially after creating a new, still nameless entry. */
 var trail=[];
+SHELL.onTreeGo(function(id){ setFocus(id); });
+
 function setFocus(id, remember){
   if(!FP.person(id)) return;
   if(remember!==false && FOCUS && FOCUS!==id && FP.person(FOCUS)){
@@ -6740,9 +6873,17 @@ function setupCombo(inputId,listId,onPick){
     list.querySelectorAll('.opt').forEach(function(el){
       if(el.dataset.i!==undefined) el.onclick=function(){ pick(current[+el.dataset.i]); }; });
   }
-  function pick(p){ input.value=p.name+(p.year?' ('+p.year+')':''); onPick(p.id); close(); }
-  input.addEventListener('focus',function(){ open(input.value); });
-  input.addEventListener('input',function(){ onPick(null); open(input.value); });
+  /* Das ✕ im Feld. Es leert nicht nur die Schrift, sondern hebt auch die
+     Auswahl auf - sonst bliebe die Person im Ergebnis stehen, obwohl das
+     Feld leer aussieht. */
+  var clear=$(inputId==='inA'?'clearA':'clearB');
+  function zeigeX(){ if(clear) clear.classList.toggle('show', !!input.value); }
+  if(clear) clear.onclick=function(){
+    input.value=''; onPick(null); close(); zeigeX(); input.focus();
+  };
+  function pick(p){ input.value=p.name+(p.year?' ('+p.year+')':''); onPick(p.id); close(); zeigeX(); }
+  input.addEventListener('focus',function(){ open(input.value); zeigeX(); });
+  input.addEventListener('input',function(){ onPick(null); open(input.value); zeigeX(); });
   input.addEventListener('keydown',function(e){
     var open=list.classList.contains('show');
     var opts=list.querySelectorAll('.opt[data-i]');
@@ -6760,6 +6901,22 @@ function setupCombo(inputId,listId,onPick){
 }
 var cA=setupCombo('inA','listA',function(id){ selA=id; render(); rememberPair(); });
 var cB=setupCombo('inB','listB',function(id){ selB=id; render(); rememberPair(); });
+
+/* Aus der Personenliste heraus angesteuert. Ist A noch frei, kommt die
+   Person nach A; ist A besetzt und B frei, nach B; sind beide besetzt,
+   rueckt A nach B und die neue Person wird A. So kann man zwei Personen
+   nacheinander aus der Liste holen, ohne vorher aufzuraeumen. */
+SHELL.onRelGo(function(id){
+  if(!G || !G.indi[id]) return;
+  if(!selA){ selA=id; }
+  else if(!selB){ selB=id; }
+  else { selB=selA; selA=id; }
+  $('inA').value=selA?fieldFor(selA):'';
+  $('inB').value=selB?fieldFor(selB):'';
+  $('clearA').classList.toggle('show', !!$('inA').value);
+  $('clearB').classList.toggle('show', !!$('inB').value);
+  render(); rememberPair();
+});
 
 /* ---------- remember the pair that was last compared ---------- */
 function rememberPair(){ SHELL.uiSet('rel', {a:selA, b:selB}); }
@@ -7217,9 +7374,9 @@ function suchen(opt){
 
    Beim ersten Lauf gegen die echte Datei wurden aus 206 Treffern 29
    Gruppen mit mehr als zwei Eintraegen, darunter eine mit fuenfzehn
-   Marie Urbain. Der Grund: Bei 70 Punkten reicht "Nachname gleich,
-   Vorname Marie" als Kettenglied, und eine Kette aus lauter schwachen
-   Gliedern verbindet am Ende eine halbe Familie. Uebertragbarkeit gilt
+   derselben Frau. Der Grund: Bei 70 Punkten reicht "Nachname gleich,
+   haeufiger Vorname" als Kettenglied, und eine Kette aus lauter
+   schwachen Gliedern verbindet am Ende eine halbe Familie. Uebertragbarkeit gilt
    schon bei starken Paaren nicht - in der Pruefdatei gab es eine
    Dreiergruppe, bei der A=B und B=C erkannt wurden, A=C aber nicht -,
    bei schwachen ist sie Unsinn. Also: Gruppen nur aus dem starken Band,
@@ -7706,8 +7863,275 @@ return {
 })();
 </script>
 <script>
+/* ===================================================================
+   Personen und Familien
+   -------------------------------------------------------------------
+   Kein vierter Reiter. Gemessen an den echten Beschriftungen: Bei vier
+   Reitern bekommt jeder auf einem 360-px-Telefon 90 px, "Nachfahren-
+   tafel" braucht 94 und "Verwandtschaft" 92, bei 320 px fehlen sogar
+   18 beziehungsweise 16 px. Beide waeren also abgeschnitten.
+
+   Stattdessen ein Fenster mit zwei Wegen hinein: dem Datenmenue und
+   dem Personenzaehler oben rechts, der ohnehin schon sagt, wie viele
+   Personen in der Datei sind. Damit kommt kein einziges neues
+   Bedienelement in die Kopfzeile.
+   =================================================================== */
+var LISTE=(function(){
+var $=FP.$, esc=FP.esc;
+function de(){ return I18N.lang()==='de'; }
+function T(en,dt){ return de()?dt:en; }
+
+/* Mehr als so viele Zeilen werden nicht auf einmal gezeichnet. Gemessen
+   auf einem Telefon mit vierfach gedrosselter Rechenleistung: 400 Zeilen
+   rund 50 ms, 8.661 Zeilen 699 ms. Das Erste merkt man beim Tippen nicht,
+   das Zweite schon. Wer trotzdem alles sehen will, bekommt es. */
+/* Zwei Deckel, weil die beiden Listen unterschiedlich teuer sind. Eine
+   Personenzeile traegt einen Namen, eine Familienzeile zwei. Zwei volle
+   Namen mit allen Vornamen und einem Zeichen dazwischen brechen auf
+   einem Telefon dreifach um, und der Umbruch ist es, was kostet, nicht
+   das Bauen der Zeile. Gemessen
+   bei vierfacher Drosselung: 400 Personenzeilen 105 ms, 400
+   Familienzeilen 440 ms, 150 Familienzeilen rund 170 ms. */
+var DECKEL_P=400, DECKEL_F=150;
+function deckel(){ return ANSICHT==='p' ? DECKEL_P : DECKEL_F; }
+var ANSICHT='p', GEZEIGT=DECKEL_P, OFFEN=null;
+
+function stammListe(){
+  var sel=$('listStamm'), I=FP.indi(), seen={}, vals=[];
+  for(var k in I){ var v=(I[k].stamm||'').trim(); if(v && !seen[v]){ seen[v]=1; vals.push(v); } }
+  vals.sort(function(a,b){ return a.localeCompare(b, de()?'de':'en'); });
+  sel.style.display = vals.length ? '' : 'none';
+  if(!vals.length){ sel.innerHTML=''; return; }
+  var cur=sel.value;
+  sel.innerHTML='<option value="">'+esc(T('All branches','Alle Stämme'))+'</option>'+
+    vals.map(function(v){ return '<option value="'+esc(v)+'">'+esc(v)+'</option>'; }).join('');
+  sel.value=cur; if(sel.value!==cur) sel.value='';
+}
+
+function trefferP(){
+  var toks=$('listQ').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  var stamm=$('listStamm').value, I=FP.indi();
+  return FP.index().filter(function(e){
+    if(stamm && (I[e.id]||{}).stamm!==stamm) return false;
+    for(var i=0;i<toks.length;i++) if(e.search.indexOf(toks[i])<0) return false;
+    return true;
+  });
+}
+/* Eine Familie wird ueber die Namen ihrer Mitglieder gesucht - danach
+   sucht man sie ja, nicht nach ihrer Kennung. Der Suchtext wird einmal
+   gebaut und gemerkt: Ihn bei jedem Tastendruck fuer 3.892 Familien neu
+   zusammenzusetzen kostete auf einem viermal gedrosselten Telefon 455 ms. */
+var FIDX=null;
+function famIndex(){
+  if(FIDX) return FIDX;
+  var I=FP.indi(), F=FP.fam(), out=[];
+  for(var id in F){
+    var f=F[id];
+    var leute=[f.husb,f.wife].concat(f.children||[]).filter(function(x){ return x && I[x]; });
+    if(!leute.length) continue;
+    var paarName=[f.husb,f.wife].filter(function(x){ return x && I[x]; })
+                  .map(function(x){ return FP.fullName(I[x]); });
+    out.push({
+      id:id, fam:f, paar:[f.husb,f.wife],
+      kinder:(f.children||[]).filter(function(x){ return I[x]; }),
+      sort:(paarName[0]||'\uffff'),
+      /* Die fertige Zeile liegt gleich mit im Index. Sie bei jedem
+         Tastendruck fuer 400 Familien neu zusammenzusetzen kostete auf
+         einem gedrosselten Telefon 296 ms gegen 83 ms bei den Personen,
+         weil je Familie alle Kindernamen durchlaufen werden. */
+      html:null,
+      staemme:leute.map(function(x){ return I[x].stamm||''; }),
+      search:(leute.map(function(x){ return FP.fullName(I[x]); }).join(' ')+' '+
+              (f.marrDate||'')+' '+(f.marrPlace||'')+' #'+id).toLowerCase()
+    });
+  }
+  out.sort(function(a,b){ return a.sort.localeCompare(b.sort, de()?'de':'en'); });
+  FIDX=out; return out;
+}
+function trefferF(){
+  var toks=$('listQ').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  var stamm=$('listStamm').value;
+  return famIndex().filter(function(f){
+    if(stamm && f.staemme.indexOf(stamm)<0) return false;
+    for(var i=0;i<toks.length;i++) if(f.search.indexOf(toks[i])<0) return false;
+    return true;
+  });
+}
+
+function zeilePerson(e){
+  var p=FP.indi()[e.id]; if(!p) return '';
+  return '<div class="lrow" data-id="'+esc(e.id)+'">'+
+    '<div class="lnm"><b>'+esc(e.name)+'</b></div>'+
+    (e.meta ? '<div class="lmeta">'+esc(e.meta)+(p.stamm?' · '+esc(p.stamm):'')+'</div>'
+            : (p.stamm?'<div class="lmeta">'+esc(p.stamm)+'</div>':''))+
+    '</div>';
+}
+function zeileFamilie(f){
+  if(f.html!=null) return f.html;
+  var I=FP.indi();
+  var paar=f.paar.filter(Boolean).map(function(x){ return I[x]?FP.fullName(I[x]):''; })
+            .filter(Boolean).join('  \u26AD  ') || T('(couple unknown)','(Paar unbekannt)');
+  var zz=[];
+  if(f.fam.marrDate) zz.push('\u26AD '+FP.gedToText(f.fam.marrDate));
+  if(f.fam.marrPlace) zz.push(f.fam.marrPlace);
+  /* Nur die Zahl, nicht die Namen. Eine Zeile, die acht Kindernamen
+     auffuehrt, bricht dreifach um: Die Liste wird unlesbar, und der
+     Umbruch von 400 solchen Zeilen kostete auf einem gedrosselten
+     Telefon 300 ms gegen 85 bei den Personen. Die Namen stehen im
+     aufgeklappten Zustand, wo man sie auch wirklich liest. */
+  zz.push(f.kinder.length
+    ? f.kinder.length+' '+T(f.kinder.length===1?'child':'children', f.kinder.length===1?'Kind':'Kinder')
+    : T('no children','keine Kinder'));
+  f.html='<div class="lrow" data-fid="'+esc(f.id)+'">'+
+    '<div class="lnm"><b>'+esc(paar)+'</b></div>'+
+    '<div class="lmeta">'+esc(zz.join(' \u00B7 '))+'</div></div>';
+  return f.html;
+}
+
+function zeichne(){
+  var box=$('listRows'), treffer = ANSICHT==='p' ? trefferP() : trefferF();
+  var teil=treffer.slice(0, GEZEIGT);
+  box.innerHTML = treffer.length
+    ? teil.map(ANSICHT==='p'?zeilePerson:zeileFamilie).join('')
+    : '<div class="lempty">'+esc(T('Nothing matches.','Keine Treffer.'))+'</div>';
+  $('listCount').textContent = treffer.length
+    ? (teil.length<treffer.length
+        ? treffer.length+' '+T('found','gefunden')+', '+teil.length+' '+T('shown','gezeigt')
+        : treffer.length+' '+(ANSICHT==='p'
+            ? T(treffer.length===1?'person':'people', treffer.length===1?'Person':'Personen')
+            : T(treffer.length===1?'family':'families', treffer.length===1?'Familie':'Familien')))
+    : '';
+  var mehr=$('listMore');
+  mehr.hidden = teil.length>=treffer.length;
+  mehr.textContent = T('Show all','Alle zeigen')+' ('+treffer.length+')';
+  OFFEN=null;
+}
+
+function knopf(txt, tun){ return '<button class="btn small" data-tun="'+tun+'">'+esc(txt)+'</button>'; }
+
+function aufklappen(el){
+  if(OFFEN && OFFEN!==el){ OFFEN.classList.remove('auf'); var a=OFFEN.querySelector('.lacts'); if(a) a.remove(); }
+  if(el.classList.contains('auf')){
+    el.classList.remove('auf'); var b=el.querySelector('.lacts'); if(b) b.remove(); OFFEN=null; return;
+  }
+  el.classList.add('auf'); OFFEN=el;
+  var d=document.createElement('div'); d.className='lacts';
+  var id=el.dataset.id, fid=el.dataset.fid;
+  if(id){
+    d.innerHTML=
+      knopf(T('In the tree','Im Stammbaum'),'baum')+
+      knopf(T('As chart root','Als Wurzel der Tafel'),'tafel')+
+      knopf(T('In kinship','In die Verwandtschaft'),'verw')+
+      knopf(T('Open here on start','Beim Öffnen hier beginnen'),'start')+
+      '<button class="btn small danger" data-tun="weg">'+esc(T('Delete','Löschen'))+'</button>';
+  } else {
+    var f=FP.fam()[fid], I=FP.indi();
+    var erste=(f&&(f.husb||f.wife||(f.children||[])[0]))||null;
+    var kinder=f ? (f.children||[]).filter(function(x){ return I[x]; }) : [];
+    var kopf = kinder.length
+      ? '<div class="lmeta" style="flex:1 1 100%">'+esc(T('Children: ','Kinder: ')+
+          kinder.map(function(x){ return FP.fullName(I[x]); }).join(', '))+'</div>'
+      : '';
+    d.innerHTML = kopf + (erste
+      ? knopf(T('Show this family in the tree','Diese Familie im Stammbaum'),'fbaum')
+      : '<span class="lmeta">'+esc(T('This family has no members left.','Diese Familie hat keine Mitglieder mehr.'))+'</span>');
+  }
+  el.appendChild(d);
+  Array.prototype.forEach.call(d.querySelectorAll('[data-tun]'), function(b){
+    b.onclick=function(ev){ ev.stopPropagation(); tun(b.dataset.tun, id, fid); };
+  });
+}
+
+function zu(){ SHELL.closeModal('mdList'); }
+
+function tun(was, id, fid){
+  var P=FP.indi();
+  if(was==='fbaum'){
+    var f=FP.fam()[fid]; if(!f) return;
+    var ziel=f.husb||f.wife||(f.children||[])[0];
+    if(!ziel){ SHELL.toast(T('Nobody to show.','Niemand zum Anzeigen.')); return; }
+    zu(); SHELL.showTab('tree'); SHELL.treeGo(ziel); return;
+  }
+  if(!P[id]) return;
+  if(was==='baum'){ zu(); SHELL.showTab('tree'); SHELL.treeGo(id); }
+  else if(was==='tafel'){ zu(); SHELL.showTab('chart'); SHELL.showInChart(id); }
+  else if(was==='verw'){ zu(); SHELL.showTab('rel'); SHELL.relGo(id); }
+  else if(was==='start'){
+    FP.setStart(id);
+    SHELL.toast(T('This file will open here from now on.','Diese Datei öffnet künftig hier.'));
+  }
+  else if(was==='weg'){
+    var nm=FP.fullName(P[id]);
+    SHELL.ask(T('Delete this person?','Diese Person löschen?'),
+      T('“'+nm+'” is removed from the file. Links to parents, partners and children are dropped with it. This cannot be undone here – but the file on your disk is untouched.',
+        '„'+nm+'“ wird aus der Datei entfernt. Die Verbindungen zu Eltern, Partnern und Kindern gehen mit. Das lässt sich hier nicht rückgängig machen – die Datei auf der Festplatte bleibt aber unberührt.'),
+      function(ja){
+        if(!ja) return;
+        FP.deletePerson(id);
+        SHELL.toast(T('Deleted: ','Gelöscht: ')+nm);
+        FIDX=null; stammListe(); fassen(); zeichne();
+      }, T('Delete','Löschen'));
+  }
+}
+
+function fassen(){
+  $('listTabP').textContent=T('People','Personen')+' ('+FP.count()+')';
+  $('listTabF').textContent=T('Families','Familien')+' ('+Object.keys(FP.fam()).length+')';
+}
+
+function oeffnen(welche){
+  if(!FP.hasData() || !FP.count()){
+    SHELL.toast(T('Open a file first.','Erst eine Datei öffnen.')); return;
+  }
+  ANSICHT = welche==='f' ? 'f' : 'p';
+  GEZEIGT=deckel();
+  $('listTabP').classList.toggle('on', ANSICHT==='p');
+  $('listTabF').classList.toggle('on', ANSICHT!=='p');
+  stammListe(); fassen(); zeichne();
+  $('listClear').classList.toggle('show', !!$('listQ').value);
+  SHELL.openModal('mdList');
+}
+
+function aufsetzen(){
+  var mi=$('miList');
+  if(mi) mi.onclick=function(){ SHELL.closeDataMenu && SHELL.closeDataMenu(); oeffnen('p'); };
+  var z=$('dataCount');
+  if(z) z.onclick=function(){ if(FP.hasData() && FP.count()) oeffnen('p'); };
+  $('listClose').onclick=zu;
+  $('listTabP').onclick=function(){ ANSICHT='p'; GEZEIGT=deckel();
+    this.classList.add('on'); $('listTabF').classList.remove('on'); zeichne(); };
+  $('listTabF').onclick=function(){ ANSICHT='f'; GEZEIGT=deckel();
+    this.classList.add('on'); $('listTabP').classList.remove('on'); zeichne(); };
+  $('listQ').oninput=function(){ GEZEIGT=deckel();
+    $('listClear').classList.toggle('show', !!this.value); zeichne(); };
+  $('listClear').onclick=function(){
+    $('listQ').value=''; this.classList.remove('show'); GEZEIGT=deckel(); zeichne(); $('listQ').focus(); };
+  $('listStamm').onchange=function(){ GEZEIGT=deckel(); zeichne(); };
+  $('listMore').onclick=function(){ GEZEIGT=1e9; zeichne(); };
+  /* Ein Zuhoerer am Kasten statt einer je Zeile: Das Binden von 400
+     Zuhoerern kostete 4 ms und musste bei jedem Tastendruck neu geschehen;
+     bei allen 8.661 Zeilen entsprechend mehr. */
+  $('listRows').addEventListener('click', function(ev){
+    if(ev.target.closest('.lacts')) return;
+    var zeile=ev.target.closest('.lrow');
+    if(zeile) aufklappen(zeile);
+  });
+  /* Aendert sich der Bestand, waehrend das Fenster offen ist, muss es
+     mitziehen - sonst zeigt die Liste Personen, die es nicht mehr gibt. */
+  FP.on(function(){
+    FIDX=null;
+    if($('mdList').classList.contains('show')){ fassen(); zeichne(); }
+    var zz=$('dataCount'); if(zz) zz.disabled = !(FP.hasData() && FP.count());
+  });
+}
+
+return { boot:aufsetzen, oeffnen:oeffnen, _deckel:function(){ return {p:DECKEL_P, f:DECKEL_F}; } };
+})();
+</script>
+<script>
 /* Stored data is loaded only once all three tabs are ready. */
 DUPE.boot();
+LISTE.boot();
 SHELL.boot();
 </script>
 </body>
