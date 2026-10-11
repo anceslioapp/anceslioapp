@@ -308,6 +308,33 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 .duperec .id{font-size:11.5px; color:var(--muted); float:right}
 .duperec .zz{color:var(--muted); font-size:12.5px}
 .dupeacts{display:flex; gap:7px; flex-wrap:wrap; margin-top:8px}
+/* ---------- Daten pruefen ----------
+   Eine Karte je Regel, nicht je Fall. Der Kopf traegt die Zahl, denn
+   die ist hier die eigentliche Nachricht: "3" neben "Gestorben vor
+   der Geburt" sagt mehr als jeder Satz. */
+#mdPruef .modalbox{width:min(820px,96vw); max-height:92dvh}
+.pruefcard{cursor:default}
+.pkopf{display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none}
+.pzahl{flex:0 0 auto; min-width:34px; text-align:center; font-weight:700; font-size:15px;
+  color:var(--accent); background:var(--hl); border-radius:8px; padding:3px 7px}
+.pname{flex:1 1 auto; font-weight:600; font-size:15px; color:var(--ink)}
+.ppfeil{flex:0 0 auto; color:var(--muted); font-size:17px; width:16px; text-align:center}
+.perkl{font-size:12.5px; color:var(--muted); line-height:1.5; margin:7px 0 0}
+.pfaelle{margin-top:9px; border-top:1px solid var(--line)}
+.pfall{display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+  padding:7px 2px; border-bottom:1px solid var(--line); font-size:13.5px}
+.pfall:last-child{border-bottom:none}
+.pfall.weg{opacity:.45}
+.ptext{flex:1 1 220px; min-width:0; color:var(--ink); line-height:1.45}
+.pneu{flex:0 0 auto; color:var(--ok); font-weight:600}
+.pacts{flex:0 0 auto; display:flex; gap:6px}
+.pmehr{text-align:center; padding:7px 0 2px}
+@media (max-width:860px){
+  .pfall{align-items:flex-start}
+  .ptext{flex:1 1 100%}
+  .pacts{flex:1 1 100%}
+  .pacts .btn{flex:1 1 auto; justify-content:center}
+}
 .dupefields{margin:10px 0 0; border-top:1px dashed var(--line); padding-top:9px}
 .dupefields table{width:100%; border-collapse:collapse; font-size:13px}
 .dupefields td,.dupefields th{text-align:left; padding:3px 6px 3px 0; vertical-align:top}
@@ -326,6 +353,19 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 .helpnav button{background:var(--soft); border:1px solid var(--line); color:var(--accent); border-radius:16px;
   padding:5px 11px; font-size:12.5px; cursor:pointer}
 .helpnav button:hover{background:var(--hl); border-color:var(--accent2)}
+/* Dreizehn Kapitel statt zehn: Umgebrochen füllte die Reiterzeile auf
+   einem 360-px-Telefon 173 px, also ein Viertel des Fensters, bevor
+   ein Satz Anleitung zu sehen war. Auf schmalen Schirmen steht sie
+   deshalb in einer Zeile und wird seitlich geschoben - dasselbe
+   Verhalten wie eine Reiterleiste im Browser. Gemessen: 173 px
+   vorher, 44 px jetzt. Auf breiten Schirmen passen sie ohnehin in
+   zwei Zeilen, dort bleibt der Umbruch. */
+@media (max-width:860px){
+  .helpnav{flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity}
+  .helpnav::-webkit-scrollbar{display:none}
+  .helpnav button{flex:0 0 auto; scroll-snap-align:start}
+}
 .help .sec{scroll-margin-top:56px; margin:0 0 26px}
 .help h4{font-family:Georgia,serif; font-size:19px; color:var(--accent); margin:0 0 8px;
   padding-bottom:6px; border-bottom:1px solid var(--line)}
@@ -917,6 +957,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <hr>
         <button id="miList" data-i18n="☰ People and families">&#9776; People and families</button>
         <button id="miDupe" data-i18n="⧉ Check for duplicates">&#10697; Check for duplicates</button>
+        <button id="miPruef" data-i18n="⚠ Check the data">&#9888; Check the data</button>
         <hr>
         <button id="miExport" data-i18n="💾 Export GEDCOM (.ged)">&#128190; Export GEDCOM (.ged)</button>
         <hr>
@@ -1497,6 +1538,60 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   </div>
 </div>
 
+<!-- ===================== Daten pruefen =====================
+     Dasselbe Muster wie die Dublettenpruefung: ein eigenes Fenster
+     statt eines Reiters, ein Satz vorweg, was geschieht, und nichts
+     wird ohne Bestaetigung geaendert. Gruppiert wird nach Regel und
+     nicht nach Person - bei 4.299 gleichartigen Befunden waeren
+     4.299 Karten unbenutzbar. -->
+<div class="modal" id="mdPruef">
+  <div class="modalbox">
+    <h3><span data-lang="en">Check the data</span><span data-lang="de">Daten pr&uuml;fen</span></h3>
+    <div class="modalbody" id="pruefBody">
+
+      <div id="pruefStart">
+        <p>
+          <span data-lang="en">The app goes through the open file and looks for three kinds of thing:
+          entries that contradict each other, entries that are possible but unlikely, and entries where
+          only the notation is off. For each one it says what it found and, where it can, what it would
+          put in its place.</span>
+          <span data-lang="de">Die App geht die ge&ouml;ffnete Datei durch und sucht nach dreierlei:
+          Angaben, die einander widersprechen, Angaben, die m&ouml;glich, aber unwahrscheinlich sind, und
+          Angaben, bei denen nur die Schreibweise nicht stimmt. Zu jedem Fund steht, was gefunden wurde
+          und, wo es geht, was stattdessen dastehen w&uuml;rde.</span>
+        </p>
+        <p class="onlylook">
+          <span data-lang="en">Nothing is changed without you. A suggestion is taken over only when you
+          press the button for it, and the last ten steps can be undone. Even so, export the file first,
+          then nothing can go wrong.</span>
+          <span data-lang="de">Ohne Dich wird nichts ge&auml;ndert. Ein Vorschlag wird nur &uuml;bernommen,
+          wenn Du den Knopf daf&uuml;r dr&uuml;ckst, und die letzten zehn Schritte lassen sich
+          zur&uuml;cknehmen. Trotzdem: vorher die Datei exportieren, dann kann nichts passieren.</span>
+        </p>
+        <button class="btn primary" id="pruefGo" data-i18n="Check now">Check now</button>
+        <span id="pruefBusy" class="dupebusy" hidden></span>
+      </div>
+
+      <div id="pruefResult" hidden>
+        <div class="dupesum" id="pruefSum"></div>
+        <div class="dupetabs">
+          <button class="btn small on" id="pruefTabW"></button>
+          <button class="btn small" id="pruefTabU"></button>
+          <button class="btn small" id="pruefTabS"></button>
+        </div>
+        <div id="pruefList"></div>
+        <div id="pruefNone" class="dupenone" hidden></div>
+      </div>
+
+    </div>
+    <div class="modalfoot">
+      <button class="btn small" id="pruefUndo" hidden></button>
+      <button class="btn small" id="pruefSave" hidden data-i18n="Save list">Save list</button>
+      <button class="btn" id="pruefClose" data-i18n="Close">Close</button>
+    </div>
+  </div>
+</div>
+
 <button id="fullExit" class="noprint" hidden data-i18n-title="Leave full screen"
         title="Leave full screen" aria-label="Leave full screen">&#10005;</button>
 <div id="toast"></div>
@@ -1851,6 +1946,8 @@ var DE = {
 'No matches. The search looked at given and family name, birth and death (date and place) and the ID.':'Keine Treffer. Gesucht wurde in Vor- und Nachname, Geburt und Tod (Datum und Ort) und der Kennung.',
 'No matches. The search looked at the names of all members, the marriage (date and place) and the ID.':'Keine Treffer. Gesucht wurde in den Namen aller Mitglieder, der Heirat (Datum und Ort) und der Kennung.',
 'Name or marriage':'Name oder Heirat',
+'\u26A0 Check the data':'\u26A0 Daten pr\u00fcfen','Check now':'Jetzt pr\u00fcfen',
+
 'Narrow down who can be picked':'Eingrenzen, wer zur Auswahl steht',
 
 'Name or year, e.g. Thomas 1986':'Name oder Jahr, z. B. Thomas 1986',
@@ -2013,20 +2110,9 @@ window.I18N={
     <h3 data-i18n="Guide – how Anceslio works">Guide &ndash; how Anceslio works</h3>
     <div class="modalbody help" id="helpBody">
       <div data-lang="en">
-      <div class="helpnav">
-        <button data-go="h1">Overview</button>
-        <button data-go="h2">First steps</button>
-        <button data-go="h3">GEDCOM</button>
-        <button data-go="h4">Tree</button>
-        <button data-go="h5">Descendants</button>
-        <button data-go="h6">Kinship</button>
-        <button data-go="h7">Saving</button>
-        <button data-go="h8">Privacy</button>
-        <button data-go="h9">Troubleshooting</button>
-        <button data-go="h10">Technical</button>
-      </div>
+      <div class="helpnav"></div>
 
-      <section class="sec" id="h1">
+      <section class="sec" id="h1" data-nav="Overview">
         <h4>What this app is</h4>
         <p>Anceslio turns a GEDCOM file &ndash; the standard file format for family trees &ndash; into something you
         can actually look at, work with and print. It holds three tools that all share the same data:</p>
@@ -2038,8 +2124,7 @@ window.I18N={
         <p>There is no account and no sign-in, and the app works without an internet connection. Nothing is uploaded:
         your family data stays on the device you are using.</p>
       </section>
-
-      <section class="sec" id="h2">
+      <section class="sec" id="h2" data-nav="First steps">
         <h4>First steps</h4>
         <p>The start screen offers two ways in, and both are complete. You can bring a GEDCOM file, or you can
         start with nothing at all.</p>
@@ -2049,6 +2134,9 @@ window.I18N={
           children. Every relative you name is created on the spot.</li>
           <li><b>Bringing a file:</b> choose <b>&#128193; Open a GEDCOM file</b> and pick your <b>.ged</b> file,
           or drop it onto the box. The number of people appears in the top right corner.</li>
+          <li><b>Later on:</b> the same two offers sit in the data menu as <b>Open GEDCOM file</b> and
+          <b>Load sample family</b> &ndash; the sample is an invented family of twenty people to try everything
+          out on without touching your own.</li>
           <li>Either way the <b>Tree</b> opens. Type a name in the search box (adding a year helps, for example
           &bdquo;William 1902&ldquo;) and pick the person from the list.</li>
           <li>Tap any box to open that person&rsquo;s details, edit them, add relatives.</li>
@@ -2057,8 +2145,7 @@ window.I18N={
         <div class="tip"><b>Only want a look first?</b> <b>Try the sample family</b> loads a small fictional
         family, so you can see everything working before your own data comes into play.</div>
       </section>
-
-      <section class="sec" id="h3">
+      <section class="sec" id="h3" data-nav="GEDCOM">
         <h4>What is a GEDCOM file?</h4>
         <p>GEDCOM (file ending <b>.ged</b>) has been the common exchange format for family trees for decades. It
         holds people with their names and dates, plus the families that connect them. Practically every genealogy
@@ -2068,8 +2155,7 @@ window.I18N={
         <p>Most genealogy websites and programs offer a GEDCOM export somewhere in their settings or family-tree
         menu. That exported file is what you open here.</p>
       </section>
-
-      <section class="sec" id="h4">
+      <section class="sec" id="h4" data-nav="Tree">
         <h4>The Tree tab</h4>
         <p>Large trees get unreadable very quickly, so this tab never shows everybody at once. It shows
         <b>one person at the centre</b> &ndash; marked with a gold frame &ndash; surrounded by their closest
@@ -2144,8 +2230,7 @@ window.I18N={
         <div class="note"><b>Good to know:</b> every change takes effect in the other two tabs at once. Correct a date
         of birth here and the chart and the kinship result use it immediately.</div>
       </section>
-
-      <section class="sec" id="h5">
+      <section class="sec" id="h5" data-nav="Descendants">
         <h4>The Descendants tab</h4>
         <p>This is where the classic <b>descendant chart</b> is built: a root person at the top, all descendants
         below, in plain black-and-white boxes like a printed family book. This tab never changes your data, only the
@@ -2174,8 +2259,7 @@ window.I18N={
         &ndash; root person, hidden branches, reference boxes, title. <b>Open project</b> brings that state back
         exactly as it was, so you can keep several charts side by side without them interfering.</p>
       </section>
-
-      <section class="sec" id="h6">
+      <section class="sec" id="h6" data-nav="Kinship">
         <h4>The Kinship tab</h4>
         <p>Pick two people and the app works out how they are related across any number of generations, then writes
         it in one sentence, for example &bdquo;Thomas is the second cousin once removed of Clara&ldquo;. The same
@@ -2193,13 +2277,76 @@ window.I18N={
         the pick lists when many people share a given name, and <b>Swap A and B</b> turns the question around. At the
         bottom of the tab, <b>Kinship terms explained</b> is there whenever a word is unfamiliar.</p>
       </section>
-
-      <section class="sec" id="h7">
+      <section class="sec" id="h8a" data-nav="List">
+        <h4>The list of people and families</h4>
+        <p>The number at the top right says how many people are in the open file. It is also a button: press it,
+        or take <b>Data &rsaquo; People and families</b>, and the whole file appears as a list. Search by name,
+        year or place, and switch between people and families. <b>Filter</b> opens the two narrower
+        settings, branch and year of birth; they stay out of the way until you want them, and the number
+        beside the button says how many are set. The year filter works in both bands: a family matches
+        when any of its members was born in the range.</p>
+        <p>The families band is the one place where the search looks at something else, and it says so:
+        a family is found by the <b>names of everyone in it</b> and by its <b>marriage</b>, date and place.
+        That is not an oversight &ndash; in a GEDCOM file a marriage belongs to the family, not to a person,
+        which is why birth and death are searched among the people and the wedding among the families.</p>
+        <p>Tap a row and it opens, with everything you can do with that person: put them at the centre of the
+        <b>tree</b>, make them the root of a <b>descendant chart</b>, carry them into the <b>kinship</b> tab, mark
+        them as the person this file should open on, or delete them. A family row is set in two columns, the couple on the left and the
+        children on the right, the way a printed family book sets them &ndash; the children in the order they
+        were born, the eldest first.</p>
+        <p>In a large file not everything is drawn at once &ndash; the list would take a second to appear on a
+        phone. It shows the first few hundred and says how many there are in total; <b>Show all</b> brings the rest
+        whenever you want it.</p>
+      </section>
+      <section class="sec" id="h8b" data-nav="Duplicates">
+        <h4>Checking for duplicates</h4>
+        <p>Files that grew over the years, or that were imported twice, often hold the same person more than once.
+        <b>Data &rsaquo; Check for duplicates</b> compares every person in the open file with every other and lists
+        who might be a double entry. For each suggestion it shows what it went by, so you can judge it instead of
+        having to trust a number.</p>
+        <p>The results come in two bands. <b>Strong suspicion</b> is the band to work through; <b>to review</b>
+        contains the weaker cases, where the greater part will not be duplicates at all. Nothing is ever merged on
+        its own: a record changes only when you press the button for it, and the last ten steps can be undone.</p>
+        <p>When you confirm a pair, nothing is deleted. The merged person takes <b>everything from both</b> records
+        &ndash; children, marriages, dates, occupation, and any tags the app does not use itself. You only decide
+        where the two genuinely contradict each other, and even then the app suggests one: a full date beats a bare
+        year, the written-out form beats the abbreviation. The identifier that is given up is written into the
+        surviving record, so the step stays traceable. If two families end up describing the same couple, they are
+        merged too and keep all the children of both.</p>
+        <p>A group can hold more than two records, and a chain is not proof: that A matches B and B matches C does
+        not make A and C the same person. The app shows the group and leaves the decision to you.</p>
+        <p><b>Save list</b> writes the findings to a text file. That is the way to go if the real master data lives
+        somewhere else &ndash; in a spreadsheet, say &ndash; and the corrections have to be made there.</p>
+      </section>
+      <section class="sec" id="h8c" data-nav="Check">
+        <h4>Checking the data</h4>
+        <p><b>Data &rsaquo; Check the data</b> goes through the open file and sorts what it finds into three bands.
+        <b>Contradiction</b> holds entries that cannot both be true &ndash; a death before a birth, a wedding after
+        one, a child older than its father. One of the two values is wrong, and which one only you can know, so
+        here the app shows and does not suggest. <b>Unlikely</b> holds what is possible but rare: a mother of
+        nine or of fifty-two, a life of 118 years, two siblings born four months apart. Most of these are typing
+        errors in a year. <b>Notation</b> holds the cases where nothing is factually wrong and only the writing is
+        off &ndash; a double space, a place ending in a comma, a family name shouted in capitals. There the app
+        does suggest, and shows the replacement beside the entry.</p>
+        <p>The findings are grouped <b>by rule, not by person</b>. A file of several thousand people can hold
+        thousands of the same small thing, and as thousands of cards that would be unusable; as one line with a
+        number and a button it is done in a moment. Each rule says what it looks for and why that is suspicious.
+        Tap the heading to see the individual cases, each with <b>Show</b>, which takes you to that person in the
+        tree, and, where there is a suggestion, <b>Take over</b>.</p>
+        <p>One rule deserves a word of its own. In many files a striking number of dates fall on the first of
+        January &ndash; not because so many people were born on New Year's Day, but because the year was known and
+        the day was not. The app does not guess this; it counts. Only when a date falls on one day far more often
+        than chance allows does it say so, and it gives the number that would be expected. Which of them are real
+        birthdays it cannot know, so look before you take them over.</p>
+        <p>Nothing is changed without you, the last ten steps can be undone, and <b>Save list</b> writes everything
+        to a text file &ndash; the way to go when the corrections have to be made in a spreadsheet somewhere else.</p>
+      </section>
+      <section class="sec" id="h7" data-nav="Saving">
         <h4>Saving and backups</h4>
         <p>Your data and every change are kept <b>automatically</b> in this browser or app, so everything is still
         there the next time you open it. That store belongs to <b>this app on this device</b>: your phone knows
         nothing about what you edited on a laptop.</p>
-        <p>The real backup is the <b>export</b>: <b>Data &rarr; Export GEDCOM</b> offers three ways out &ndash; save
+        <p>The real backup is the <b>export</b>: <b>Export GEDCOM (.ged)</b> in the data menu offers three ways out &ndash; save
         as a file, copy to the clipboard, or show the text so you can copy it by hand. Any of them gives you a
         complete GEDCOM file. Do this after larger edits, and always before switching devices or clearing your
         browser.</p>
@@ -2233,8 +2380,7 @@ window.I18N={
         <p><b>Clear data on this device</b> in the same menu removes the file that is currently open, for example before
         handing the device on. It asks first, because it cannot be undone.</p>
       </section>
-
-      <section class="sec" id="h8">
+      <section class="sec" id="h8" data-nav="Privacy">
         <h4>Privacy</h4>
         <p>Anceslio has no server, no account and no analytics. Your family data is read from the file you choose,
         kept in this app&rsquo;s own local storage and written back to a file when you export it. It is never sent
@@ -2243,51 +2389,7 @@ window.I18N={
         any address list, and think twice before sharing a chart that contains dates of birth of people who have not
         agreed to it.</p>
       </section>
-
-      <section class="sec" id="h8a">
-        <h4>The list of people and families</h4>
-        <p>The number at the top right says how many people are in the open file. It is also a button: press it,
-        or take <b>Data &rsaquo; People and families</b>, and the whole file appears as a list. Search by name,
-        year or place, and switch between people and families. <b>Filter</b> opens the two narrower
-        settings, branch and year of birth; they stay out of the way until you want them, and the number
-        beside the button says how many are set. The year filter works in both bands: a family matches
-        when any of its members was born in the range.</p>
-        <p>The families band is the one place where the search looks at something else, and it says so:
-        a family is found by the <b>names of everyone in it</b> and by its <b>marriage</b>, date and place.
-        That is not an oversight &ndash; in a GEDCOM file a marriage belongs to the family, not to a person,
-        which is why birth and death are searched among the people and the wedding among the families.</p>
-        <p>Tap a row and it opens, with everything you can do with that person: put them at the centre of the
-        <b>tree</b>, make them the root of a <b>descendant chart</b>, carry them into the <b>kinship</b> tab, mark
-        them as the person this file should open on, or delete them. A family row is set in two columns, the couple on the left and the
-        children on the right, the way a printed family book sets them &ndash; the children in the order they
-        were born, the eldest first.</p>
-        <p>In a large file not everything is drawn at once &ndash; the list would take a second to appear on a
-        phone. It shows the first few hundred and says how many there are in total; <b>Show all</b> brings the rest
-        whenever you want it.</p>
-      </section>
-
-      <section class="sec" id="h8b">
-        <h4>Checking for duplicates</h4>
-        <p>Files that grew over the years, or that were imported twice, often hold the same person more than once.
-        <b>Data &rsaquo; Check for duplicates</b> compares every person in the open file with every other and lists
-        who might be a double entry. For each suggestion it shows what it went by, so you can judge it instead of
-        having to trust a number.</p>
-        <p>The results come in two bands. <b>Strong suspicion</b> is the band to work through; <b>to review</b>
-        contains the weaker cases, where the greater part will not be duplicates at all. Nothing is ever merged on
-        its own: a record changes only when you press the button for it, and the last ten steps can be undone.</p>
-        <p>When you confirm a pair, nothing is deleted. The merged person takes <b>everything from both</b> records
-        &ndash; children, marriages, dates, occupation, and any tags the app does not use itself. You only decide
-        where the two genuinely contradict each other, and even then the app suggests one: a full date beats a bare
-        year, the written-out form beats the abbreviation. The identifier that is given up is written into the
-        surviving record, so the step stays traceable. If two families end up describing the same couple, they are
-        merged too and keep all the children of both.</p>
-        <p>A group can hold more than two records, and a chain is not proof: that A matches B and B matches C does
-        not make A and C the same person. The app shows the group and leaves the decision to you.</p>
-        <p><b>Save list</b> writes the findings to a text file. That is the way to go if the real master data lives
-        somewhere else &ndash; in a spreadsheet, say &ndash; and the corrections have to be made there.</p>
-      </section>
-
-      <section class="sec" id="h9">
+      <section class="sec" id="h9" data-nav="Troubleshooting">
         <h4>If something does not work</h4>
         <p><b>Choosing a file does nothing.</b> Some devices restrict the file picker. Copy the .ged file into a
         plain folder such as Downloads and try again from there, or open this page in an ordinary browser, where
@@ -2304,8 +2406,7 @@ window.I18N={
         <p><b>The data is gone after reopening.</b> The browser cleared its storage. Load your last exported .ged
         file again &ndash; and export a little more often.</p>
       </section>
-
-      <section class="sec" id="h10">
+      <section class="sec" id="h10" data-nav="Technical">
         <h4>Technical notes</h4>
         <p>Anceslio reads and writes <b>GEDCOM 5.5.1</b> in UTF-8. It interprets name (NAME, GIVN, SURN), sex (SEX),
         birth and death with date and place (BIRT, DEAT), occupation (OCCU), a lineage or house name stored as
@@ -2344,22 +2445,24 @@ window.I18N={
         <b>Root person</b>, <b>View</b>, <b>The selected person</b> and <b>Output</b>.</p>
         <p class="muted">Version 3.3</p>
       </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
       </div>
       <div data-lang="de">
-      <div class="helpnav">
-        <button data-go="d1">&Uuml;berblick</button>
-        <button data-go="d2">Erste Schritte</button>
-        <button data-go="d3">GEDCOM</button>
-        <button data-go="d4">Stammbaum</button>
-        <button data-go="d5">Nachfahrentafel</button>
-        <button data-go="d6">Verwandtschaft</button>
-        <button data-go="d7">Speichern</button>
-        <button data-go="d8">Datenschutz</button>
-        <button data-go="d9">Wenn etwas klemmt</button>
-        <button data-go="d10">Technisches</button>
-      </div>
+      <div class="helpnav"></div>
 
-      <section class="sec" id="d1">
+      <section class="sec" id="d1" data-nav="Überblick">
         <h4>Was diese App ist</h4>
         <p>Anceslio macht aus einer GEDCOM-Datei &ndash; dem &uuml;blichen Dateiformat f&uuml;r Stammb&auml;ume &ndash;
         etwas, das man tats&auml;chlich ansehen, bearbeiten und drucken kann. Die App enth&auml;lt drei Werkzeuge, die
@@ -2372,8 +2475,7 @@ window.I18N={
         <p>Es gibt kein Konto und keine Anmeldung, und die App funktioniert ohne Internetverbindung. Nichts wird
         hochgeladen: Die Familiendaten bleiben auf dem Ger&auml;t, das gerade benutzt wird.</p>
       </section>
-
-      <section class="sec" id="d2">
+      <section class="sec" id="d2" data-nav="Erste Schritte">
         <h4>Erste Schritte</h4>
         <p>Der Startbildschirm bietet zwei Wege an, und beide sind vollwertig. Man kann eine GEDCOM-Datei
         mitbringen &ndash; oder ganz ohne Datei anfangen.</p>
@@ -2383,6 +2485,10 @@ window.I18N={
           &ndash; Eltern, Partner, Kinder. Jeder genannte Verwandte wird gleich mit angelegt.</li>
           <li><b>Mit Datei:</b> <b>&#128193; GEDCOM-Datei &ouml;ffnen</b> w&auml;hlen und die eigene
           <b>.ged</b>-Datei aussuchen oder auf das Feld ziehen. Oben rechts erscheint die Zahl der Personen.</li>
+          <li><b>Sp&auml;ter:</b> Dieselben zwei Angebote stehen im Datenmen&uuml; als
+          <b>GEDCOM-Datei &ouml;ffnen</b> und <b>Beispielfamilie laden</b> &ndash; das Beispiel ist eine erfundene
+          Familie aus zwanzig Personen, an der sich alles ausprobieren l&auml;sst, ohne die eigenen Daten
+          anzur&uuml;hren.</li>
           <li>So oder so &ouml;ffnet sich der <b>Stammbaum</b>. Einen Namen ins Suchfeld tippen (eine Jahreszahl
           hilft, etwa &bdquo;Wilhelm 1902&ldquo;) und die Person aus der Liste w&auml;hlen.</li>
           <li>Einen beliebigen Kasten antippen, um die Angaben dieser Person zu &ouml;ffnen, zu bearbeiten und
@@ -2392,8 +2498,7 @@ window.I18N={
         <div class="tip"><b>Erst einmal nur schauen?</b> <b>Beispielfamilie ausprobieren</b> l&auml;dt eine kleine
         erfundene Familie, an der sich alles zeigen l&auml;sst, bevor eigene Daten ins Spiel kommen.</div>
       </section>
-
-      <section class="sec" id="d3">
+      <section class="sec" id="d3" data-nav="GEDCOM">
         <h4>Was ist eine GEDCOM-Datei?</h4>
         <p>GEDCOM (Dateiendung <b>.ged</b>) ist seit Jahrzehnten das gemeinsame Austauschformat f&uuml;r
         Stammb&auml;ume. Es enth&auml;lt Personen mit Namen und Daten sowie die Familien, die sie verbinden. Nahezu
@@ -2405,8 +2510,7 @@ window.I18N={
         <p>Die meisten Genealogieseiten und -programme bieten irgendwo in den Einstellungen oder im Stammbaum-Men&uuml;
         einen GEDCOM-Export an. Genau diese exportierte Datei wird hier ge&ouml;ffnet.</p>
       </section>
-
-      <section class="sec" id="d4">
+      <section class="sec" id="d4" data-nav="Stammbaum">
         <h4>Der Reiter Stammbaum</h4>
         <p>Gro&szlig;e Stammb&auml;ume werden sehr schnell un&uuml;bersichtlich, deshalb zeigt dieser Reiter nie alle
         auf einmal. Er zeigt <b>eine Person in der Mitte</b> &ndash; mit goldenem Rahmen &ndash; und darum herum ihre
@@ -2496,8 +2600,7 @@ window.I18N={
         <div class="note"><b>Gut zu wissen:</b> Jede &Auml;nderung wirkt sofort auch in den anderen beiden Reitern.
         Wird hier ein Geburtsdatum korrigiert, rechnen Nachfahrentafel und Verwandtschaftsrechner sofort damit.</div>
       </section>
-
-      <section class="sec" id="d5">
+      <section class="sec" id="d5" data-nav="Nachfahrentafel">
         <h4>Der Reiter Nachfahrentafel</h4>
         <p>Hier entsteht die klassische <b>Nachkommentafel</b>: eine Wurzelperson oben, darunter alle Nachkommen, in
         schlichten schwarzwei&szlig;en K&auml;sten wie in einem gedruckten Familienbuch. Dieser Reiter ver&auml;ndert
@@ -2532,8 +2635,7 @@ window.I18N={
         <p class="muted">Die Tafel wird auch im dunklen Design auf wei&szlig;em Papier gezeigt, weil sie genau so
         gedruckt und exportiert wird.</p>
       </section>
-
-      <section class="sec" id="d6">
+      <section class="sec" id="d6" data-nav="Verwandtschaft">
         <h4>Der Reiter Verwandtschaft</h4>
         <p>Zwei Personen ausw&auml;hlen, und die App ermittelt &uuml;ber beliebig viele Generationen hinweg, wie sie
         verwandt sind, und schreibt es in einem Satz auf, zum Beispiel &bdquo;Thomas ist der Cousin 2. Grades
@@ -2553,13 +2655,85 @@ window.I18N={
         <b>A und B tauschen</b> dreht die Frage um. Ganz unten im Reiter steht
         <b>Verwandtschaftsbegriffe erkl&auml;rt</b> bereit, wann immer ein Wort unklar ist.</p>
       </section>
-
-      <section class="sec" id="d7">
+      <section class="sec" id="d8a" data-nav="Liste">
+        <h4>Die Liste aller Personen und Familien</h4>
+        <p>Oben rechts steht, wie viele Personen in der ge&ouml;ffneten Datei sind. Das ist zugleich ein Knopf:
+        darauf dr&uuml;cken, oder &uuml;ber <b>Daten &rsaquo; Personen und Familien</b> gehen, und die ganze Datei
+        erscheint als Liste. Gesucht wird nach Name, Jahr oder Ort, und zwischen Personen und Familien
+        l&auml;sst sich umschalten. <b>Filter</b> klappt die beiden engeren Einstellungen auf, Stamm und
+        Geburtsjahrgang; sie bleiben aus dem Weg, bis man sie braucht, und die Zahl neben dem Knopf sagt,
+        wie viele gesetzt sind. Der Jahresfilter greift in beiden B&auml;ndern: Eine Familie passt, wenn
+        eines ihrer Mitglieder in der Spanne geboren wurde.</p>
+        <p>Das Familienband ist die eine Stelle, an der die Suche etwas anderes durchsieht &ndash; und sie
+        sagt es auch: Eine Familie wird &uuml;ber die <b>Namen aller, die zu ihr geh&ouml;ren</b>, und &uuml;ber
+        ihre <b>Heirat</b> gefunden, Datum wie Ort. Das ist keine Nachl&auml;ssigkeit: In einer GEDCOM-Datei
+        geh&ouml;rt die Hochzeit zur Familie und nicht zur Person. Deshalb wird bei den Personen nach Geburt
+        und Tod gesucht und bei den Familien nach der Hochzeit. Die Kinder stehen in der rechten Spalte in
+        der Reihenfolge ihrer Geburt, das &auml;lteste zuerst.</p>
+        <p>Eine Zeile antippen, und sie klappt auf, mit allem, was sich mit dieser Person tun l&auml;sst: sie in
+        die Mitte des <b>Stammbaums</b> holen, sie zur Wurzel einer <b>Nachfahrentafel</b> machen, sie in die
+        <b>Verwandtschaft</b> mitnehmen, sie als die Person merken, bei der diese Datei k&uuml;nftig &ouml;ffnet,
+        oder sie l&ouml;schen. Eine Familienzeile steht in zwei Spalten, links das Paar, rechts die
+        Kinder, so wie ein gedrucktes Familienbuch sie setzt.</p>
+        <p>Bei einer gro&szlig;en Datei wird nicht alles auf einmal gezeichnet &ndash; die Liste br&auml;uchte auf
+        dem Handy sonst eine Sekunde, bis sie da ist. Gezeigt werden die ersten paar hundert, dazu steht, wie viele
+        es insgesamt sind; <b>Alle zeigen</b> holt den Rest, wann immer man ihn braucht.</p>
+      </section>
+      <section class="sec" id="d8b" data-nav="Dubletten">
+        <h4>Dubletten pr&uuml;fen</h4>
+        <p>In Dateien, die &uuml;ber Jahre gewachsen sind oder zweimal importiert wurden, steht dieselbe Person oft
+        mehrfach. <b>Daten &rsaquo; Dubletten pr&uuml;fen</b> vergleicht jede Person der ge&ouml;ffneten Datei mit
+        jeder anderen und listet auf, wer doppelt erfasst sein k&ouml;nnte. Zu jedem Vorschlag steht dabei, worauf
+        er sich st&uuml;tzt, damit man ihn beurteilen kann, statt einer Zahl glauben zu m&uuml;ssen.</p>
+        <p>Die Treffer kommen in zwei B&auml;ndern. <b>Starker Verdacht</b> ist das Band zum Abarbeiten,
+        <b>zum Pr&uuml;fen</b> enth&auml;lt die schw&auml;cheren F&auml;lle, von denen der gr&ouml;&szlig;ere Teil
+        keine Dublette ist. Von selbst wird nie etwas zusammengelegt: Ein Eintrag &auml;ndert sich nur, wenn Du den
+        Knopf daf&uuml;r dr&uuml;ckst, und die letzten zehn Schritte lassen sich zur&uuml;cknehmen.</p>
+        <p>Beim Best&auml;tigen wird nichts gel&ouml;scht. Die zusammengelegte Person bekommt <b>alles aus beiden</b>
+        Eintr&auml;gen &ndash; Kinder, Ehen, Daten, Beruf und auch die Kennzeichen, die die App selbst nicht
+        auswertet. Zu entscheiden ist nur, wo sich die beiden wirklich widersprechen, und selbst dort macht die App
+        einen Vorschlag: Ein vollst&auml;ndiges Datum schl&auml;gt ein blo&szlig;es Jahr, die ausgeschriebene Form
+        schl&auml;gt die Abk&uuml;rzung. Die aufgegebene Kennung wird im bleibenden Eintrag vermerkt, damit der
+        Schritt nachvollziehbar bleibt. Beschreiben danach zwei Familien dasselbe Paar, werden auch sie verschmolzen
+        und behalten die Kinder von beiden.</p>
+        <p>Eine Gruppe kann mehr als zwei Eintr&auml;ge umfassen, und eine Kette ist kein Beweis: Dass A zu B passt
+        und B zu C, macht A und C noch nicht zu derselben Person. Die App zeigt die Gruppe und &uuml;berl&auml;sst
+        Dir die Entscheidung.</p>
+        <p><b>Liste speichern</b> schreibt die Funde in eine Textdatei. Das ist der Weg, wenn die eigentlichen
+        Stammdaten woanders liegen, etwa in einer Tabelle, und die Korrekturen dort gemacht werden m&uuml;ssen.</p>
+      </section>
+      <section class="sec" id="d8c" data-nav="Daten prüfen">
+        <h4>Daten pr&uuml;fen</h4>
+        <p><b>Daten &rsaquo; Daten pr&uuml;fen</b> geht die ge&ouml;ffnete Datei durch und sortiert, was sie findet,
+        in drei B&auml;nder. <b>Widerspruch</b> sammelt, was nicht beides stimmen kann &ndash; ein Tod vor der
+        Geburt, eine Hochzeit danach, ein Kind, das &auml;lter ist als sein Vater. Eine der beiden Angaben ist
+        falsch, und welche, wei&szlig;t nur Du; deshalb zeigt die App hier und schl&auml;gt nichts vor.
+        <b>Unstimmig</b> sammelt das M&ouml;gliche, aber Seltene: eine Mutter mit neun oder mit zweiundf&uuml;nfzig,
+        ein Leben von 118 Jahren, zwei Geschwister vier Monate auseinander. Das meiste davon sind Zahlendreher in
+        einer Jahreszahl. <b>Schreibweise</b> sammelt, wo sachlich alles stimmt und nur die Notation nicht &ndash;
+        ein doppeltes Leerzeichen, ein Ort, der auf ein Komma endet, ein Nachname in Gro&szlig;buchstaben. Dort
+        schl&auml;gt die App etwas vor und zeigt die Ersetzung neben dem Eintrag.</p>
+        <p>Gruppiert wird <b>nach Regel, nicht nach Person</b>. Eine Datei mit mehreren tausend Personen
+        enth&auml;lt oft tausende Male dieselbe Kleinigkeit; als tausende Karten w&auml;re das unbenutzbar, als eine
+        Zeile mit einer Zahl und einem Knopf ist es in einem Augenblick erledigt. Zu jeder Regel steht, wonach sie
+        sucht und warum das verd&auml;chtig ist. Ein Druck auf die &Uuml;berschrift zeigt die einzelnen F&auml;lle,
+        jeden mit <b>Ansehen</b>, das zu dieser Person in den Stammbaum f&uuml;hrt, und, wo es einen Vorschlag gibt,
+        mit <b>&Uuml;bernehmen</b>.</p>
+        <p>Eine Regel verdient ein eigenes Wort. In vielen Dateien f&auml;llt auff&auml;llig viel auf den
+        1. Januar &ndash; nicht weil so viele an Neujahr geboren w&auml;ren, sondern weil das Jahr bekannt war und
+        der Tag nicht. Die App r&auml;t das nicht, sie z&auml;hlt: Erst wenn ein Datum weit h&auml;ufiger auf einen
+        Tag f&auml;llt, als der Zufall zul&auml;sst, sagt sie etwas, und sie nennt die Zahl, die zu erwarten
+        w&auml;re. Welche davon echte Geburtstage sind, kann sie nicht wissen &ndash; also vorher hineinsehen.</p>
+        <p>Ohne Dich wird nichts ge&auml;ndert, die letzten zehn Schritte lassen sich zur&uuml;cknehmen, und
+        <b>Liste speichern</b> schreibt alles in eine Textdatei &ndash; der Weg, wenn die Korrekturen in einer
+        Tabelle woanders gemacht werden m&uuml;ssen.</p>
+      </section>
+      <section class="sec" id="d7" data-nav="Speichern">
         <h4>Speichern und Sicherungen</h4>
         <p>Die Daten und jede &Auml;nderung werden <b>automatisch</b> in dieser App auf diesem Ger&auml;t behalten, es
         ist also beim n&auml;chsten &Ouml;ffnen alles wieder da. Dieser Speicher geh&ouml;rt <b>dieser App auf diesem
         Ger&auml;t</b>: Das Handy wei&szlig; nichts davon, was am Rechner bearbeitet wurde.</p>
-        <p>Die eigentliche Sicherung ist der <b>Export</b>: <b>Daten &rarr; GEDCOM exportieren</b> bietet drei Wege
+        <p>Die eigentliche Sicherung ist der <b>Export</b>: <b>GEDCOM exportieren (.ged)</b> im Datenmen&uuml; bietet drei Wege
         an &ndash; als Datei speichern, in die Zwischenablage kopieren oder den Text anzeigen, um ihn von Hand zu
         kopieren. Jeder davon liefert eine vollst&auml;ndige GEDCOM-Datei. Das sollte man nach gr&ouml;&szlig;eren
         Bearbeitungen tun, und immer vor einem Ger&auml;tewechsel oder bevor man die Browserdaten l&ouml;scht.</p>
@@ -2600,8 +2774,7 @@ window.I18N={
         das Ger&auml;t weitergegeben wird. Es wird vorher gefragt, denn r&uuml;ckg&auml;ngig machen l&auml;sst es sich
         nicht.</p>
       </section>
-
-      <section class="sec" id="d8">
+      <section class="sec" id="d8" data-nav="Datenschutz">
         <h4>Datenschutz</h4>
         <p>Anceslio hat keinen Server, kein Konto und keine Analysewerkzeuge. Die Familiendaten werden aus der
         gew&auml;hlten Datei gelesen, im lokalen Speicher dieser App gehalten und beim Export wieder in eine Datei
@@ -2610,57 +2783,7 @@ window.I18N={
         mit derselben Sorgfalt behandeln wie eine Adressliste, und zweimal &uuml;berlegen, bevor man eine Tafel
         weitergibt, auf der Geburtsdaten von Personen stehen, die dem nicht zugestimmt haben.</p>
       </section>
-
-      <section class="sec" id="d8a">
-        <h4>Die Liste aller Personen und Familien</h4>
-        <p>Oben rechts steht, wie viele Personen in der ge&ouml;ffneten Datei sind. Das ist zugleich ein Knopf:
-        darauf dr&uuml;cken, oder &uuml;ber <b>Daten &rsaquo; Personen und Familien</b> gehen, und die ganze Datei
-        erscheint als Liste. Gesucht wird nach Name, Jahr oder Ort, und zwischen Personen und Familien
-        l&auml;sst sich umschalten. <b>Filter</b> klappt die beiden engeren Einstellungen auf, Stamm und
-        Geburtsjahrgang; sie bleiben aus dem Weg, bis man sie braucht, und die Zahl neben dem Knopf sagt,
-        wie viele gesetzt sind. Der Jahresfilter greift in beiden B&auml;ndern: Eine Familie passt, wenn
-        eines ihrer Mitglieder in der Spanne geboren wurde.</p>
-        <p>Das Familienband ist die eine Stelle, an der die Suche etwas anderes durchsieht &ndash; und sie
-        sagt es auch: Eine Familie wird &uuml;ber die <b>Namen aller, die zu ihr geh&ouml;ren</b>, und &uuml;ber
-        ihre <b>Heirat</b> gefunden, Datum wie Ort. Das ist keine Nachl&auml;ssigkeit: In einer GEDCOM-Datei
-        geh&ouml;rt die Hochzeit zur Familie und nicht zur Person. Deshalb wird bei den Personen nach Geburt
-        und Tod gesucht und bei den Familien nach der Hochzeit. Die Kinder stehen in der rechten Spalte in
-        der Reihenfolge ihrer Geburt, das &auml;lteste zuerst.</p>
-        <p>Eine Zeile antippen, und sie klappt auf, mit allem, was sich mit dieser Person tun l&auml;sst: sie in
-        die Mitte des <b>Stammbaums</b> holen, sie zur Wurzel einer <b>Nachfahrentafel</b> machen, sie in die
-        <b>Verwandtschaft</b> mitnehmen, sie als die Person merken, bei der diese Datei k&uuml;nftig &ouml;ffnet,
-        oder sie l&ouml;schen. Eine Familienzeile steht in zwei Spalten, links das Paar, rechts die
-        Kinder, so wie ein gedrucktes Familienbuch sie setzt.</p>
-        <p>Bei einer gro&szlig;en Datei wird nicht alles auf einmal gezeichnet &ndash; die Liste br&auml;uchte auf
-        dem Handy sonst eine Sekunde, bis sie da ist. Gezeigt werden die ersten paar hundert, dazu steht, wie viele
-        es insgesamt sind; <b>Alle zeigen</b> holt den Rest, wann immer man ihn braucht.</p>
-      </section>
-
-      <section class="sec" id="d8b">
-        <h4>Dubletten pr&uuml;fen</h4>
-        <p>In Dateien, die &uuml;ber Jahre gewachsen sind oder zweimal importiert wurden, steht dieselbe Person oft
-        mehrfach. <b>Daten &rsaquo; Dubletten pr&uuml;fen</b> vergleicht jede Person der ge&ouml;ffneten Datei mit
-        jeder anderen und listet auf, wer doppelt erfasst sein k&ouml;nnte. Zu jedem Vorschlag steht dabei, worauf
-        er sich st&uuml;tzt, damit man ihn beurteilen kann, statt einer Zahl glauben zu m&uuml;ssen.</p>
-        <p>Die Treffer kommen in zwei B&auml;ndern. <b>Starker Verdacht</b> ist das Band zum Abarbeiten,
-        <b>zum Pr&uuml;fen</b> enth&auml;lt die schw&auml;cheren F&auml;lle, von denen der gr&ouml;&szlig;ere Teil
-        keine Dublette ist. Von selbst wird nie etwas zusammengelegt: Ein Eintrag &auml;ndert sich nur, wenn Du den
-        Knopf daf&uuml;r dr&uuml;ckst, und die letzten zehn Schritte lassen sich zur&uuml;cknehmen.</p>
-        <p>Beim Best&auml;tigen wird nichts gel&ouml;scht. Die zusammengelegte Person bekommt <b>alles aus beiden</b>
-        Eintr&auml;gen &ndash; Kinder, Ehen, Daten, Beruf und auch die Kennzeichen, die die App selbst nicht
-        auswertet. Zu entscheiden ist nur, wo sich die beiden wirklich widersprechen, und selbst dort macht die App
-        einen Vorschlag: Ein vollst&auml;ndiges Datum schl&auml;gt ein blo&szlig;es Jahr, die ausgeschriebene Form
-        schl&auml;gt die Abk&uuml;rzung. Die aufgegebene Kennung wird im bleibenden Eintrag vermerkt, damit der
-        Schritt nachvollziehbar bleibt. Beschreiben danach zwei Familien dasselbe Paar, werden auch sie verschmolzen
-        und behalten die Kinder von beiden.</p>
-        <p>Eine Gruppe kann mehr als zwei Eintr&auml;ge umfassen, und eine Kette ist kein Beweis: Dass A zu B passt
-        und B zu C, macht A und C noch nicht zu derselben Person. Die App zeigt die Gruppe und &uuml;berl&auml;sst
-        Dir die Entscheidung.</p>
-        <p><b>Liste speichern</b> schreibt die Funde in eine Textdatei. Das ist der Weg, wenn die eigentlichen
-        Stammdaten woanders liegen, etwa in einer Tabelle, und die Korrekturen dort gemacht werden m&uuml;ssen.</p>
-      </section>
-
-      <section class="sec" id="d9">
+      <section class="sec" id="d9" data-nav="Wenn etwas klemmt">
         <h4>Wenn etwas nicht funktioniert</h4>
         <p><b>Die Dateiauswahl tut nichts.</b> Manche Ger&auml;te schr&auml;nken den Dateidialog ein. Dann die
         .ged-Datei in einen gew&ouml;hnlichen Ordner wie Downloads legen und es von dort erneut versuchen, oder diese
@@ -2678,8 +2801,7 @@ window.I18N={
         <p><b>Nach dem erneuten &Ouml;ffnen sind die Daten weg.</b> Der Browser hat seinen Speicher geleert. Die
         zuletzt exportierte .ged-Datei wieder laden &ndash; und k&uuml;nftig etwas h&auml;ufiger exportieren.</p>
       </section>
-
-      <section class="sec" id="d10">
+      <section class="sec" id="d10" data-nav="Technisches">
         <h4>Technische Hinweise</h4>
         <p>Anceslio liest und schreibt <b>GEDCOM 5.5.1</b> in UTF-8. Ausgewertet werden Name (NAME, GIVN, SURN),
         Geschlecht (SEX), Geburt und Tod mit Datum und Ort (BIRT, DEAT), Beruf (OCCU), ein Stamm- oder Hausname in der
@@ -2726,6 +2848,19 @@ window.I18N={
         <b>Wurzelperson</b>, <b>Ansicht</b>, <b>Die gew&auml;hlte Person</b> und <b>Ausgeben</b>.</p>
         <p class="muted">Version 3.3</p>
       </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
       </div>
     </div>
     <div class="modalfoot">
@@ -4155,16 +4290,51 @@ $('helpClose').onclick=function(){ closeModal('mdHelp'); };
    four or five rows. scrollIntoView puts the section flush with the top of the
    scrolling box – that is, underneath the chips, so the heading you just asked
    for is the one thing you cannot see. Measure the row and stop above it. */
-document.querySelectorAll('.helpnav button').forEach(function(b){
-  b.onclick=function(){
-    var t=$(b.dataset.go); if(!t) return;
-    var box=t.closest('.modalbody'), nav=b.closest('.helpnav');
-    if(!box){ t.scrollIntoView({block:'start', behavior:'smooth'}); return; }
-    var pad=(nav ? nav.getBoundingClientRect().height : 0)+10;
-    var top=box.scrollTop + t.getBoundingClientRect().top - box.getBoundingClientRect().top - pad;
-    box.scrollTo({top:Math.max(0,top), behavior:'smooth'});
-  };
-});
+/* Die Reiterzeile der Anleitung wird aus den Abschnitten gebaut, nicht
+   von Hand gepflegt. Anlass: Drei Kapitel - die Liste, die
+   Dublettenprüfung und die Datenprüfung - kamen in drei Versionen
+   dazu, und keines bekam einen Reiter; sie waren nur durch Scrollen
+   zu finden. Von Hand gepflegte Reiter gehen mit der Zeit immer
+   auseinander. Jetzt trägt jeder Abschnitt seine Beschriftung selbst
+   (data-nav), und die Zeile entsteht daraus - ein neues Kapitel hat
+   seinen Reiter, sobald es existiert. */
+function baueHelpNav(){
+  document.querySelectorAll('#helpBody .helpnav').forEach(function(nav){
+    var wrap=nav.parentElement;
+    nav.innerHTML='';
+    wrap.querySelectorAll('section.sec[data-nav]').forEach(function(sec){
+      var b=document.createElement('button');
+      b.dataset.go=sec.id;
+      b.textContent=sec.dataset.nav;
+      nav.appendChild(b);
+    });
+  });
+  document.querySelectorAll('.helpnav button').forEach(function(b){
+    b.onclick=function(){
+      var t=$(b.dataset.go); if(!t) return;
+      var box=t.closest('.modalbody'), nav=b.closest('.helpnav');
+      if(!box){ t.scrollIntoView({block:'start', behavior:'smooth'}); return; }
+      /* Die Reiterzeile steht fest über dem Text. scrollIntoView
+         schiebt den Abschnitt bündig nach oben, also unter die
+         Reiter - genau die Überschrift, die man sehen wollte, wäre
+         verdeckt. Deshalb um die Höhe der Zeile darüber anhalten. */
+      var pad=(nav ? nav.getBoundingClientRect().height : 0)+10;
+      var top=box.scrollTop + t.getBoundingClientRect().top - box.getBoundingClientRect().top - pad;
+      box.scrollTo({top:Math.max(0,top), behavior:'smooth'});
+      /* Auf dem Handy steht die Reiterzeile in einer schiebbaren
+         Zeile. Wer den letzten Reiter antippt, soll danach sehen, wo
+         er steht - also den angetippten Reiter in die Mitte holen.
+         Gerechnet statt scrollIntoView: das hätte auch den Text
+         senkrecht verschoben, den wir gerade erst gesetzt haben. */
+      if(nav && nav.scrollWidth > nav.clientWidth + 4){
+        var br=b.getBoundingClientRect(), nr=nav.getBoundingClientRect();
+        nav.scrollTo({left:Math.max(0, nav.scrollLeft + (br.left-nr.left) - (nr.width-br.width)/2),
+                      behavior:'smooth'});
+      }
+    };
+  });
+}
+baueHelpNav();
 
 /* ---------------- status line & welcome screen ---------------- */
 function countLabel(){
@@ -8555,8 +8725,913 @@ return { boot:aufsetzen, oeffnen:oeffnen, _filterZahl:filterZahl, _deckel:functi
 })();
 </script>
 <script>
+/* ===================================================================
+   Daten prüfen
+   -------------------------------------------------------------------
+   Eine gewachsene Familiendatei enthält Widersprüche. Nicht weil
+   jemand schlampt, sondern weil sie aus Kirchenbüchern, aus fremden
+   Dateien und aus vierzig Jahren Notizen zusammenkommt. Dieses
+   Fenster zeigt, was nicht stimmen kann, was unwahrscheinlich ist
+   und was nur anders geschrieben gehört.
+
+   DREI ENTSCHEIDUNGEN, die die Form bestimmen:
+
+   1. NACH REGEL GRUPPIERT, NICHT NACH PERSON. In Joachims Datei
+      stehen 4.299 Geburtsdaten auf dem 1. Januar. Als 4.299 Karten
+      wäre das Fenster unbenutzbar; als eine Zeile mit einer Zahl und
+      einem Knopf ist es in zehn Sekunden erledigt.
+
+   2. DREI BÄNDER NACH SCHWERE, nicht nach Reparierbarkeit.
+        Widerspruch  Zwei Angaben schließen einander aus. Eine davon
+                     ist falsch, und welche, weiß nur der Mensch.
+        Unstimmig    Möglich, aber selten. Eine Mutter mit 48 gibt
+                     es, eine mit 9 nicht.
+        Schreibweise Sachlich stimmt alles, nur die Notation nicht.
+      Ein Vorschlag kann in jedem Band stehen, auch wenn er im
+      dritten die Regel ist.
+
+   3. NICHTS WIRD OHNE DICH GEÄNDERT. Dieselbe Regel wie bei den
+      Dubletten, und aus demselben Grund: Eine Datei mit vierzig
+      Jahren Arbeit darf ein Aufräumwerkzeug nicht beschädigen.
+      Jeder Schritt ist einzeln oder regelweise zu bestätigen, die
+      letzten zehn lassen sich zurücknehmen.
+   =================================================================== */
+var PRUEF=(function(){
+var $=FP.$;
+function de(){ return I18N.lang()==='de'; }
+function T(en,dt){ return de()?dt:en; }
+function esc(x){ return FP.esc(String(x==null?'':x)); }
+
+var MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+/* ---------- Datum: Zahl oder nichts ----------
+   Verglichen wird in Tagen seit einem festen Punkt. Ein Datum ohne
+   Tag zählt als Monatsmitte, eines ohne Monat als Jahresmitte - so
+   schlägt "1750" gegen "Juni 1750" nicht als Widerspruch an, nur
+   weil die eine Angabe gröber ist. Angaben mit ABT, BET, BEF, AFT
+   sind ausdrücklich unsicher; sie werden für die harten Regeln
+   übersprungen, sonst meldet das Werkzeug Widersprüche, die keine
+   sind. */
+function roh(s){ return String(s||'').trim().toUpperCase(); }
+/* Erster Versuch war, die zerlegten Daten in einer Tabelle zu
+   merken, weil dieselbe Zeichenkette von sechs Regeln angesehen
+   wird. Gemessen wurde das Gegenteil: 1.779 ms statt 1.504 ms an
+   11.700 Personen. Der Schlüssel aus zwei Zeichenketten und der
+   Nachschlag in einem wachsenden Objekt kosten mehr als das
+   Zerlegen selbst. Also wieder heraus - hier steht es, damit es
+   niemand (ich eingeschlossen) ein zweites Mal versucht. */
+function unscharf(s){ return /\b(ABT|CAL|EST|BET|BEF|AFT|FROM|TO|AND)\b|\?/.test(roh(s)); }
+function teile(s){
+  var t=roh(s).replace(/[^A-Z0-9 ]/g,' ').replace(/\s+/g,' ').trim().split(' ');
+  var tag=null, mon=null, jahr=null, i;
+  for(i=0;i<t.length;i++){
+    if(/^\d{1,2}$/.test(t[i]) && tag==null && +t[i]>=1 && +t[i]<=31) tag=+t[i];
+    else if(/^[A-Z]{3,}$/.test(t[i]) && mon==null){ var k=MON.indexOf(t[i].slice(0,3)); if(k>=0) mon=k+1; }
+    else if(/^\d{3,4}$/.test(t[i]) && jahr==null) jahr=+t[i];
+  }
+  return {tag:tag, mon:mon, jahr:jahr};
+}
+/* Tageszahl, grob: Jahr*365 + Tag im Jahr. Für Vergleiche reicht das;
+   Schaltjahre verschieben nichts, was eine Regel auslösen würde. */
+function tage(s){
+  var d=teile(s); if(d.jahr==null) return null;
+  var m = d.mon==null ? 6.5 : d.mon;
+  var t = d.tag==null ? 15 : d.tag;
+  return Math.round(d.jahr*365.25 + (m-1)*30.44 + t);
+}
+function jahrVon(s){ var d=teile(s); return d.jahr; }
+function lesbar(s){
+  s=String(s||'').trim(); if(!s) return true;
+  if(unscharf(s)) return true;
+  var d=teile(s);
+  return d.jahr!=null;
+}
+var JETZT=new Date();
+var HEUTE=Math.round(JETZT.getFullYear()*365.25 + JETZT.getMonth()*30.44 + JETZT.getDate());
+var JAHR_JETZT=JETZT.getFullYear();
+var JAHR=365.25;
+
+function nm(id){ var p=FP.indi()[id]; return p?FP.fullName(p):('#'+id); }
+function dt(s){ return FP.gedToText(s)||s; }
+
+/* ===================================================================
+   Vorbereitung: Zeiträume statt Zeitpunkte
+   -------------------------------------------------------------------
+   Gemessen an Joachims Datei mit 8.649 Personen: Die erste Fassung
+   meldete 70 Kinder, die nach dem Tod ihrer Mutter geboren seien,
+   20 Kinder älter als ihre Eltern und 5 Tote vor der eigenen Geburt.
+   Beim Nachsehen war fast alles derselbe Fall:
+
+       Kind  * 1. Jan 1511     Mutter  † 1. Jan 1510
+
+   Beides sind keine Daten, sondern Jahresangaben mit einem
+   Platzhaltertag. Die Mutter kann im Dezember 1510 gestorben und das
+   Kind im Januar 1511 geboren sein - kein Widerspruch, sondern ein
+   Artefakt der Schreibweise.
+
+   Deshalb rechnet die Prüfung nicht mit Zeitpunkten, sondern mit
+   Zeiträumen, und sie meldet einen Widerspruch nur, wenn er auch bei
+   der GROSSZÜGIGSTEN Lesart bestehen bleibt:
+
+       1 JAN 1511, als Platzhalter erkannt  ->  [1.1.1511 .. 31.12.1511]
+       MAR 1511 (ohne Tag)                  ->  [1.3.1511 .. 31.3.1511]
+       1511 (nur Jahr)                      ->  [1.1.1511 .. 31.12.1511]
+       11 MAR 1511                          ->  [11.3.1511 .. 11.3.1511]
+
+   Welcher Tag als Platzhalter gilt, wird nicht geraten, sondern
+   gezählt - dieselbe Rechnung, die auch die Regel „Platzhalterdatum"
+   benutzt. In einer Datei, in der der 1. Januar nicht gehäuft
+   vorkommt, bleibt er ein gewöhnliches Datum.
+   =================================================================== */
+function tagVon(j,m,t){ return Math.round(j*365.25 + (m-1)*30.44 + t); }
+/* Sind beide Angaben taggenau, zählt jeder Tag. Ist auch nur eine
+   davon bloss ein Jahr, braucht es mehr als ein halbes Jahr
+   Überschneidung, bevor die Prüfung einen Widerspruch meldet.
+   Gemessen an Joachims Datei: Ohne diesen Spielraum meldete die
+   Prüfung Fälle wie „Kind 1511, Mutter gestorben 1510" - rechnerisch
+   ein Tag Widerspruch, in Wahrheit zwei Jahresangaben, die sich
+   berühren. */
+function spiel(a,b){ return (a&&b) ? 0 : 183; }
+var TAGE_IM_MONAT=[31,29,31,30,31,30,31,31,30,31,30,31];
+
+/* Welche Tag-Monat-Kombinationen sind überrepräsentiert? */
+function platzKombis(P){
+  var zaehl={}, genau=0, id, d, k, p2;
+  function zaehle(v){
+    if(!v||unscharf(v)) return;
+    d=teile(v); if(d.tag==null||d.mon==null||d.jahr==null) return;
+    genau++; k=d.tag+'.'+d.mon; zaehl[k]=(zaehl[k]||0)+1;
+  }
+  for(id in P){ p2=P[id]; zaehle(p2.birthDate); zaehle(p2.deathDate); }
+  var out={}, liste=[];
+  if(genau<60) return {satz:out, liste:liste, genau:genau, erwartet:0};
+  var erwartet=genau/366;
+  for(k in zaehl){
+    if(zaehl[k]<10 || zaehl[k] < erwartet*5) continue;
+    out[k]=true; liste.push({tag:k, n:zaehl[k], erwartet:Math.round(erwartet)});
+  }
+  liste.sort(function(a,b){ return b.n-a.n; });
+  return {satz:out, liste:liste, genau:genau, erwartet:Math.round(erwartet)};
+}
+
+/* Ein Datum als Zeitraum [frühestens, spätestens] in Tagen.
+   null, wenn gar kein Jahr darin steht. */
+function spanne(v, platz){
+  if(!v) return null;
+  var d=teile(v); if(d.jahr==null) return null;
+  if(unscharf(v)) return null;          /* ABT, BET, BEF: bleibt aussen vor */
+  if(d.tag!=null && d.mon!=null){
+    if(platz[d.tag+'.'+d.mon]) return [tagVon(d.jahr,1,1), tagVon(d.jahr,12,31)];
+    return [tagVon(d.jahr,d.mon,d.tag), tagVon(d.jahr,d.mon,d.tag)];
+  }
+  if(d.mon!=null) return [tagVon(d.jahr,d.mon,1), tagVon(d.jahr,d.mon,TAGE_IM_MONAT[d.mon-1])];
+  return [tagVon(d.jahr,1,1), tagVon(d.jahr,12,31)];
+}
+function genauesDatum(v, platz){
+  if(!v||unscharf(v)) return false;
+  var d=teile(v);
+  return d.tag!=null && d.mon!=null && d.jahr!=null && !platz[d.tag+'.'+d.mon];
+}
+
+/* Ringe in der Abstammung: EINE Tiefensuche über den ganzen Graphen
+   statt einer je Person. Die erste Fassung ging von jeder Person
+   einzeln nach oben; an Joachims Datei kostete allein diese Regel
+   2.729 von 4.684 ms, also mehr als alle anderen zweiundzwanzig
+   zusammen. Mit Weiss/Grau/Schwarz ist es ein Durchgang. */
+function ringeFinden(P,F){
+  var eltern={}, id, p2, i, fid, f;
+  for(id in P){
+    var el=[];
+    p2=P[id];
+    for(i=0;i<(p2.famc||[]).length;i++){
+      f=F[p2.famc[i]]; if(!f) continue;
+      if(f.husb&&P[f.husb]) el.push(f.husb);
+      if(f.wife&&P[f.wife]) el.push(f.wife);
+    }
+    eltern[id]=el;
+  }
+  var farbe={}, aufRing={}, start;
+  for(start in P){
+    if(farbe[start]) continue;
+    var stapel=[[start,0]];
+    farbe[start]=1;
+    while(stapel.length){
+      var oben=stapel[stapel.length-1], el2=eltern[oben[0]];
+      if(oben[1] < el2.length){
+        var nx=el2[oben[1]++];
+        if(farbe[nx]===1){
+          /* Grau heisst: steht noch auf dem Stapel, also ein Ring. */
+          for(var k=stapel.length-1;k>=0;k--){
+            aufRing[stapel[k][0]]=1;
+            if(stapel[k][0]===nx) break;
+          }
+        } else if(!farbe[nx]){ farbe[nx]=1; stapel.push([nx,0]); }
+      } else { farbe[oben[0]]=2; stapel.pop(); }
+    }
+  }
+  return aufRing;
+}
+
+function vorEltern(P,F,id){
+  var p=P[id], out=[];
+  (p.famc||[]).forEach(function(fid){
+    var f=F[fid]; if(!f) return;
+    if(f.husb&&P[f.husb]) out.push(P[f.husb]);
+    if(f.wife&&P[f.wife]) out.push(P[f.wife]);
+  });
+  return out;
+}
+
+/* ===================================================================
+   Die Regeln
+   -------------------------------------------------------------------
+   Jede Regel liefert Befunde: {ids, text, feld, alt, neu}.
+   feld/alt/neu nur dort, wo sich ein konkreter Vorschlag machen
+   lässt. Alles andere wird gezeigt, nicht vorgeschlagen.
+
+   Die Widerspruchsregeln arbeiten durchweg mit den Zeiträumen aus
+   ctx.S: S[id].g ist [frühestens, spätestens] der Geburt, S[id].s
+   dasselbe für den Tod, ctx.M[fid].h für die Heirat. Gemeldet wird
+   nur, was auch bei der grosszügigsten Lesart ein Widerspruch
+   bleibt.
+   =================================================================== */
+var REGELN=[
+/* ---------------- Band 1: Widerspruch ---------------- */
+{k:'tod_vor_geburt', band:'w',
+ t:['Died before being born','Gestorben vor der Geburt'],
+ e:['The date of death lies before the date of birth, even reading both as generously as possible. One of the two is wrong.',
+    'Das Sterbedatum liegt vor dem Geburtsdatum, auch bei grosszügigster Lesart beider Angaben. Eine der beiden ist falsch.'],
+ f:function(P,F,out,ctx){
+   var S=ctx.S;
+   for(var id in P){ var p=P[id], q=S[id];
+     if(!q.g||!q.s) continue;
+     if(q.s[1] + spiel(q.gx,q.sx) < q.g[0])
+       out.push({ids:[id], text:nm(id)+': * '+dt(p.birthDate)+'  \u2020 '+dt(p.deathDate)});
+   }
+ }},
+{k:'heirat_vor_geburt', band:'w',
+ t:['Married before being born','Geheiratet vor der Geburt'],
+ e:['The wedding is dated before this person was born.',
+    'Die Hochzeit ist auf ein Datum vor der Geburt dieser Person datiert.'],
+ f:function(P,F,out,ctx){
+   var S=ctx.S, M=ctx.M;
+   for(var fid in F){ var f=F[fid], h=M[fid].h; if(!h) continue;
+     [f.husb,f.wife].forEach(function(id){
+       var p=id&&P[id]; if(!p) return;
+       var g=S[id].g; if(!g) return;
+       if(h[1] + spiel(S[id].gx, M[fid].hx) < g[0])
+         out.push({ids:[id], text:nm(id)+': * '+dt(p.birthDate)+'  \u26AD '+dt(f.marrDate)});
+     });
+   }
+ }},
+{k:'heirat_nach_tod', band:'w',
+ t:['Married after death','Geheiratet nach dem Tod'],
+ e:['The wedding is dated after this person had died.',
+    'Die Hochzeit ist auf ein Datum nach dem Tod dieser Person datiert.'],
+ f:function(P,F,out,ctx){
+   var S=ctx.S, M=ctx.M;
+   for(var fid in F){ var f=F[fid], h=M[fid].h; if(!h) continue;
+     [f.husb,f.wife].forEach(function(id){
+       var p=id&&P[id]; if(!p||!p.deathDate) return;
+       var sp=S[id].s; if(!sp) return;
+       if(h[0] > sp[1]+40+spiel(S[id].sx, M[fid].hx))
+         out.push({ids:[id], text:nm(id)+': \u2020 '+dt(p.deathDate)+'  \u26AD '+dt(f.marrDate)});
+     });
+   }
+ }},
+{k:'kind_vor_eltern', band:'w',
+ t:['Child born before its parent','Kind vor dem Elternteil geboren'],
+ e:['A child is dated earlier than its mother or father.',
+    'Ein Kind ist früher datiert als seine Mutter oder sein Vater.'],
+ f:function(P,F,out,ctx){
+   var S=ctx.S;
+   for(var fid in F){ var f=F[fid];
+     (f.children||[]).forEach(function(cid){
+       var c=P[cid]; if(!c) return;
+       var kg=S[cid].g; if(!kg) return;
+       [f.husb,f.wife].forEach(function(eid){
+         var e=eid&&P[eid]; if(!e) return;
+         var eg=S[eid].g; if(!eg) return;
+         if(kg[1] + spiel(S[cid].gx, S[eid].gx) < eg[0])
+           out.push({ids:[cid,eid], text:nm(cid)+' * '+dt(c.birthDate)+
+             '  \u2014 '+T('parent','Elternteil')+' '+nm(eid)+' * '+dt(e.birthDate)});
+       });
+     });
+   }
+ }},
+{k:'kind_nach_tod', band:'w',
+ t:['Child born after the parent had died','Kind nach dem Tod des Elternteils geboren'],
+ e:['A child is dated after its mother had died, or more than nine months after its father.',
+    'Ein Kind ist nach dem Tod der Mutter datiert, oder mehr als neun Monate nach dem des Vaters.'],
+ f:function(P,F,out,ctx){
+   var S=ctx.S;
+   for(var fid in F){ var f=F[fid];
+     (f.children||[]).forEach(function(cid){
+       var c=P[cid]; if(!c) return;
+       var kg=S[cid].g; if(!kg) return;
+       [[f.wife,0],[f.husb,280]].forEach(function(q){
+         var e=q[0]&&P[q[0]]; if(!e||!e.deathDate) return;
+         var es=S[e.id].s; if(!es) return;
+         if(kg[0] > es[1]+q[1]+spiel(S[cid].gx, S[e.id].sx))
+           out.push({ids:[cid,e.id], text:nm(cid)+' * '+dt(c.birthDate)+
+             '  \u2014 '+nm(e.id)+' \u2020 '+dt(e.deathDate)});
+       });
+     });
+   }
+ }},
+{k:'ehe_mit_verwandten', band:'w',
+ t:['Married to their own child or parent','Mit dem eigenen Kind oder Elternteil verheiratet'],
+ e:['The same two people are recorded both as a couple and as parent and child. One of the two links is wrong.',
+    'Dieselben zwei Personen stehen einmal als Paar und einmal als Eltern und Kind. Eine der beiden Verbindungen ist falsch.'],
+ f:function(P,F,out){
+   for(var fid in F){ var f=F[fid];
+     if(!f.husb||!f.wife) continue;
+     var paar=[f.husb,f.wife];
+     for(var i=0;i<2;i++){
+       var a=paar[i], b=paar[1-i];
+       var el=vorEltern(P,F,a).map(function(x){return x.id;});
+       if(el.indexOf(b)>=0) out.push({ids:[a,b], text:nm(a)+' \u2014 '+nm(b)});
+     }
+   }
+ }},
+{k:'eigener_vorfahr', band:'w',
+ t:['Is their own ancestor','Ist eigener Vorfahr'],
+ e:['Following the line of descent upwards leads back to this person. Somewhere in the chain a link is wrong.',
+    'Die Abstammung führt nach oben wieder auf diese Person zurück. Irgendwo in der Kette ist eine Verbindung falsch.'],
+ f:function(P,F,out,ctx){
+   var r=ctx.ring;
+   for(var id in r) if(P[id]) out.push({ids:[id], text:nm(id)});
+ }},
+{k:'geschlecht_rolle', band:'w',
+ t:['Sex contradicts the role','Geschlecht widerspricht der Rolle'],
+ e:['Recorded as the husband of a family but female, or as the wife but male.',
+    'In einer Familie als Ehemann eingetragen, aber weiblich - oder als Ehefrau, aber männlich.'],
+ f:function(P,F,out){
+   for(var fid in F){ var f=F[fid];
+     if(f.husb&&P[f.husb]&&P[f.husb].sex==='F')
+       out.push({ids:[f.husb], text:nm(f.husb)+': '+T('husband, but recorded female','Ehemann, aber als weiblich erfasst'),
+                 feld:'sex', alt:'F', neu:'M'});
+     if(f.wife&&P[f.wife]&&P[f.wife].sex==='M')
+       out.push({ids:[f.wife], text:nm(f.wife)+': '+T('wife, but recorded male','Ehefrau, aber als männlich erfasst'),
+                 feld:'sex', alt:'M', neu:'F'});
+   }
+ }},
+{k:'zukunft', band:'w',
+ t:['Date in the future','Datum in der Zukunft'],
+ e:['A date lies after today.','Ein Datum liegt nach dem heutigen Tag.'],
+ f:function(P,F,out,ctx){
+   var S=ctx.S, M=ctx.M;
+   for(var id in P){ var p=P[id], q=S[id];
+     if(p.birthDate&&q.g&&q.g[0]>HEUTE) out.push({ids:[id], text:nm(id)+': * '+dt(p.birthDate)});
+     if(p.deathDate&&q.s&&q.s[0]>HEUTE) out.push({ids:[id], text:nm(id)+': \u2020 '+dt(p.deathDate)});
+   }
+   for(var fid in F){ var f=F[fid], h=M[fid].h;
+     if(f.marrDate&&h&&h[0]>HEUTE){
+       var wer=[f.husb,f.wife].filter(function(x){return x&&P[x];});
+       out.push({ids:wer, text:(wer.map(nm).join(' \u2014 ')||('#'+fid))+': \u26AD '+dt(f.marrDate)});
+     }
+   }
+ }},
+
+/* ---------------- Band 2: Unstimmig ---------------- */
+{k:'mutter_jung', band:'u',
+ t:['Mother under 14','Mutter unter 14'],
+ e:['The mother would have been younger than fourteen at the birth, even at the latest possible reading of her own date.',
+    'Die Mutter wäre bei der Geburt jünger als vierzehn gewesen, selbst bei spätestmöglicher Lesart ihres eigenen Datums.'],
+ f:function(P,F,out,ctx){ altersRegel(P,F,out,'wife',null,14,'<',ctx); }},
+{k:'mutter_alt', band:'u',
+ t:['Mother over 50','Mutter über 50'],
+ e:['The mother would have been older than fifty at the birth. It happens, but it is worth a look.',
+    'Die Mutter wäre bei der Geburt älter als fünfzig gewesen. Kommt vor, lohnt aber einen Blick.'],
+ f:function(P,F,out,ctx){ altersRegel(P,F,out,'wife',50,null,'>',ctx); }},
+{k:'vater_jung', band:'u',
+ t:['Father under 14','Vater unter 14'],
+ e:['The father would have been younger than fourteen at the birth.',
+    'Der Vater wäre bei der Geburt jünger als vierzehn gewesen.'],
+ f:function(P,F,out,ctx){ altersRegel(P,F,out,'husb',null,14,'<',ctx); }},
+{k:'vater_alt', band:'u',
+ t:['Father over 75','Vater über 75'],
+ e:['The father would have been older than seventy-five at the birth.',
+    'Der Vater wäre bei der Geburt älter als fünfundsiebzig gewesen.'],
+ f:function(P,F,out,ctx){ altersRegel(P,F,out,'husb',75,null,'>',ctx); }},
+{k:'alter_hoch', band:'u',
+ t:['Lived longer than 110 years','Älter als 110 Jahre geworden'],
+ e:['Possible, but in a family file it is usually a typing error in one of the two years.',
+    'Möglich, in einer Familiendatei aber meist ein Zahlendreher in einer der beiden Jahreszahlen.'],
+ f:function(P,F,out,ctx){
+   var S=ctx.S;
+   for(var id in P){ var p=P[id], q=S[id];
+     if(!q.g||!q.s) continue;
+     /* kürzestmögliche Lebensspanne, damit eine Jahresangabe nicht
+        schon durch ihre Unschärfe über die Grenze rutscht */
+     var kurzSpanne=q.s[0]-q.g[1];
+     if(kurzSpanne>110*JAHR)
+       out.push({ids:[id], text:nm(id)+': * '+dt(p.birthDate)+'  \u2020 '+dt(p.deathDate)+
+         '  ('+Math.floor(kurzSpanne/JAHR)+' '+T('years','Jahre')+')'});
+   }
+ }},
+{k:'kein_geschlecht', band:'u',
+ t:['No sex recorded','Kein Geschlecht erfasst'],
+ e:['Without it the app cannot tell husband from wife in a chart. Where the role in a family says it, a suggestion is offered.',
+    'Ohne diese Angabe kann die App in der Tafel Mann und Frau nicht unterscheiden. Wo die Rolle in einer Familie es verrät, steht ein Vorschlag dabei.'],
+ f:function(P,F,out){
+   var rolle={};
+   for(var fid in F){ var f=F[fid];
+     if(f.husb) rolle[f.husb]='M';
+     if(f.wife) rolle[f.wife]='F';
+   }
+   for(var id in P){ var p=P[id];
+     if(p.sex==='M'||p.sex==='F') continue;
+     if(rolle[id]) out.push({ids:[id], text:nm(id)+' \u2014 '+
+       T('appears as '+(rolle[id]==='M'?'husband':'wife'), 'steht als '+(rolle[id]==='M'?'Ehemann':'Ehefrau')+' in einer Familie'),
+       feld:'sex', alt:p.sex||'', neu:rolle[id]});
+     else out.push({ids:[id], text:nm(id)});
+   }
+ }},
+{k:'jahr_unplausibel', band:'u',
+ t:['Implausible year','Unplausible Jahreszahl'],
+ e:['A year before 1000 or after this one. Usually a digit too few or too many.',
+    'Eine Jahreszahl vor 1000 oder nach dem laufenden Jahr. Meist eine Ziffer zu wenig oder zu viel.'],
+ f:function(P,F,out){
+   for(var id in P){ var p=P[id];
+     [['birthDate','*'],['deathDate','\u2020']].forEach(function(q){
+       var j=jahrVon(p[q[0]]); if(j==null) return;
+       if(j<1000||j>JAHR_JETZT) out.push({ids:[id], text:nm(id)+': '+q[1]+' '+dt(p[q[0]])});
+     });
+   }
+ }},
+{k:'geschwister_dicht', band:'u',
+ t:['Siblings born too close together','Geschwister zu dicht beieinander geboren'],
+ e:['Two children of the same parents, born between one and eight months apart, both with a full date. Twins share a date; this looks more like a wrong year.',
+    'Zwei Kinder derselben Eltern, zwischen einem und acht Monaten auseinander geboren, beide mit vollem Datum. Zwillinge haben dasselbe Datum; das hier sieht eher nach einer falschen Jahreszahl aus.'],
+ f:function(P,F,out,ctx){
+   /* Nur taggenaue Daten. Ein Platzhalter auf dem 1. Januar neben
+      einem echten Datum ergab vorher einen Abstand, den es gar
+      nicht gibt - an Joachims Datei die Hälfte der Funde. */
+   var platz=ctx.platz.satz, S=ctx.S;
+   for(var fid in F){ var f=F[fid];
+     var ki=(f.children||[]).filter(function(c){
+       return P[c] && genauesDatum(P[c].birthDate, platz); });
+     for(var i=0;i<ki.length;i++) for(var j=i+1;j<ki.length;j++){
+       var a=S[ki[i]].g[0], b=S[ki[j]].g[0], d=Math.abs(a-b);
+       if(d>25&&d<245) out.push({ids:[ki[i],ki[j]],
+         text:nm(ki[i])+' * '+dt(P[ki[i]].birthDate)+'  \u2014 '+nm(ki[j])+' * '+dt(P[ki[j]].birthDate)});
+     }
+   }
+ }},
+{k:'datum_unlesbar', band:'u',
+ t:['Date the app cannot read','Datum, das die App nicht lesen kann'],
+ e:['No year can be found in this entry, so it counts for nothing in the tree, the chart or any filter.',
+    'In dieser Angabe ist keine Jahreszahl zu finden. Sie zählt damit weder im Stammbaum noch in der Tafel noch in einem Filter.'],
+ f:function(P,F,out){
+   for(var id in P){ var p=P[id];
+     [['birthDate','*'],['deathDate','\u2020']].forEach(function(q){
+       var v=p[q[0]]; if(!v) return;
+       if(!lesbar(v)) out.push({ids:[id], text:nm(id)+': '+q[1]+' '+v});
+     });
+   }
+   for(var fid in F){ var f=F[fid];
+     if(f.marrDate&&!lesbar(f.marrDate)){
+       var wer=[f.husb,f.wife].filter(function(x){return x&&P[x];});
+       out.push({ids:wer, text:(wer.map(nm).join(' \u2014 ')||('#'+fid))+': \u26AD '+f.marrDate});
+     }
+   }
+ }},
+
+/* ---------------- Band 3: Schreibweise ---------------- */
+{k:'platzhalter_datum', band:'s',
+ t:['Placeholder date','Platzhalterdatum'],
+ e:['',''],
+ f:function(P,F,out,ctx){
+   var liste=ctx.platz.liste; if(!liste.length) return;
+   var satz=ctx.platz.satz;
+   function sammle(id, feld, v){
+     if(!v||unscharf(v)) return;
+     var d=teile(v); if(d.tag==null||d.mon==null||d.jahr==null) return;
+     if(!satz[d.tag+'.'+d.mon]) return;
+     out.push({ids:[id], text:nm(id)+': '+(feld==='birthDate'?'*':'\u2020')+' '+dt(v),
+               feld:feld, alt:v, neu:String(d.jahr)});
+   }
+   for(var id in P){ sammle(id,'birthDate',P[id].birthDate); sammle(id,'deathDate',P[id].deathDate); }
+ }},
+{k:'leerzeichen', band:'s',
+ t:['Stray spaces','Überzählige Leerzeichen'],
+ e:['A space at the start or end, or two in a row. Invisible on screen, but it breaks sorting and searching.',
+    'Ein Leerzeichen am Anfang oder Ende oder zwei hintereinander. Auf dem Schirm unsichtbar, aber es stört Sortierung und Suche.'],
+ f:function(P,F,out){
+   var felder=[['given','Vorname','Given name'],['surname','Nachname','Family name'],
+               ['birthPlace','Geburtsort','Place of birth'],['deathPlace','Sterbeort','Place of death'],
+               ['occ','Beruf','Occupation'],['stamm','Stamm','Branch']];
+   for(var id in P){ var p=P[id];
+     felder.forEach(function(q){
+       var v=p[q[0]]; if(!v) return;
+       var neu=String(v).replace(/\s+/g,' ').trim();
+       if(neu!==v) out.push({ids:[id], text:nm(id)+' \u2014 '+T(q[2],q[1])+': \u00BB'+v+'\u00AB',
+                             feld:q[0], alt:v, neu:neu});
+     });
+   }
+ }},
+{k:'satzzeichen_ort', band:'s',
+ t:['Punctuation left over in a place name','Satzzeichen im Ortsnamen'],
+ e:['A place that ends in a comma, or has two in a row, usually comes from a conversion that left levels empty.',
+    'Ein Ort, der auf ein Komma endet oder zwei hintereinander trägt, stammt meist aus einer Umwandlung, bei der Ebenen leer blieben.'],
+ f:function(P,F,out){
+   function putz(v){
+     return String(v).replace(/\s*,\s*/g,', ').replace(/(,\s*)+,/g,', ')
+       .replace(/^[\s,;]+/,'').replace(/[\s,;]+$/,'').replace(/\s+/g,' ');
+   }
+   for(var id in P){ var p=P[id];
+     [['birthPlace','Geburtsort','Place of birth'],['deathPlace','Sterbeort','Place of death']].forEach(function(q){
+       var v=p[q[0]]; if(!v) return;
+       var neu=putz(v);
+       if(neu!==v) out.push({ids:[id], text:nm(id)+' \u2014 '+T(q[2],q[1])+': \u00BB'+v+'\u00AB',
+                             feld:q[0], alt:v, neu:neu});
+     });
+   }
+   for(var fid in F){ var f=F[fid]; if(!f.marrPlace) continue;
+     var n2=putz(f.marrPlace);
+     if(n2!==f.marrPlace){
+       var wer=[f.husb,f.wife].filter(function(x){return x&&P[x];});
+       out.push({ids:wer, famId:fid, text:(wer.map(nm).join(' \u2014 ')||('#'+fid))+
+         ' \u2014 '+T('Place of marriage','Heiratsort')+': \u00BB'+f.marrPlace+'\u00AB',
+         feld:'marrPlace', alt:f.marrPlace, neu:n2});
+     }
+   }
+ }},
+{k:'name_versalien', band:'s',
+ t:['Family name in capitals','Nachname in Großbuchstaben'],
+ e:['Many programs write the family name in capitals. That is a display choice, not part of the name, and it looks shouted in a chart.',
+    'Viele Programme schreiben den Nachnamen in Großbuchstaben. Das ist eine Anzeigeform, nicht Teil des Namens, und in einer Tafel sieht es nach Geschrei aus.'],
+ f:function(P,F,out){
+   for(var id in P){ var p=P[id]; var v=p.surname; if(!v) continue;
+     if(!/[A-ZÄÖÜ]{3,}/.test(v)) continue;
+     if(v!==v.toUpperCase()) continue;
+     if(/[a-zäöüß]/.test(v)) continue;
+     var neu=v.toLowerCase().replace(/(^|[\s\-'])([a-zäöüß])/g, function(m2,a,b){ return a+b.toUpperCase(); });
+     if(neu!==v) out.push({ids:[id], text:nm(id)+': \u00BB'+v+'\u00AB \u2192 \u00BB'+neu+'\u00AB',
+                           feld:'surname', alt:v, neu:neu});
+   }
+ }},
+{k:'platzhaltername', band:'s',
+ t:['Placeholder instead of a name','Platzhalter statt eines Namens'],
+ e:['Entries such as N.N., ?, unknown. They are honest, but the app can show an empty name just as well, and then it does not sort among the Ns.',
+    'Einträge wie N.N., ?, unbekannt. Sie sind ehrlich gemeint, aber die App kann einen leeren Namen genauso zeigen - und dann sortiert er nicht unter N ein.'],
+ f:function(P,F,out){
+   var muster=/^(n\.?\s*n\.?|nn|\?+|-+|_+|unbekannt|unknown|unbek\.?|lebt|living|privat|private)$/i;
+   for(var id in P){ var p=P[id];
+     [['given','Vorname','Given name'],['surname','Nachname','Family name']].forEach(function(q){
+       var v=(p[q[0]]||'').trim(); if(!v) return;
+       if(muster.test(v)) out.push({ids:[id], text:nm(id)+' \u2014 '+T(q[2],q[1])+': \u00BB'+v+'\u00AB',
+                                    feld:q[0], alt:v, neu:''});
+     });
+   }
+ }}
+];
+
+/* Eine Hilfsfunktion für die vier Altersregeln. Gerechnet wird mit
+   der für die Regel GÜNSTIGSTEN Lesart der beiden Zeiträume: Wer
+   "unter 14" meldet, muss zeigen, dass selbst das höchstmögliche
+   Alter darunter liegt. Sonst meldet die Regel Mütter, deren
+   Jahresangabe nur unscharf ist. Angezeigt wird abgerundet, nicht
+   gerundet - sonst stand bei der Regel "unter 14" die Zahl 14. */
+function altersRegel(P,F,out,rolle,ueber,unter,zeichen,ctx){
+  var S=ctx.S;
+  for(var fid in F){ var f=F[fid];
+    var e=f[rolle]&&P[f[rolle]]; if(!e) continue;
+    var eg=S[e.id].g; if(!eg) continue;
+    (f.children||[]).forEach(function(cid){
+      var c=P[cid]; if(!c) return;
+      var kg=S[cid].g; if(!kg) return;
+      /* Gerechnet wird in vollen Jahren, und zwar in denselben, die
+         danach dastehen. Ohne das Abrunden entschied die vierte
+         Nachkommastelle: Zwei Jahresangaben einundfünfzig Jahre
+         auseinander ergeben bei grosszügigster Lesart 50,0014 Jahre,
+         und eine Regel "über 50" schlug an, obwohl im Text "50"
+         stand. Wer die Zahl liest, soll die Regel nachvollziehen
+         können. */
+      var hoechst=Math.floor((kg[1]-eg[0])/JAHR);    /* höchstmögliches Alter */
+      var niedrigst=Math.floor((kg[0]-eg[1])/JAHR);  /* niedrigstmögliches Alter */
+      if(hoechst<0) return;                /* das meldet schon kind_vor_eltern */
+      var trifft = zeichen==='<' ? hoechst<unter : niedrigst>ueber;
+      if(trifft) out.push({ids:[e.id,cid],
+        text:nm(e.id)+' '+T('was','war')+' '+(zeichen==='<'?hoechst:niedrigst)+' '+
+             T('years old at the birth of','Jahre alt bei der Geburt von')+
+             ' '+nm(cid)+' ('+dt(c.birthDate)+')'});
+    });
+  }
+}
+
+/* ===================================================================
+   Suchen
+   =================================================================== */
+/* Jedes Datum einmal zerlegen, nicht einmal je Regel. Zehn der
+   dreiundzwanzig Regeln sehen dieselben zwei Daten je Person an;
+   ohne diese Tabelle wird jedes Datum zehnmal zerlegt. Was es
+   bringt, steht in den Versionshinweisen. Ein frueherer Versuch,
+   die Zerlegung nach Zeichenkette zu merken, war messbar
+   LANGSAMER - siehe die Bemerkung weiter oben. */
+function ruesten(P,F){
+  var platz=platzKombis(P);
+  var S={}, M={}, id, f, fid, p2;
+  for(id in P){ p2=P[id];
+    S[id]={ g:spanne(p2.birthDate, platz.satz), s:spanne(p2.deathDate, platz.satz),
+            gx:genauesDatum(p2.birthDate, platz.satz), sx:genauesDatum(p2.deathDate, platz.satz) };
+  }
+  for(fid in F){ f=F[fid];
+    M[fid]={ h:spanne(f.marrDate, platz.satz), hx:genauesDatum(f.marrDate, platz.satz) };
+  }
+  return {S:S, M:M, platz:platz, ring:ringeFinden(P,F)};
+}
+function suchen(){
+  var P=FP.indi(), F=FP.fam(), ctx={}, erg=[];
+  var vor=ruesten(P,F);
+  ctx.S=vor.S; ctx.M=vor.M; ctx.platz=vor.platz; ctx.ring=vor.ring;
+  var t0=(window.performance&&performance.now)?performance.now():0;
+  /* Eine Regel, die stolpert, darf das Fenster nicht mitreissen -
+     aber sie darf auch nicht lautlos verschwinden. Beim Bauen hat
+     genau das eine halbe Stunde gekostet: acht Regeln lieferten
+     nichts, weil ihnen ein Argument fehlte, und der Fang verschluckte
+     die Meldung. Jetzt wird sie festgehalten, und die Testreihe
+     besteht darauf, dass die Liste leer ist. */
+  var kaputt=[];
+  REGELN.forEach(function(r){
+    var out=[];
+    try{ r.f(P,F,out,ctx); }catch(e){ out=[]; kaputt.push(r.k+': '+(e&&e.message||e)); }
+    if(out.length) erg.push({regel:r, befunde:out});
+  });
+  var t1=(window.performance&&performance.now)?performance.now():0;
+  return {gruppen:erg, ctx:ctx, personen:Object.keys(P).length, ms:Math.round(t1-t0), kaputt:kaputt};
+}
+
+/* Die Erklärung der Platzhalterregel trägt Zahlen und entsteht
+   deshalb erst, wenn gezählt ist. */
+function platzText(ctx){
+  var liste=ctx.platz&&ctx.platz.liste;
+  if(!liste||!liste.length) return '';
+  var teileTxt=liste.map(function(q){
+    var tm=q.tag.split('.');
+    return T(tm[0]+'.'+tm[1]+'.', tm[0]+'.'+tm[1]+'.')+' ×'+q.n;
+  }).join(', ');
+  var g=liste[0];
+  return T('The date '+teileTxt+' appears far more often than chance allows (about '+g.erwartet+
+           ' would be expected). That is the mark of a placeholder standing in for a year that is known '+
+           'and a day that is not. Which of them are real birthdays, the app cannot know – so look before you take them.',
+           'Das Datum '+teileTxt+' kommt weit häufiger vor, als der Zufall zulässt (zu erwarten wären etwa '+
+           g.erwartet+'). So sieht ein Platzhalter aus: Das Jahr ist bekannt, der Tag nicht. Welche davon '+
+           'echte Geburtstage sind, kann die App nicht wissen – also vorher hineinsehen.');
+}
+
+/* ===================================================================
+   Anwenden
+   =================================================================== */
+function anwenden(liste){
+  /* liste: Befunde mit feld/alt/neu. Alles in einem Zug, mit einem
+     Stand davor für das Zurücknehmen. */
+  var vorher=FP.serialize(), n=0, P=FP.indi(), F=FP.fam();
+  liste.forEach(function(b){
+    if(!b.feld) return;
+    if(b.famId){ var f=F[b.famId]; if(f&&f[b.feld]===b.alt){ f[b.feld]=b.neu; n++; } return; }
+    var id=b.ids[0], p=P[id]; if(!p) return;
+    if(p[b.feld]!==b.alt) return;                /* zwischenzeitlich geändert */
+    var fe={}; fe[b.feld]=b.neu;
+    FP.updatePerson(id, fe); n++;
+  });
+  if(n) FP.touchAll();
+  return {n:n, vorher:vorher};
+}
+
+
+/* ===================================================================
+   Das Fenster
+   =================================================================== */
+var ERG=null, BAND='w', RUECK=[], OFFEN={}, ERLEDIGT={};
+var ZEIGE=12;          /* so viele Fälle je Regel auf einmal */
+
+function bandName(b){
+  return b==='w' ? T('Contradiction','Widerspruch')
+       : b==='u' ? T('Unlikely','Unstimmig')
+                 : T('Notation','Schreibweise');
+}
+function gruppenVon(b){
+  if(!ERG) return [];
+  return ERG.gruppen.filter(function(g){ return g.regel.band===b; });
+}
+function zahlVon(b){
+  var n=0; gruppenVon(b).forEach(function(g){ n+=g.befunde.length; }); return n;
+}
+function erklaerung(r){
+  if(r.k==='platzhalter_datum') return platzText(ERG.ctx);
+  return r.e[de()?1:0];
+}
+function offenVorschlaege(g){
+  return g.befunde.filter(function(b){ return b.feld && !ERLEDIGT[schluessel(b)]; });
+}
+function schluessel(b){ return (b.famId||b.ids[0])+'|'+(b.feld||'')+'|'+(b.alt||''); }
+
+function zeichneTabs(){
+  [['w','pruefTabW'],['u','pruefTabU'],['s','pruefTabS']].forEach(function(q){
+    var el=$(q[1]); if(!el) return;
+    el.textContent=bandName(q[0])+' ('+zahlVon(q[0])+')';
+    el.classList.toggle('on', BAND===q[0]);
+  });
+}
+
+function zeichneListe(){
+  var box=$('pruefList'), leer=$('pruefNone');
+  var liste=gruppenVon(BAND);
+  box.innerHTML='';
+  if(!liste.length){
+    leer.hidden=false;
+    leer.textContent = BAND==='w'
+      ? T('No contradictions in this file.','Keine Widersprüche in dieser Datei.')
+      : BAND==='u' ? T('Nothing unlikely in this file.','Nichts Unstimmiges in dieser Datei.')
+                   : T('Nothing to tidy up in this file.','Nichts aufzuräumen in dieser Datei.');
+    return;
+  }
+  leer.hidden=true;
+  liste.forEach(function(g){
+    var r=g.regel, auf=!!OFFEN[r.k];
+    var mit=offenVorschlaege(g);
+    var d=document.createElement('div');
+    d.className='dupecard pruefcard';
+    var zeigen = auf ? g.befunde : g.befunde.slice(0,0);
+    var faelle = zeigen.slice(0, OFFEN[r.k]===2 ? 1e9 : ZEIGE).map(function(b){
+      var erl=ERLEDIGT[schluessel(b)];
+      return '<div class="pfall'+(erl?' weg':'')+'" data-k="'+esc(schluessel(b))+'">'+
+        '<span class="ptext">'+esc(b.text)+'</span>'+
+        (b.feld&&!erl ? '<span class="pneu">\u2192 '+(b.neu===''?T('(empty)','(leer)'):esc(b.neu))+'</span>' : '')+
+        '<span class="pacts">'+
+          (b.ids&&b.ids.length ? '<button class="btn small" data-tun="ansehen">'+esc(T('Show','Ansehen'))+'</button>' : '')+
+          (b.feld&&!erl ? '<button class="btn small" data-tun="eins">'+esc(T('Take over','Übernehmen'))+'</button>' : '')+
+        '</span></div>';
+    }).join('');
+    var mehr = auf && OFFEN[r.k]!==2 && g.befunde.length>ZEIGE
+      ? '<div class="pmehr"><button class="btn small" data-tun="alle">'+
+        esc(T('Show all ('+g.befunde.length+')','Alle zeigen ('+g.befunde.length+')'))+'</button></div>' : '';
+    d.innerHTML=
+      '<div class="pkopf" data-tun="klapp">'+
+        '<span class="pzahl">'+g.befunde.length+'</span>'+
+        '<span class="pname">'+esc(r.t[de()?1:0])+'</span>'+
+        '<span class="ppfeil">'+(auf?'\u2212':'+')+'</span>'+
+      '</div>'+
+      '<div class="perkl">'+esc(erklaerung(r))+'</div>'+
+      (auf ? '<div class="pfaelle">'+faelle+'</div>'+mehr : '')+
+      /* Der Knopf für die ganze Regel erscheint erst ab zwei Fällen -
+         bei einem stand "Alle 1 übernehmen" neben einem Knopf, der
+         dasselbe tut. */
+      (mit.length>1 ? '<div class="dupeacts"><button class="btn small primary" data-tun="regel">'+
+         esc(T('Take over all '+mit.length,'Alle '+mit.length+' übernehmen'))+'</button></div>' : '');
+    d.addEventListener('click', function(ev){
+      var btn=ev.target.closest('[data-tun]'); if(!btn) return;
+      var tun=btn.dataset.tun;
+      if(tun==='klapp'){ OFFEN[r.k]=OFFEN[r.k]?0:1; zeichneListe(); return; }
+      if(tun==='alle'){ OFFEN[r.k]=2; zeichneListe(); return; }
+      if(tun==='regel'){ uebernehmen(offenVorschlaege(g), true); return; }
+      var zeile=btn.closest('.pfall'); if(!zeile) return;
+      var b=null;
+      for(var i=0;i<g.befunde.length;i++) if(schluessel(g.befunde[i])===zeile.dataset.k){ b=g.befunde[i]; break; }
+      if(!b) return;
+      if(tun==='eins'){ uebernehmen([b]); return; }
+      if(tun==='ansehen'){
+        SHELL.closeModal('mdPruef');
+        SHELL.treeGo(b.ids[0]);
+      }
+    });
+    box.appendChild(d);
+  });
+}
+
+/* Nach einer Übernahme NICHT jedesmal alles neu durchrechnen. Der
+   Durchlauf kostet an 11.700 Personen gut anderthalb Sekunden bei
+   vierfacher Drosselung; wer dreißig Einzelfälle nacheinander
+   übernimmt, wartete also eine Dreiviertelminute aufs Nichts. Der
+   erledigte Fall wird durchgestrichen - dasselbe Verhalten wie in
+   der Dublettenprüfung. Neu gerechnet wird nur, wenn eine ganze
+   Regel auf einmal übernommen wurde, denn dann ändert sich genug,
+   dass die Zahlen sonst täuschen. */
+function uebernehmen(liste, neuRechnenDanach){
+  if(!liste.length) return;
+  var r=PRUEF.anwenden(liste);
+  if(!r.n){ SHELL.toast(T('Nothing left to change there.','Dort war nichts mehr zu ändern.')); return; }
+  RUECK.push({text:r.vorher, n:r.n});
+  if(RUECK.length>10) RUECK.shift();
+  liste.forEach(function(b){ ERLEDIGT[schluessel(b)]=1; });
+  SHELL.toast(r.n+' '+T(r.n===1?'entry changed':'entries changed', r.n===1?'Angabe geändert':'Angaben geändert'));
+  if(neuRechnenDanach) neuRechnen();
+  else { fussZeichnen(); zeichneListe(); }
+}
+
+/* Nach einer Änderung stimmen die alten Befunde nicht mehr - also
+   noch einmal durchlaufen. Das kostet bei 11.700 Personen gemessene
+   Millisekunden, und es ist der einzige Weg, der nicht lügt. */
+function neuRechnen(){
+  ERG=PRUEF.suchen();
+  fussZeichnen(); zeichneTabs(); zeichneListe(); summe();
+}
+
+function summe(){
+  var w=zahlVon('w'), u=zahlVon('u'), ss=zahlVon('s');
+  var txt=T('Checked: '+ERG.personen+' people. '+w+' contradictions, '+u+' unlikely, '+ss+' notations.',
+            'Geprüft: '+ERG.personen+' Personen. '+w+' Widersprüche, '+u+' unstimmig, '+ss+' Schreibweisen.');
+  /* Wenn Platzhalterdaten erkannt wurden, gehört der Satz dazu: Er
+     erklärt, warum hier weniger Widersprüche stehen als eine
+     stumpfe Prüfung melden würde - und dass das Absicht ist. */
+  var liste=ERG.ctx&&ERG.ctx.platz&&ERG.ctx.platz.liste;
+  if(liste&&liste.length){
+    var tm=liste[0].tag.split('.');
+    txt+=' '+T('Dates on '+tm[0]+'.'+tm[1]+'. are read as a bare year, not as a day, so a placeholder does not count as a contradiction.',
+               'Daten auf dem '+tm[0]+'.'+tm[1]+'. werden als blosse Jahresangabe gelesen und nicht als Tag \u2013 ein Platzhalter gilt damit nicht als Widerspruch.');
+  }
+  $('pruefSum').textContent=txt;
+}
+
+function fussZeichnen(){
+  $('pruefUndo').hidden = !RUECK.length;
+  $('pruefUndo').textContent = T('Undo','Rückgängig')+(RUECK.length>1?(' ('+RUECK.length+')'):'');
+  $('pruefSave').hidden = !(ERG && ERG.gruppen.length);
+}
+
+function alsText(){
+  var z=[];
+  z.push(T('Anceslio – data check','Anceslio – Datenprüfung'));
+  z.push(T('File','Datei')+': '+(FP.fileName()||''));
+  z.push(T('People','Personen')+': '+ERG.personen);
+  z.push('');
+  ['w','u','s'].forEach(function(b){
+    var gr=gruppenVon(b); if(!gr.length) return;
+    z.push('== '+bandName(b)+' ==');
+    gr.forEach(function(g){
+      z.push('');
+      z.push(g.regel.t[de()?1:0]+'  ('+g.befunde.length+')');
+      z.push('  '+erklaerung(g.regel));
+      g.befunde.forEach(function(bf){
+        z.push('  - '+bf.text+(bf.feld?('   \u2192 '+(bf.neu===''?T('(empty)','(leer)'):bf.neu)):''));
+      });
+    });
+    z.push('');
+  });
+  return z.join('\n');
+}
+
+function starten(){
+  var b=$('pruefBusy');
+  b.hidden=false; b.textContent=T('Checking …','Wird geprüft …');
+  $('pruefGo').disabled=true;
+  setTimeout(function(){
+    ERG=PRUEF.suchen();
+    OFFEN={}; ERLEDIGT={};
+    /* Das Band, in dem etwas steht, wird gezeigt - sonst öffnet das
+       Fenster auf einer leeren Seite, obwohl es Funde gibt. */
+    BAND = zahlVon('w') ? 'w' : (zahlVon('u') ? 'u' : 's');
+    b.hidden=true; $('pruefGo').disabled=false;
+    $('pruefStart').hidden=true; $('pruefResult').hidden=false;
+    summe(); zeichneTabs(); zeichneListe(); fussZeichnen();
+  }, 30);
+}
+
+function aufsetzen(){
+  var mi=$('miPruef');
+  if(mi) mi.onclick=function(){
+    SHELL.closeDataMenu && SHELL.closeDataMenu();
+    if(!FP.hasData() || !FP.count()){
+      SHELL.toast(T('Open a file first.','Erst eine Datei öffnen.')); return;
+    }
+    $('pruefStart').hidden=false; $('pruefResult').hidden=true;
+    $('pruefSave').hidden=true; $('pruefUndo').hidden=!RUECK.length;
+    SHELL.openModal('mdPruef');
+  };
+  $('pruefGo').onclick=starten;
+  $('pruefClose').onclick=function(){ SHELL.closeModal('mdPruef'); };
+  [['w','pruefTabW'],['u','pruefTabU'],['s','pruefTabS']].forEach(function(q){
+    $(q[1]).onclick=function(){ BAND=q[0]; zeichneTabs(); zeichneListe(); };
+  });
+  $('pruefSave').onclick=function(){
+    if(!ERG) return;
+    var name=(de()?'pruefung_':'check_')+(FP.fileName()||'').replace(/[^\w\-]+/g,'_').slice(0,30)+'.txt';
+    SHELL.download(new Blob([alsText()],{type:'text/plain;charset=utf-8'}), name);
+  };
+  $('pruefUndo').onclick=function(){
+    var z=RUECK.pop(); if(!z) return;
+    FP.applyGedcom(z.text);
+    SHELL.toast(T('Taken back.','Zurückgenommen.'));
+    ERLEDIGT={};
+    neuRechnen();
+  };
+}
+
+return {
+  REGELN:REGELN, suchen:suchen, anwenden:anwenden, platzText:platzText,
+  boot:aufsetzen,
+  /* nur fuer die Testreihe */
+  _tage:tage, _teile:teile, _unscharf:unscharf, _lesbar:lesbar,
+  _stand:function(){ return {erg:ERG, band:BAND, rueck:RUECK.length}; }
+};
+})();
+</script>
+<script>
 /* Stored data is loaded only once all three tabs are ready. */
 DUPE.boot();
+PRUEF.boot();
 LISTE.boot();
 SHELL.boot();
 </script>
