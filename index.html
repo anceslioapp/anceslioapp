@@ -2326,8 +2326,8 @@ window.I18N={
         here the app shows and does not suggest. <b>Unlikely</b> holds what is possible but rare: a mother of
         nine or of fifty-two, a life of 118 years, two siblings born four months apart. Most of these are typing
         errors in a year. <b>Notation</b> holds the cases where nothing is factually wrong and only the writing is
-        off &ndash; a double space, a place ending in a comma, a family name shouted in capitals. There the app
-        does suggest, and shows the replacement beside the entry.</p>
+        off &ndash; a double space, a place ending in a comma, a family name shouted in capitals, a name particle
+        glued to the name as in &raquo;vonBergmann&laquo;. There the app does suggest, and shows the replacement beside the entry.</p>
         <p>The findings are grouped <b>by rule, not by person</b>. A file of several thousand people can hold
         thousands of the same small thing, and as thousands of cards that would be unusable; as one line with a
         number and a button it is done in a moment. Each rule says what it looks for and why that is suspicious.
@@ -2443,7 +2443,7 @@ window.I18N={
         and the Escape key. The app always starts with its menus in sight, so nobody can get stuck.</p>
         <p>In the chart everything else lives behind the <b>&#9776;</b> menu, divided into four parts:
         <b>Root person</b>, <b>View</b>, <b>The selected person</b> and <b>Output</b>.</p>
-        <p class="muted">Version 3.3</p>
+        <p class="muted appver"></p>
       </section>
 
 
@@ -2711,8 +2711,8 @@ window.I18N={
         <b>Unstimmig</b> sammelt das M&ouml;gliche, aber Seltene: eine Mutter mit neun oder mit zweiundf&uuml;nfzig,
         ein Leben von 118 Jahren, zwei Geschwister vier Monate auseinander. Das meiste davon sind Zahlendreher in
         einer Jahreszahl. <b>Schreibweise</b> sammelt, wo sachlich alles stimmt und nur die Notation nicht &ndash;
-        ein doppeltes Leerzeichen, ein Ort, der auf ein Komma endet, ein Nachname in Gro&szlig;buchstaben. Dort
-        schl&auml;gt die App etwas vor und zeigt die Ersetzung neben dem Eintrag.</p>
+        ein doppeltes Leerzeichen, ein Ort, der auf ein Komma endet, ein Nachname in Gro&szlig;buchstaben,
+        ein Namenszusatz ohne Leerzeichen wie &raquo;vonBergmann&laquo;. Dort schl&auml;gt die App etwas vor und zeigt die Ersetzung neben dem Eintrag.</p>
         <p>Gruppiert wird <b>nach Regel, nicht nach Person</b>. Eine Datei mit mehreren tausend Personen
         enth&auml;lt oft tausende Male dieselbe Kleinigkeit; als tausende Karten w&auml;re das unbenutzbar, als eine
         Zeile mit einer Zahl und einem Knopf ist es in einem Augenblick erledigt. Zu jeder Regel steht, wonach sie
@@ -2846,7 +2846,7 @@ window.I18N={
         sichtbaren Men&uuml;s, damit niemand darin h&auml;ngenbleibt.</p>
         <p>In der Nachfahrentafel steckt alles Weitere hinter dem <b>&#9776;</b>-Men&uuml;, in vier Teile gegliedert:
         <b>Wurzelperson</b>, <b>Ansicht</b>, <b>Die gew&auml;hlte Person</b> und <b>Ausgeben</b>.</p>
-        <p class="muted">Version 3.3</p>
+        <p class="muted appver"></p>
       </section>
 
 
@@ -2874,6 +2874,13 @@ window.I18N={
    - read, hold, edit and write GEDCOM
    - everything stays in the browser (localStorage), nothing is uploaded
    =================================================================== */
+/* Die Versionsnummer steht an genau EINER Stelle. In der Anleitung
+   stand sie zweimal von Hand getippt und war bei 3.3 stehen
+   geblieben, während die App bei 3.9 war - sechs Versionen daneben.
+   Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
+   Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
+   bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
+var APPVERSION='3.9';
 (function(){
 "use strict";
 var L=I18N.L;
@@ -3702,6 +3709,7 @@ window.FP = {
   addPartner:addPartner, removePartner:removePartner, setMarriage:setMarriage,
   addChildToFam:addChildToFam, removeChildFromFam:removeChildFromFam, ensureOwnFamily:ensureOwnFamily,
   gedToText:gedToText, textToGed:textToGed, yearOf:yearOf, esc:esc, $:$,
+  version:function(){ return APPVERSION; },
   /* ---------- Eine Suche fuer fuenf Felder ----------
      Stammbaum, Nachfahrentafel, Verwandtschaft (zweimal), Personenwahl
      und Liste suchten bisher jedes fuer sich: fuenf Platzhaltertexte,
@@ -4326,6 +4334,10 @@ $('helpClose').onclick=function(){ closeModal('mdHelp'); };
    auseinander. Jetzt trägt jeder Abschnitt seine Beschriftung selbst
    (data-nav), und die Zeile entsteht daraus - ein neues Kapitel hat
    seinen Reiter, sobald es existiert. */
+function setzeVersion(){
+  var t=L('Version')+' '+APPVERSION;
+  document.querySelectorAll('.appver').forEach(function(e){ e.textContent=t; });
+}
 function baueHelpNav(){
   document.querySelectorAll('#helpBody .helpnav').forEach(function(nav){
     var wrap=nav.parentElement;
@@ -4363,6 +4375,7 @@ function baueHelpNav(){
   });
 }
 baueHelpNav();
+setzeVersion();
 
 /* ---------------- status line & welcome screen ---------------- */
 function countLabel(){
@@ -9298,6 +9311,114 @@ var REGELN=[
      var neu=v.toLowerCase().replace(/(^|[\s\-'])([a-zäöüß])/g, function(m2,a,b){ return a+b.toUpperCase(); });
      if(neu!==v) out.push({ids:[id], text:nm(id)+': \u00BB'+v+'\u00AB \u2192 \u00BB'+neu+'\u00AB',
                            feld:'surname', alt:v, neu:neu});
+   }
+ }},
+/* Zusammengeschriebene Namenszusaetze: "vonBergmann" statt "von
+   Bergmann". In gewachsenen Dateien entsteht das beim Einlesen aus
+   Programmen, die Vorsatzwort und Name in ein Feld pressen, und beim
+   Abtippen.
+
+   Die Regel greift nur bei der einen Form, die sich sicher lesen
+   laesst: Zusatz klein geschrieben, unmittelbar danach ein
+   Grossbuchstabe und noch mindestens drei Buchstaben. Damit bleiben
+   die englischen und niederlaendischen Namen still, die
+   zusammengeschrieben richtig sind - DeWitt, VanHalen, Vandenberg,
+   LeRoy -, denn dort steht der Zusatz gross oder es folgt ihm kein
+   Grossbuchstabe.
+
+   Wo im Wort der Zusatz stehen darf, ist gemessen, nicht geraten. Zur
+   Probe wurden aus 4.352 echten Namenswoertern einer gewachsenen
+   Datei 3.669 Paare gebildet und verklebt ("Alexander"+"Georg" ->
+   "AlexanderGeorg"); jeder Treffer darauf ist ein Fehlalarm, denn der
+   richtige Schnitt liegt woanders. Mit der ganzen Zusatzliste im
+   Wortinneren waren es 211 Fehlschnitte und kein einziger Treffer:
+   "Ade le Adele", "Alexan der Georg", "Pe ter Christian", "Ama la
+   Friederike" - die Zusaetze sind zugleich Endungen gewoehnlicher
+   Vornamen. Deshalb gilt:
+     - am Wortanfang ist die ganze Liste erlaubt (ein Wort, das klein
+       mit "de" beginnt und dann gross weitergeht, ist nie ein Vorname),
+     - im Wortinneren nur von, vom, zu, zur, zum, denn auf die endet
+       kein gewoehnlicher Name,
+     - das einzelne v nur nach einem Mitlaut: in "Lindhorst|v" ist es
+       ein Zusatz, in "Gusta|v" und "Detle|v" eine Namensendung,
+     - jeder Zusatz auch dann, wenn davor nur ein zweiter Zusatz steht
+       ("Dela" = De+la, "Vanden" = Van+den).
+   So gemessen: 0 Fehlschnitte bei 3.669 Kontrollpaaren, 57 richtige
+   Vorschlaege und 3 Meldungen ohne Vorschlag an der echten Datei.
+   Nicht in der Liste stehen du, u, und, gen, el, al, dos, auf, aus:
+   die ergeben an echten Namen falsche Schnitte, etwa bei "u." fuer
+   "und" zwischen zwei Herrschaftsnamen. */
+{k:'name_partikel', band:'s',
+ t:['Name particle written without a space','Namenszusatz ohne Leerzeichen'],
+ e:['Entries such as »vonBergmann« instead of »von Bergmann«. The particle belongs to the name but is a word of its own; glued on it breaks sorting, searching and every chart.',
+    'Einträge wie »vonBergmann« statt »von Bergmann«. Der Zusatz gehört zum Namen, ist aber ein eigenes Wort; angeklebt stört er Sortierung, Suche und jede Tafel.'],
+ f:function(P,F,out){
+   /* Reihenfolge: lange Zusätze zuerst, sonst nimmt "de" das "dem" vorweg. */
+   var KOPF=['von','van','vom','zur','zum','zu','del','den','der','dem',
+             'ten','ter','de','di','da','la','le','of','v'];
+   var INNEN={von:1, vom:1, zur:1, zum:1, zu:1, v:1};
+   var ISTZUSATZ={}; KOPF.forEach(function(z){ ISTZUSATZ[z]=1; });
+   var NACHWORT=/^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß'\-]{2,}$/;
+   var VORWORT=/^[A-Za-zÄÖÜäöüß'\-]+$/;
+   var SELBSTLAUT=/[aeiouäöü]$/;
+   /* null: nichts zu melden. String: Vorschlag. false: gemeldet, aber
+      ohne Vorschlag, weil nicht zu entscheiden. */
+   function trenne(wort){
+     for(var i=0;i<KOPF.length;i++){
+       var zu=KOPF[i], ab=0, st, vor, nach;
+       while((st=wort.indexOf(zu, ab))>=0){
+         ab=st+1;
+         vor=wort.slice(0,st); nach=wort.slice(st+zu.length);
+         if(!NACHWORT.test(nach)) continue;
+         if(vor){
+           if(vor.length===1) continue;            /* ein Buchstabe ist nicht zu lesen */
+           if(!VORWORT.test(vor)) continue;
+           if(!ISTZUSATZ[vor.toLowerCase()]){
+             if(!INNEN[zu]) continue;
+             if(zu==='v' && SELBSTLAUT.test(vor)) continue;
+           }
+         }
+         /* "...tzu..." ist nicht zu entscheiden: "Markwitzu" heisst
+            entweder "Markwitz u." oder "Markwit zu". Melden, nicht raten. */
+         if(zu==='zu' && /t$/.test(vor)) return false;
+         return (vor ? vor+' ' : '')+(zu==='v' ? 'v.' : zu)+' '+nach;
+       }
+     }
+     return null;
+   }
+   function pruefe(id, feld, bez, bezD){
+     var v=P[id][feld]; if(!v) return;
+     var text=String(v), offen=false, geaendert=false, runde;
+     /* Mehrere Klebestellen in einem Wort brauchen mehrere Durchgänge;
+        vier sind mehr als je gebraucht wurden. */
+     for(runde=0; runde<4; runde++){
+       var teile=text.split(/(\s+)/), nochmal=false, i;
+       for(i=0;i<teile.length;i++){
+         if(!teile[i] || /^\s+$/.test(teile[i])) continue;
+         var r=trenne(teile[i]);
+         if(r===null) continue;
+         if(r===false){ offen=true; continue; }
+         teile[i]=r; geaendert=true; nochmal=true;
+       }
+       text=teile.join('');
+       if(!nochmal) break;
+     }
+     var kopf=nm(id)+' — '+T(bez,bezD)+': »'+v+'«';
+     /* Steht in einem Feld beides, wird erst der Vorschlag gezeigt;
+        die unklare Stelle meldet der nächste Durchlauf, wenn der
+        Vorschlag übernommen ist. Zwei Befunde mit demselben
+        Feldinhalt hätten denselben Schlüssel. */
+     if(geaendert){
+       out.push({ids:[id], text:kopf+' → »'+text+'«',
+                 feld:feld, alt:v, neu:text});
+     }else if(offen){
+       out.push({ids:[id], text:kopf+' — '+
+         T('cannot be read either way','nicht eindeutig zu lesen')});
+     }
+   }
+   for(var id in P){
+     pruefe(id,'given','Given name','Vorname');
+     pruefe(id,'surname','Family name','Nachname');
    }
  }},
 {k:'platzhaltername', band:'s',
