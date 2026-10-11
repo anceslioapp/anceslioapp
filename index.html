@@ -357,6 +357,11 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
    jeder Trefferliste, solange nichts getippt ist, und ist damit genau
    dann da, wenn jemand gleich tippen will - ohne staendig Platz zu
    belegen. Nicht anklickbar, deshalb kein Zeiger und kein Hinterlegen. */
+/* Die Fundstelle im Treffer. Kein greller Block, sondern dieselbe
+   Hervorhebung, die der Stammbaum fuer Gefundenes benutzt - sonst
+   flackert eine Liste aus vierzig Treffern. */
+mark{background:var(--hl); color:inherit; font-weight:600; border-radius:3px;
+  padding:0 1px; box-shadow:inset 0 -1px 0 var(--accent2)}
 .shint{display:block; font-size:12px; line-height:1.45; color:var(--muted);
   padding:7px 11px; border-bottom:1px solid var(--line); cursor:default;
   background:transparent}
@@ -1841,8 +1846,11 @@ var DE = {
 'Reset':'Zurücksetzen','from':'von','to':'bis',
 'Filter':'Filter','Show filters':'Filter anzeigen','Hide filters':'Filter ausblenden',
 'Name, year or place':'Name, Jahr oder Ort',
-'Several words narrow it down, e.g. William 1902 Ashford':'Mehrere Wörter grenzen ein, z. B. Wilhelm 1902 Ashford',
-'No matches. The search covers name, year, place and ID.':'Keine Treffer. Die Suche geht über Name, Jahr, Ort und Kennung.',
+'Given and family name, birth and death (date and place). Several words narrow it down: William 1902 Ashford':'Vor- und Nachname, Geburt und Tod (Datum und Ort). Mehrere Wörter grenzen ein: Wilhelm 1902 Ashford',
+'Names of all members, marriage (date and place). Several words narrow it down: Hayes 1928':'Namen aller Mitglieder, Heirat (Datum und Ort). Mehrere Wörter grenzen ein: Hayes 1928',
+'No matches. The search looked at given and family name, birth and death (date and place) and the ID.':'Keine Treffer. Gesucht wurde in Vor- und Nachname, Geburt und Tod (Datum und Ort) und der Kennung.',
+'No matches. The search looked at the names of all members, the marriage (date and place) and the ID.':'Keine Treffer. Gesucht wurde in den Namen aller Mitglieder, der Heirat (Datum und Ort) und der Kennung.',
+'Name or marriage':'Name oder Heirat',
 'Narrow down who can be picked':'Eingrenzen, wer zur Auswahl steht',
 
 'Name or year, e.g. Thomas 1986':'Name oder Jahr, z. B. Thomas 1986',
@@ -2068,11 +2076,13 @@ window.I18N={
         relatives: parents above, siblings and partners beside them, children below.</p>
 
         <h5>Moving around</h5>
-        <p>Every search box in the app works the same way, and each says so: <b>name, year or place</b>.
-        Several words are combined, so &bdquo;Ruth 1933&ldquo; and &bdquo;Hayes Ashford&ldquo; both work, and
-        a record ID such as &bdquo;#I17&ldquo; finds that one entry. As soon as a box is tapped, the line above
-        the list repeats how it works; if nothing matches, it says what the search looked at. The <b>&#10005;</b>
-        at the right-hand end empties the box in one tap. The <b>Filter</b> button beside it narrows the list down:
+        <p>Every search box in the app works the same way, and each says so. A person is found by
+        <b>given and family name</b>, by <b>birth and death</b> &ndash; date as well as place &ndash; and by
+        the record ID (&bdquo;#I17&ldquo;). Several words are combined, so &bdquo;Ruth 1933&ldquo; and
+        &bdquo;Hayes Ashford&ldquo; both work. Whatever matched is <b>marked in the result</b>, so you can see
+        at a glance whether it was the name, the year or the place. The line above the list says how it works;
+        if nothing matches, it says what the search looked at. The <b>&#10005;</b> at the right-hand end empties
+        the box in one tap. The <b>Filter</b> button beside it narrows the list down:
         by <b>lineage or house</b> and by <b>year of birth</b> (&bdquo;from 1900&ldquo;, &bdquo;to 1950&ldquo;, or
         both). The number on the button says how many filters are set; <b>Reset</b> switches them off again.
         Tapping a box <b>opens that person&rsquo;s details</b>. The small crosshair
@@ -2242,10 +2252,15 @@ window.I18N={
         settings, branch and year of birth; they stay out of the way until you want them, and the number
         beside the button says how many are set. The year filter works in both bands: a family matches
         when any of its members was born in the range.</p>
+        <p>The families band is the one place where the search looks at something else, and it says so:
+        a family is found by the <b>names of everyone in it</b> and by its <b>marriage</b>, date and place.
+        That is not an oversight &ndash; in a GEDCOM file a marriage belongs to the family, not to a person,
+        which is why birth and death are searched among the people and the wedding among the families.</p>
         <p>Tap a row and it opens, with everything you can do with that person: put them at the centre of the
         <b>tree</b>, make them the root of a <b>descendant chart</b>, carry them into the <b>kinship</b> tab, mark
         them as the person this file should open on, or delete them. A family row is set in two columns, the couple on the left and the
-        children on the right, the way a printed family book sets them.</p>
+        children on the right, the way a printed family book sets them &ndash; the children in the order they
+        were born, the eldest first.</p>
         <p>In a large file not everything is drawn at once &ndash; the list would take a second to appear on a
         phone. It shows the first few hundred and says how many there are in total; <b>Show all</b> brings the rest
         whenever you want it.</p>
@@ -2398,11 +2413,13 @@ window.I18N={
         n&auml;chsten Verwandten: Eltern oben, Geschwister und Partner daneben, Kinder darunter.</p>
 
         <h5>Sich bewegen</h5>
-        <p>Jedes Suchfeld der App arbeitet gleich, und jedes sagt es auch: <b>Name, Jahr oder Ort</b>.
-        Mehrere W&ouml;rter werden verkn&uuml;pft, &bdquo;Ruth 1933&ldquo; funktioniert also ebenso wie
-        &bdquo;Hayes Ashford&ldquo;, und eine Kennung wie &bdquo;#I17&ldquo; findet genau diesen Eintrag.
-        Sobald ein Feld angetippt ist, steht &uuml;ber der Liste noch einmal, wie das geht; findet sich nichts,
-        steht dort, worin gesucht wurde. Das <b>&#10005;</b> am rechten Rand leert das Feld mit einem Tipp.
+        <p>Jedes Suchfeld der App arbeitet gleich, und jedes sagt es auch. Eine Person wird gefunden &uuml;ber
+        <b>Vor- und Nachnamen</b>, &uuml;ber <b>Geburt und Tod</b> &ndash; Datum wie Ort &ndash; und &uuml;ber die
+        Kennung (&bdquo;#I17&ldquo;). Mehrere W&ouml;rter werden verkn&uuml;pft, &bdquo;Ruth 1933&ldquo;
+        funktioniert also ebenso wie &bdquo;Hayes Ashford&ldquo;. Was gepasst hat, ist <b>im Treffer
+        hervorgehoben</b> &ndash; so sieht man auf einen Blick, ob es der Name war, das Jahr oder der Ort.
+        &Uuml;ber der Liste steht, wie das geht; findet sich nichts, steht dort, worin gesucht wurde. Das
+        <b>&#10005;</b> am rechten Rand leert das Feld mit einem Tipp.
         Die Schaltfl&auml;che <b>Filter</b> daneben grenzt die Liste ein: nach <b>Stamm oder Haus</b> und nach
         <b>Geburtsjahr</b> (&bdquo;ab 1900&ldquo;, &bdquo;bis 1950&ldquo; oder beides). Die Zahl auf der
         Schaltfl&auml;che sagt, wie viele Filter gesetzt sind; <b>Zur&uuml;cksetzen</b> hebt sie wieder auf. Ein Kasten antippen <b>&ouml;ffnet die Angaben</b>
@@ -2603,6 +2620,12 @@ window.I18N={
         Geburtsjahrgang; sie bleiben aus dem Weg, bis man sie braucht, und die Zahl neben dem Knopf sagt,
         wie viele gesetzt sind. Der Jahresfilter greift in beiden B&auml;ndern: Eine Familie passt, wenn
         eines ihrer Mitglieder in der Spanne geboren wurde.</p>
+        <p>Das Familienband ist die eine Stelle, an der die Suche etwas anderes durchsieht &ndash; und sie
+        sagt es auch: Eine Familie wird &uuml;ber die <b>Namen aller, die zu ihr geh&ouml;ren</b>, und &uuml;ber
+        ihre <b>Heirat</b> gefunden, Datum wie Ort. Das ist keine Nachl&auml;ssigkeit: In einer GEDCOM-Datei
+        geh&ouml;rt die Hochzeit zur Familie und nicht zur Person. Deshalb wird bei den Personen nach Geburt
+        und Tod gesucht und bei den Familien nach der Hochzeit. Die Kinder stehen in der rechten Spalte in
+        der Reihenfolge ihrer Geburt, das &auml;lteste zuerst.</p>
         <p>Eine Zeile antippen, und sie klappt auf, mit allem, was sich mit dieser Person tun l&auml;sst: sie in
         die Mitte des <b>Stammbaums</b> holen, sie zur Wurzel einer <b>Nachfahrentafel</b> machen, sie in die
         <b>Verwandtschaft</b> mitnehmen, sie als die Person merken, bei der diese Datei k&uuml;nftig &ouml;ffnet,
@@ -3033,6 +3056,14 @@ var COLL=null;
 try{ COLL=new Intl.Collator('en',{sensitivity:'base', numeric:true}); }catch(e){ COLL=null; }
 var byName = COLL ? function(a,b){ return COLL.compare(a.name,b.name); }
                   : function(a,b){ return a.name<b.name ? -1 : (a.name>b.name ? 1 : 0); };
+/* Der Suchtext einer Person. Er muss genau das enthalten, was die App
+   dem Benutzer verspricht - und umgekehrt. Vorher stand im Heuhaufen das
+   Geburtsdatum im Klartext, beide Jahreszahlen und der GEBURTSort; der
+   Sterbeort fehlte, und das Sterbedatum stand nur als Jahr darin. Wer
+   nach „Bexley" suchte, fand die dort Geborenen und nicht die dort
+   Gestorbenen, ohne dass irgendetwas das gesagt haette. Jetzt beides -
+   und beides steht auch in der Zeile unter dem Namen, sonst waere ein
+   Treffer unsichtbar. */
 function entryFor(id){
   var p=D.indi[id];
   var name=fullName(p);
@@ -3041,8 +3072,11 @@ function entryFor(id){
   if(p.birthDate) meta.push('* '+gedToText(p.birthDate));
   if(p.birthPlace) meta.push(p.birthPlace);
   if(p.deathDate) meta.push('† '+gedToText(p.deathDate));
+  if(p.deathPlace) meta.push((p.deathDate?'':'† ')+p.deathPlace);
   return { id:id, name:name, meta:meta.join(' · '), year:by,
-    search:(name+' '+gedToText(p.birthDate)+' '+(by||'')+' '+(dy||'')+' '+(p.birthPlace||'')+' #'+id).toLowerCase() };
+    search:(name+' '+gedToText(p.birthDate)+' '+(by||'')+' '+
+            gedToText(p.deathDate)+' '+(dy||'')+' '+
+            (p.birthPlace||'')+' '+(p.deathPlace||'')+' #'+id).toLowerCase() };
 }
 function reposition(){
   INDEX_AT={};
@@ -3522,9 +3556,46 @@ window.FP = {
      Gesucht wird im Suchtext des Verzeichnisses: Name, Geburtsdatum in
      beiden Schreibweisen, Geburts- und Sterbejahr, Geburtsort und
      Kennung. Mehrere Woerter sind ein UND. */
-  suchFeld:function(){ return L('Name, year or place'); },
-  suchWie:function(){ return L('Several words narrow it down, e.g. William 1902 Ashford'); },
-  suchLeer:function(){ return L('No matches. The search covers name, year, place and ID.'); },
+  /* Zwei Saetze je Feldart, denn das Versprechen muss stimmen: Bei
+     Personen wird in Geburt und Tod gesucht, bei Familien in der
+     Heirat - das ist keine Unachtsamkeit, sondern liegt an GEDCOM, wo
+     die Hochzeit zur Familie gehoert und nicht zur Person. Genau das
+     ist die eine Ausnahme von der Einheitlichkeit, und sie steht
+     deshalb woertlich da, statt dass man sie sich zusammenreimen muss.
+     'f' ist das Familienband der Liste, alles andere sind Personen. */
+  suchFeld:function(art){ return art==='f'
+    ? L('Name or marriage') : L('Name, year or place'); },
+  suchWie:function(art){ return art==='f'
+    ? L('Names of all members, marriage (date and place). Several words narrow it down: Hayes 1928')
+    : L('Given and family name, birth and death (date and place). Several words narrow it down: William 1902 Ashford'); },
+  suchLeer:function(art){ return art==='f'
+    ? L('No matches. The search looked at the names of all members, the marriage (date and place) and the ID.')
+    : L('No matches. The search looked at given and family name, birth and death (date and place) and the ID.'); },
+  /* Die gefundenen Stellen im Treffer hervorheben. Das beantwortet die
+     Frage „was hat denn jetzt gepasst?" dort, wo sie entsteht - am
+     Treffer selbst - und spart jede weitere Erklaerung. Markiert wird
+     auf dem rohen Text, erst danach wird maskiert; andersherum
+     verschoeben die Ersatzzeichen (&amp;) die Fundstellen. */
+  markiere:function(text, q){
+    text=String(text==null?'':text);
+    var toks=String(q||'').trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if(!toks.length) return esc(text);
+    var low=text.toLowerCase(), stellen=[], i, k, von;
+    for(k=0;k<toks.length;k++){
+      von=0;
+      while((i=low.indexOf(toks[k], von))>=0){ stellen.push([i, i+toks[k].length]); von=i+toks[k].length; }
+    }
+    if(!stellen.length) return esc(text);
+    stellen.sort(function(a,b){ return a[0]-b[0] || a[1]-b[1]; });
+    var out='', ende=0;
+    for(k=0;k<stellen.length;k++){
+      var a=stellen[k][0], b=stellen[k][1];
+      if(a<ende){ if(b>ende){ out+='<mark>'+esc(text.slice(ende,b))+'</mark>'; ende=b; } continue; }
+      out+=esc(text.slice(ende,a))+'<mark>'+esc(text.slice(a,b))+'</mark>';
+      ende=b;
+    }
+    return out+esc(text.slice(ende));
+  },
   suchTreffer:function(q, pool, max){
     var toks=String(q||'').trim().toLowerCase().split(/\s+/).filter(Boolean);
     if(!toks.length) return pool.slice(0, max);
@@ -3716,7 +3787,8 @@ function renderPickList(q){
   if(!list.length){ $('pickList').innerHTML='<div class="shint">'+esc(FP.suchLeer())+'</div>'; return; }
   var hint = q.trim() ? '' : '<div class="shint">'+esc(FP.suchWie())+'</div>';
   $('pickList').innerHTML=hint+list.map(function(p){
-    return '<div class="pitem" data-id="'+esc(p.id)+'">'+esc(p.name)+(p.meta?'<small>'+esc(p.meta)+'</small>':'')+'</div>';
+    return '<div class="pitem" data-id="'+esc(p.id)+'">'+FP.markiere(p.name,q)+
+      (p.meta?'<small>'+FP.markiere(p.meta,q)+'</small>':'')+'</div>';
   }).join('');
   $('pickList').querySelectorAll('.pitem[data-id]').forEach(function(el){
     el.onclick=function(){ var cb=pickCb; pickCb=null; closeModal('mdPick'); if(cb) cb(el.dataset.id); };
@@ -5127,8 +5199,8 @@ function renderDrop(q){
     d.classList.add('show'); return; }
   var hint = q.trim() ? '' : '<div class="shint">'+esc(FP.suchWie())+'</div>';
   d.innerHTML=hint+items.map(function(p,i){
-    return '<div class="titem'+(i===hi?' hi':'')+'" data-id="'+esc(p.id)+'">'+esc(p.name)+
-           (p.meta?'<small>'+esc(p.meta)+'</small>':'')+'</div>'; }).join('');
+    return '<div class="titem'+(i===hi?' hi':'')+'" data-id="'+esc(p.id)+'">'+FP.markiere(p.name,q)+
+           (p.meta?'<small>'+FP.markiere(p.meta,q)+'</small>':'')+'</div>'; }).join('');
   d.classList.add('show');
   d.querySelectorAll('.titem[data-id]').forEach(function(it){
     it.onclick=function(){ d.classList.remove('show'); setFocus(it.dataset.id); }; });
@@ -6345,8 +6417,8 @@ function renderDrop(q){
     drop.style.display='block'; return; }
   var hint = q.trim() ? '' : '<div class="shint">'+FP.esc(FP.suchWie())+'</div>';
   drop.innerHTML=hint+treffer.map(function(e,i){
-    return '<div class="item '+(i===dropHi?'hi':'')+'" data-id="'+FP.esc(e.id)+'">'+FP.esc(e.name)+
-      (e.meta?' <small>'+FP.esc(e.meta)+'</small>':'')+'</div>';
+    return '<div class="item '+(i===dropHi?'hi':'')+'" data-id="'+FP.esc(e.id)+'">'+FP.markiere(e.name,q)+
+      (e.meta?' <small>'+FP.markiere(e.meta,q)+'</small>':'')+'</div>';
   }).join('');
   drop.style.display='block';
   drop.querySelectorAll('.item[data-id]').forEach(function(it){ it.onclick=function(){ chooseRoot(it.dataset.id); }; });
@@ -7098,8 +7170,8 @@ function setupCombo(inputId,listId,onPick){
       list.classList.add('show'); return; }
     var hint = q.trim() ? '' : '<div class="shint">'+esc(FP.suchWie())+'</div>';
     list.innerHTML=hint+current.map(function(p,i){
-      return '<div class="opt" data-i="'+i+'"><div class="nm">'+esc(p.name)+'</div>'+
-        (p.meta?'<div class="meta">'+esc(p.meta)+'</div>':'')+'</div>'; }).join('');
+      return '<div class="opt" data-i="'+i+'"><div class="nm">'+FP.markiere(p.name,q)+'</div>'+
+        (p.meta?'<div class="meta">'+FP.markiere(p.meta,q)+'</div>':'')+'</div>'; }).join('');
     list.classList.add('show'); active=-1;
     list.querySelectorAll('.opt').forEach(function(el){
       if(el.dataset.i!==undefined) el.onclick=function(){ pick(current[+el.dataset.i]); }; });
@@ -8233,7 +8305,13 @@ function famIndex(){
                   .map(function(x){ return FP.fullName(I[x]); });
     out.push({
       id:id, fam:f, paar:[f.husb,f.wife],
-      kinder:(f.children||[]).filter(function(x){ return I[x]; }),
+      /* Die Kinder stehen so, wie eine Familienchronik sie setzt:
+         aeltestes zuerst. FP.sortByAge nimmt das Geburtsdatum, stellt
+         Kinder ohne Datum ans Ende und laesst bei gleichem Datum die
+         Reihenfolge aus der Datei stehen. Vorher stand hier einfach
+         die Reihenfolge der CHIL-Zeilen, und die ist in zusammen-
+         gefuehrten Dateien beliebig. */
+      kinder:FP.sortByAge((f.children||[]).filter(function(x){ return I[x]; })),
       sort:(paarName[0]||'\uffff'),
       /* Die fertige Zeile liegt gleich mit im Index. Sie bei jedem
          Tastendruck fuer 400 Familien neu zusammenzusetzen kostete auf
@@ -8247,8 +8325,12 @@ function famIndex(){
          gestellt hat - es geht sehr wohl, es fehlte nur. */
       jahre:leute.map(function(x){ return FP.yearOf(I[x].birthDate); })
                  .filter(function(j){ return j!=null; }),
+      /* Was eine Familie findbar macht: die Namen aller, die zu ihr
+         gehoeren, und die Heirat. Das Datum auch in der Schreibweise
+         der App, sonst findet „Sep 1928" nichts, obwohl es so dasteht. */
       search:(leute.map(function(x){ return FP.fullName(I[x]); }).join(' ')+' '+
-              (f.marrDate||'')+' '+(f.marrPlace||'')+' #'+id).toLowerCase()
+              (f.marrDate||'')+' '+FP.gedToText(f.marrDate)+' '+(FP.yearOf(f.marrDate)||'')+' '+
+              (f.marrPlace||'')+' #'+id).toLowerCase()
     });
   }
   out.sort(function(a,b){ return a.sort.localeCompare(b.sort, de()?'de':'en'); });
@@ -8267,9 +8349,10 @@ function trefferF(){
 
 function zeilePerson(e){
   var p=FP.indi()[e.id]; if(!p) return '';
+  var q=$('listQ').value;
   return '<div class="lrow" data-id="'+esc(e.id)+'">'+
-    '<div class="lnm"><b>'+esc(e.name)+'</b></div>'+
-    (e.meta ? '<div class="lmeta">'+esc(e.meta)+(p.stamm?' · '+esc(p.stamm):'')+'</div>'
+    '<div class="lnm"><b>'+FP.markiere(e.name,q)+'</b></div>'+
+    (e.meta ? '<div class="lmeta">'+FP.markiere(e.meta,q)+(p.stamm?' · '+esc(p.stamm):'')+'</div>'
             : (p.stamm?'<div class="lmeta">'+esc(p.stamm)+'</div>':''))+
     '</div>';
 }
@@ -8280,26 +8363,32 @@ function zeilePerson(e){
    in der Zeile standen. */
 var KINDER_MAX=8;
 function zeileFamilie(f){
-  if(f.html!=null) return f.html;
+  /* Die fertige Zeile bleibt gemerkt, aber nur solange die Suche
+     dieselbe ist - die Fundstellen sind ja hervorgehoben. Beim Blaettern
+     und bei „Alle zeigen" greift der Speicher weiter, beim Tippen wird
+     neu gesetzt. Was das kostet, steht in den Versionshinweisen. */
+  var q=$('listQ').value;
+  if(f.html!=null && f.htmlQ===q) return f.html;
   var I=FP.indi();
   var paar=f.paar.filter(function(x){ return x && I[x]; });
   var zz=[];
   if(f.fam.marrDate) zz.push('\u26AD '+FP.gedToText(f.fam.marrDate));
   if(f.fam.marrPlace) zz.push(f.fam.marrPlace);
   var links = paar.length
-    ? paar.map(function(x){ return '<div class="lnm">'+esc(FP.fullName(I[x]))+'</div>'; }).join('')
+    ? paar.map(function(x){ return '<div class="lnm">'+FP.markiere(FP.fullName(I[x]),q)+'</div>'; }).join('')
     : '<div class="leer">'+esc(T('(couple unknown)','(Paar unbekannt)'))+'</div>';
-  if(zz.length) links+='<div class="lmeta">'+esc(zz.join(' \u00B7 '))+'</div>';
+  if(zz.length) links+='<div class="lmeta">'+FP.markiere(zz.join(' \u00B7 '),q)+'</div>';
   var ki=f.kinder, rechts;
   if(!ki.length){
     rechts='<div class="leer">'+esc(T('no children','keine Kinder'))+'</div>';
   } else {
     rechts=ki.slice(0,KINDER_MAX).map(function(x){
-      return '<div class="lnm">'+esc(FP.fullName(I[x]))+'</div>'; }).join('');
+      return '<div class="lnm">'+FP.markiere(FP.fullName(I[x]),q)+'</div>'; }).join('');
     if(ki.length>KINDER_MAX)
       rechts+='<div class="lmeta">'+esc(T('and '+(ki.length-KINDER_MAX)+' more',
         'und '+(ki.length-KINDER_MAX)+' weitere'))+'</div>';
   }
+  f.htmlQ=q;
   f.html='<div class="lrow fam" data-fid="'+esc(f.id)+'">'+
     '<div class="lsp">'+links+'</div><div class="lsp">'+rechts+'</div></div>';
   return f.html;
@@ -8310,7 +8399,7 @@ function zeichne(){
   var teil=treffer.slice(0, GEZEIGT);
   box.innerHTML = treffer.length
     ? teil.map(ANSICHT==='p'?zeilePerson:zeileFamilie).join('')
-    : '<div class="lempty">'+esc(FP.suchLeer())+'</div>';
+    : '<div class="lempty">'+esc(FP.suchLeer(ANSICHT==='p'?'p':'f'))+'</div>';
   var zahl = treffer.length
     ? (teil.length<treffer.length
         ? treffer.length+' '+T('found','gefunden')+', '+teil.length+' '+T('shown','gezeigt')
@@ -8322,8 +8411,10 @@ function zeichne(){
      Liste hat keinen - ihre Treffer stehen immer da -, deshalb steht er
      hier in der Zaehlzeile und nur, solange nichts getippt ist. Er
      verschwindet beim ersten Zeichen und belegt dann keinen Platz mehr. */
+  var art = ANSICHT==='p' ? 'p' : 'f';
   $('listCount').textContent = $('listQ').value.trim()
-    ? zahl : (zahl ? zahl+' \u00B7 '+FP.suchWie() : '');
+    ? zahl : (zahl ? zahl+' \u00B7 '+FP.suchWie(art) : '');
+  $('listQ').placeholder = FP.suchFeld(art);
   $('listReset').style.visibility = filterAktiv() ? '' : 'hidden';
   filterStand();
   var mehr=$('listMore');
