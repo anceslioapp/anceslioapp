@@ -278,7 +278,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 .setrow .btn{flex:1 1 120px; justify-content:center}
 .setlbl{font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--accent);
   font-weight:600; margin:10px 0 2px}
-#pickSearch{width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:9px; font-size:17.5px; background:var(--field)}
+#pickSearch{width:100%; padding:11px 38px 11px 12px; border:1px solid var(--line);
+  border-radius:9px; font-size:17.5px; background:var(--field); color:var(--ink)}
+#mdPick .listfield{position:relative; margin-bottom:9px}
 
 /* --- user guide --- */
 #mdHelp .modalbox{width:min(840px,96vw); max-height:92dvh}
@@ -351,6 +353,14 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 #trSearchWrap{position:relative; flex:1 1 240px; min-width:0}
 #trSearch{width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:9px; font-size:17.5px; background:var(--field)}
 /* small ✕ inside a search field, plus the search filter row */
+/* Die Zeile, die sagt, WIE gesucht wird. Sie steht als erster Eintrag in
+   jeder Trefferliste, solange nichts getippt ist, und ist damit genau
+   dann da, wenn jemand gleich tippen will - ohne staendig Platz zu
+   belegen. Nicht anklickbar, deshalb kein Zeiger und kein Hinterlegen. */
+.shint{display:block; font-size:12px; line-height:1.45; color:var(--muted);
+  padding:7px 11px; border-bottom:1px solid var(--line); cursor:default;
+  background:transparent}
+.shint:hover{background:transparent; color:var(--muted)}
 .clearbtn{position:absolute; right:6px; top:50%; transform:translateY(-50%); display:none;
   width:30px; height:30px; border:none; background:none; color:var(--muted); font-size:15.5px;
   cursor:pointer; border-radius:50%; line-height:1; padding:0; z-index:5}
@@ -360,9 +370,12 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 #trBtnFilter{position:relative; padding-left:11px; padding-right:11px}
 #trBtnFilter svg{display:block}
 #trFilter .filyears{display:flex; align-items:center; gap:8px; flex-wrap:nowrap}
-#trFilterDot{position:absolute; top:4px; right:4px; width:7px; height:7px; border-radius:50%;
-  background:var(--gold); display:none}
-#trFilterDot.show{display:block}
+/* Statt eines goldenen Punktes dieselbe Zahl wie in der Liste: Der Punkt
+   sagte, DASS gefiltert wird, die Zahl sagt, wie oft. Die Kennung heisst
+   weiter ...Dot, damit die Pruefungen, die auf ihre Sichtbarkeit sehen,
+   weiter dasselbe pruefen - ein leeres Feld ist unsichtbar. */
+#trFilterDot, #relFilterDot, #listFiltN{font-variant-numeric:tabular-nums}
+#trBtnFilter svg, #relBtnFilter svg, #listFilt svg{margin-right:5px; vertical-align:-2px}
 #trFilter{display:none; flex:1 1 100%; gap:10px; flex-wrap:wrap; align-items:center;
   padding:8px 2px 2px; border-top:1px dotted var(--line); margin-top:2px}
 #trFilter.show{display:flex}
@@ -542,11 +555,10 @@ body.fullscreen #fullExit{display:flex}
   padding-top:14px; border-top:1px dotted var(--line)}
 .filterbar.show{display:flex}
 #relBtnFilter{position:relative}
-#relFilterDot{position:absolute; top:4px; right:4px; width:7px; height:7px; border-radius:50%;
-  background:var(--gold); display:none}
-#relFilterDot.show{display:block}
 .filterbar .lbl{font-size:14px; font-weight:600; color:var(--accent)}
-.filterbar input{width:94px; padding:8px 10px}
+.filterbar .filyears{display:flex; align-items:center; gap:8px; flex-wrap:nowrap}
+.filterbar label{display:flex; align-items:center; gap:5px; font-size:12.5px}
+.filterbar input[type=number]{width:74px; padding:5px 7px}
 .filterbar .cnt{font-size:12.5px; color:var(--muted); margin-left:auto}
 #panelRel .grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
 @media(max-width:620px){#panelRel .grid{grid-template-columns:1fr}}
@@ -931,15 +943,15 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   <section class="panel active" id="panelTree">
     <div id="trBar" class="noprint">
       <div id="trSearchWrap">
-        <input type="text" id="trSearch" data-i18n-ph="Search a person, e.g. “William 1902”"
-               placeholder="Search a person, e.g. &ldquo;William 1902&rdquo;" autocomplete="off">
+        <input type="text" id="trSearch" data-i18n-ph="Name, year or place"
+               placeholder="Name, year or place" autocomplete="off">
         <button type="button" class="clearbtn" id="trClear" data-i18n-title="Clear the search field"
                 title="Clear the search field" aria-label="Clear">&#10005;</button>
       </div>
       <button class="btn" id="trBtnFilter" data-i18n-title="Narrow the search down"
               title="Narrow the search down" aria-label="Filter"><svg viewBox="0 0 16 16" width="15" height="15"
               aria-hidden="true" focusable="false"><path d="M1.6 2.6h12.8L9.4 8.5v4.3l-2.8 1.6V8.5z"
-              fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span id="trFilterDot"></span></button>
+              fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span data-i18n="Filter">Filter</span><span id="trFilterDot"></span></button>
       <button class="btn" id="trBtnOpts" data-i18n-title="Show or hide the tree settings"
               title="Show or hide the tree settings" aria-label="Tree settings">&#9776;</button>
       <div id="trFilter">
@@ -996,8 +1008,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
       <div class="tgrp">
         <div class="tgrph" data-i18n="Root person">Root person</div>
         <div class="combo">
-          <input id="rootSearch" data-i18n-ph="Search the root person, e.g. “William 1902”"
-                 placeholder="Search the root person, e.g. &ldquo;William 1902&rdquo;" autocomplete="off" disabled>
+          <input id="rootSearch" data-i18n-ph="Name, year or place"
+                 placeholder="Name, year or place" autocomplete="off" disabled>
           <button type="button" class="clearbtn" id="rootClear" data-i18n-title="Clear the search field"
                   title="Clear the search field" aria-label="Clear">&#10005;</button>
           <div id="rootDrop"></div>
@@ -1112,12 +1124,12 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <div class="grid">
           <div>
             <label class="fld" for="inA" data-i18n="Person A">Person A</label>
-            <div class="combo"><input type="text" id="inA" data-i18n-ph="Name or year, e.g. Thomas 1986" placeholder="Name or year, e.g. Thomas 1986" autocomplete="off"><button type="button" class="clearbtn" id="clearA" data-i18n-title="Clear the field"
+            <div class="combo"><input type="text" id="inA" data-i18n-ph="Name, year or place" placeholder="Name, year or place" autocomplete="off"><button type="button" class="clearbtn" id="clearA" data-i18n-title="Clear the field"
                     title="Clear the field" aria-label="Clear">&#10005;</button><div class="list" id="listA"></div></div>
           </div>
           <div>
             <label class="fld" for="inB" data-i18n="Person B">Person B</label>
-            <div class="combo"><input type="text" id="inB" data-i18n-ph="Name or year, e.g. Clara 1955" placeholder="Name or year, e.g. Clara 1955" autocomplete="off"><button type="button" class="clearbtn" id="clearB" data-i18n-title="Clear the field"
+            <div class="combo"><input type="text" id="inB" data-i18n-ph="Name, year or place" placeholder="Name, year or place" autocomplete="off"><button type="button" class="clearbtn" id="clearB" data-i18n-title="Clear the field"
                     title="Clear the field" aria-label="Clear">&#10005;</button><div class="list" id="listB"></div></div>
           </div>
         </div>
@@ -1127,13 +1139,17 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
                   title="Narrow the search down" aria-label="Filter"><svg viewBox="0 0 16 16" width="14" height="14"
                   aria-hidden="true" focusable="false"><path d="M1.6 2.6h12.8L9.4 8.5v4.3l-2.8 1.6V8.5z"
                   fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span
-                  data-i18n="Year of birth">Year of birth</span><span id="relFilterDot"></span></button>
+                  data-i18n="Filter">Filter</span><span id="relFilterDot"></span></button>
         </div>
         <div class="filterbar" id="relFilter">
-          <span class="lbl"><span data-lang="en">Filter by year of birth:</span><span data-lang="de">Nach Geburtsjahr filtern:</span></span>
-          <input type="number" id="minY" data-i18n-ph="from" placeholder="from" inputmode="numeric" aria-label="Year of birth from">
-          <span style="color:var(--muted)">&ndash;</span>
-          <input type="number" id="maxY" data-i18n-ph="to" placeholder="to" inputmode="numeric" aria-label="Year of birth to">
+          <span class="filyears">
+            <label class="muted"><span data-i18n="Born from">Born from</span>
+              <input type="number" id="minY" inputmode="numeric" placeholder="1800"
+                     aria-label="Year of birth from"></label>
+            <label class="muted"><span data-i18n="to">to</span>
+              <input type="number" id="maxY" inputmode="numeric" placeholder="1980"
+                     aria-label="Year of birth to"></label>
+          </span>
           <button class="btn small" id="clearY" data-i18n="Reset">Reset</button>
           <span class="cnt" id="cnt"></span>
         </div>
@@ -1334,7 +1350,12 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   <div class="modalbox">
     <h3 id="pickTitle">Select a person</h3>
     <div class="modalbody">
-      <input type="text" id="pickSearch" autocomplete="off">
+      <div class="listfield">
+        <input type="text" id="pickSearch" autocomplete="off"
+               data-i18n-ph="Name, year or place" placeholder="Name, year or place">
+        <button type="button" class="clearbtn" id="pickClear" data-i18n-title="Clear the search field"
+                title="Clear the search field" aria-label="Clear">&#10005;</button>
+      </div>
       <div id="pickList"></div>
     </div>
     <div class="modalfoot">
@@ -1386,7 +1407,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
       <div class="listsearch">
         <div class="listfield">
           <input type="text" id="listQ" autocomplete="off"
-                 data-i18n-ph="Search by name, year or place" placeholder="Search by name, year or place">
+                 data-i18n-ph="Name, year or place" placeholder="Name, year or place">
           <button type="button" class="clearbtn" id="listClear" data-i18n-title="Clear the search field"
                   title="Clear the search field" aria-label="Clear">&#10005;</button>
         </div>
@@ -1397,7 +1418,9 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
              Namensfeld. Ist ein Filter gesetzt, steht die Zahl am Knopf
              und das Feld oeffnet sich von selbst. -->
         <button class="btn small" id="listFilt" aria-expanded="false" aria-controls="listFilters"
-                data-i18n-title="Show filters" title="Show filters"><span
+                data-i18n-title="Show filters" title="Show filters"><svg viewBox="0 0 16 16" width="14"
+                height="14" aria-hidden="true" focusable="false"><path d="M1.6 2.6h12.8L9.4 8.5v4.3l-2.8 1.6V8.5z"
+                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span
                 data-i18n="Filter">Filter</span><span id="listFiltN"></span></button>
       </div>
       <div class="listfilters" id="listFilters" hidden>
@@ -1817,6 +1840,11 @@ var DE = {
 /* ---- kinship tab ---- */
 'Reset':'Zurücksetzen','from':'von','to':'bis',
 'Filter':'Filter','Show filters':'Filter anzeigen','Hide filters':'Filter ausblenden',
+'Name, year or place':'Name, Jahr oder Ort',
+'Several words narrow it down, e.g. William 1902 Ashford':'Mehrere Wörter grenzen ein, z. B. Wilhelm 1902 Ashford',
+'No matches. The search covers name, year, place and ID.':'Keine Treffer. Die Suche geht über Name, Jahr, Ort und Kennung.',
+'Narrow down who can be picked':'Eingrenzen, wer zur Auswahl steht',
+
 'Name or year, e.g. Thomas 1986':'Name oder Jahr, z. B. Thomas 1986',
 'Name or year, e.g. Clara 1955':'Name oder Jahr, z. B. Clara 1955',
 'Swap person A and B':'Person A und B tauschen',
@@ -2040,11 +2068,13 @@ window.I18N={
         relatives: parents above, siblings and partners beside them, children below.</p>
 
         <h5>Moving around</h5>
-        <p>Use the <b>search box</b> to find people by name or year; several words are combined, so
-        &bdquo;Ruth 1933&ldquo; works. The <b>&#10005;</b> at the right-hand end of the box empties it in one tap,
-        so you can start the next search straight away. The <b>funnel</b> button beside it narrows the list down:
+        <p>Every search box in the app works the same way, and each says so: <b>name, year or place</b>.
+        Several words are combined, so &bdquo;Ruth 1933&ldquo; and &bdquo;Hayes Ashford&ldquo; both work, and
+        a record ID such as &bdquo;#I17&ldquo; finds that one entry. As soon as a box is tapped, the line above
+        the list repeats how it works; if nothing matches, it says what the search looked at. The <b>&#10005;</b>
+        at the right-hand end empties the box in one tap. The <b>Filter</b> button beside it narrows the list down:
         by <b>lineage or house</b> and by <b>year of birth</b> (&bdquo;from 1900&ldquo;, &bdquo;to 1950&ldquo;, or
-        both). A small gold dot on the funnel reminds you that a filter is on; <b>Reset</b> switches it off again.
+        both). The number on the button says how many filters are set; <b>Reset</b> switches them off again.
         Tapping a box <b>opens that person&rsquo;s details</b>. The small crosshair
         <b>&#8982;</b> in the corner of a box <b>moves that person to the centre</b> &ndash; that is how you walk
         through the family one generation at a time. Drag with the mouse or one finger to pan, use <b>&ndash;</b> and
@@ -2140,7 +2170,7 @@ window.I18N={
         <p>Pick two people and the app works out how they are related across any number of generations, then writes
         it in one sentence, for example &bdquo;Thomas is the second cousin once removed of Clara&ldquo;. The same
         statement in the other direction follows underneath.</p>
-        <p>The <b>funnel</b> button below the two fields works exactly as it does in the Tree tab: it narrows both
+        <p>The <b>Filter</b> button below the two fields works exactly as it does in the Tree tab: it narrows both
         lists down to a range of birth years, which helps when a file holds several people of the same name.</p>
         <p>The small badges add the details: the <b>degree of kinship</b> (the number of births counted up to the
         common ancestor and down again &ndash; the civil-law method used in inheritance law in many countries), the
@@ -2368,12 +2398,14 @@ window.I18N={
         n&auml;chsten Verwandten: Eltern oben, Geschwister und Partner daneben, Kinder darunter.</p>
 
         <h5>Sich bewegen</h5>
-        <p>&Uuml;ber das <b>Suchfeld</b> lassen sich Personen nach Name oder Jahr finden; mehrere W&ouml;rter werden
-        verkn&uuml;pft, &bdquo;Ruth 1933&ldquo; funktioniert also. Das <b>&#10005;</b> am rechten Rand des Feldes
-        leert es mit einem Tipp, so ist die n&auml;chste Suche sofort m&ouml;glich. Die <b>Trichter</b>-Schaltfl&auml;che
-        daneben grenzt die Liste ein: nach <b>Stamm oder Haus</b> und nach <b>Geburtsjahr</b> (&bdquo;ab 1900&ldquo;,
-        &bdquo;bis 1950&ldquo; oder beides). Ein kleiner goldener Punkt am Trichter erinnert daran, dass ein Filter
-        gesetzt ist; <b>Zur&uuml;cksetzen</b> hebt ihn wieder auf. Ein Kasten antippen <b>&ouml;ffnet die Angaben</b>
+        <p>Jedes Suchfeld der App arbeitet gleich, und jedes sagt es auch: <b>Name, Jahr oder Ort</b>.
+        Mehrere W&ouml;rter werden verkn&uuml;pft, &bdquo;Ruth 1933&ldquo; funktioniert also ebenso wie
+        &bdquo;Hayes Ashford&ldquo;, und eine Kennung wie &bdquo;#I17&ldquo; findet genau diesen Eintrag.
+        Sobald ein Feld angetippt ist, steht &uuml;ber der Liste noch einmal, wie das geht; findet sich nichts,
+        steht dort, worin gesucht wurde. Das <b>&#10005;</b> am rechten Rand leert das Feld mit einem Tipp.
+        Die Schaltfl&auml;che <b>Filter</b> daneben grenzt die Liste ein: nach <b>Stamm oder Haus</b> und nach
+        <b>Geburtsjahr</b> (&bdquo;ab 1900&ldquo;, &bdquo;bis 1950&ldquo; oder beides). Die Zahl auf der
+        Schaltfl&auml;che sagt, wie viele Filter gesetzt sind; <b>Zur&uuml;cksetzen</b> hebt sie wieder auf. Ein Kasten antippen <b>&ouml;ffnet die Angaben</b>
         dieser Person. Das kleine Fadenkreuz <b>&#8982;</b> in der Ecke eines Kastens <b>holt diese Person in die
         Mitte</b> &ndash; so wandert man Generation f&uuml;r Generation durch die Familie. Mit der Maus oder einem
         Finger ziehen verschiebt den Ausschnitt, <b>&ndash;</b> und <b>+</b> oder zwei Finger zoomen, und
@@ -2489,7 +2521,7 @@ window.I18N={
         <p>Zwei Personen ausw&auml;hlen, und die App ermittelt &uuml;ber beliebig viele Generationen hinweg, wie sie
         verwandt sind, und schreibt es in einem Satz auf, zum Beispiel &bdquo;Thomas ist der Cousin 2. Grades
         (1 Generation versetzt) von Clara&ldquo;. Darunter folgt dieselbe Aussage in der Gegenrichtung.</p>
-        <p>Die <b>Trichter</b>-Schaltfl&auml;che unter den beiden Feldern wirkt genauso wie im Reiter Stammbaum: Sie
+        <p>Die Schaltfl&auml;che <b>Filter</b> unter den beiden Feldern wirkt genauso wie im Reiter Stammbaum: Sie
         grenzt beide Listen auf einen Bereich von Geburtsjahren ein, was hilft, wenn in einer Datei mehrere Personen
         denselben Namen tragen.</p>
         <p>Die kleinen Abzeichen liefern die Einzelheiten: den <b>Verwandtschaftsgrad</b> (die Zahl der Geburten
@@ -3472,7 +3504,38 @@ window.FP = {
   setParent:setParent, removeParent:removeParent,
   addPartner:addPartner, removePartner:removePartner, setMarriage:setMarriage,
   addChildToFam:addChildToFam, removeChildFromFam:removeChildFromFam, ensureOwnFamily:ensureOwnFamily,
-  gedToText:gedToText, textToGed:textToGed, yearOf:yearOf, esc:esc, $:$
+  gedToText:gedToText, textToGed:textToGed, yearOf:yearOf, esc:esc, $:$,
+  /* ---------- Eine Suche fuer fuenf Felder ----------
+     Stammbaum, Nachfahrentafel, Verwandtschaft (zweimal), Personenwahl
+     und Liste suchten bisher jedes fuer sich: fuenf Platzhaltertexte,
+     drei verschiedene Meldungen bei null Treffern (zwei davon auch auf
+     Deutsch englisch), und die Tafel durchsuchte als einzige nicht den
+     Geburtsort. Von aussen war nicht zu erkennen, wonach ein Feld
+     sucht - man musste es ausprobieren. Ab jetzt fuehren alle fuenf
+     Felder durch dieselben vier Funktionen:
+
+       suchFeld()    was im leeren Feld steht - WAS gesucht wird
+       suchWie()     die Zeile ueber der Trefferliste - WIE man sucht
+       suchLeer()    was bei null Treffern dasteht
+       suchTreffer() das Suchen selbst
+
+     Gesucht wird im Suchtext des Verzeichnisses: Name, Geburtsdatum in
+     beiden Schreibweisen, Geburts- und Sterbejahr, Geburtsort und
+     Kennung. Mehrere Woerter sind ein UND. */
+  suchFeld:function(){ return L('Name, year or place'); },
+  suchWie:function(){ return L('Several words narrow it down, e.g. William 1902 Ashford'); },
+  suchLeer:function(){ return L('No matches. The search covers name, year, place and ID.'); },
+  suchTreffer:function(q, pool, max){
+    var toks=String(q||'').trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if(!toks.length) return pool.slice(0, max);
+    var out=[], i, k;
+    for(i=0;i<pool.length && out.length<max;i++){
+      var hay=pool[i].search, passt=true;
+      for(k=0;k<toks.length;k++) if(hay.indexOf(toks[k])<0){ passt=false; break; }
+      if(passt) out.push(pool[i]);
+    }
+    return out;
+  }
 };
 })();
 </script>
@@ -3625,7 +3688,7 @@ function pickPerson(opts){
   $('pickTitle').textContent=opts.title||L('Select a person');
   $('pickNew').style.display=(opts.allowNew===false)?'none':'';
   $('pickSearch').value='';
-  $('pickSearch').placeholder=L('Type a name – to search, or to create someone new');
+  $('pickClear').classList.remove('show');
   renderPickList('');
   updateNewLabel();
   openModal('mdPick', function(){ pickCb=null; });
@@ -3648,19 +3711,25 @@ function splitName(s){
   return {given:parts.slice(0,i).join(' '), surname:parts.slice(i).join(' ')};
 }
 function renderPickList(q){
-  var toks=q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   var pool=FP.index().filter(function(p){ return !pickExclude[p.id]; });
-  var list= !toks.length ? pool.slice(0,80)
-    : pool.filter(function(p){ return toks.every(function(t){ return p.search.indexOf(t)>-1; }); }).slice(0,80);
-  if(!list.length){ $('pickList').innerHTML='<div class="pitem"><small>No matches</small></div>'; return; }
-  $('pickList').innerHTML=list.map(function(p){
+  var list=FP.suchTreffer(q, pool, 80);
+  if(!list.length){ $('pickList').innerHTML='<div class="shint">'+esc(FP.suchLeer())+'</div>'; return; }
+  var hint = q.trim() ? '' : '<div class="shint">'+esc(FP.suchWie())+'</div>';
+  $('pickList').innerHTML=hint+list.map(function(p){
     return '<div class="pitem" data-id="'+esc(p.id)+'">'+esc(p.name)+(p.meta?'<small>'+esc(p.meta)+'</small>':'')+'</div>';
   }).join('');
   $('pickList').querySelectorAll('.pitem[data-id]').forEach(function(el){
     el.onclick=function(){ var cb=pickCb; pickCb=null; closeModal('mdPick'); if(cb) cb(el.dataset.id); };
   });
 }
-$('pickSearch').addEventListener('input', function(){ renderPickList(this.value); updateNewLabel(); });
+$('pickSearch').addEventListener('input', function(){
+  $('pickClear').classList.toggle('show', !!this.value);
+  renderPickList(this.value); updateNewLabel(); });
+/* Dasselbe ✕ wie in den vier anderen Feldern, und es tut dasselbe:
+   leeren, die volle Liste zeigen, Schreibmarke zurueck ins Feld. */
+$('pickClear').onclick=function(){
+  var f=$('pickSearch'); f.value=''; this.classList.remove('show');
+  renderPickList(''); updateNewLabel(); f.focus(); };
 $('pickCancel').onclick=function(){ pickCb=null; closeModal('mdPick'); };
 $('pickNew').onclick=function(){
   var cb=pickCb, typed=$('pickSearch').value.trim();
@@ -4984,6 +5053,10 @@ var hi=-1, items=[];
 /* ---------- search filter (lineage / year of birth) ---------- */
 var FIL={stamm:'', from:null, to:null};
 function filActive(){ return !!(FIL.stamm || FIL.from!=null || FIL.to!=null); }
+/* Wie viele Filter gesetzt sind - dieselbe Zahl, die auch in der Liste
+   und in der Verwandtschaft am Knopf steht. */
+function filZahl(){ var n=0;
+  if(FIL.stamm) n++; if(FIL.from!=null) n++; if(FIL.to!=null) n++; return n; }
 function passes(p){
   var rec=FP.person(p.id); if(!rec) return false;
   if(FIL.stamm){
@@ -5019,8 +5092,11 @@ function fillStammList(){
   if(sel.value!==cur) FIL.stamm='';
 }
 function paintFilter(){
-  $('trFilterDot').classList.toggle('show', filActive());
+  $('trFilterDot').textContent = filZahl() ? ' ('+filZahl()+')' : '';
   $('trBtnFilter').classList.toggle('on', filActive());
+  /* Zuruecksetzen erscheint erst, wenn es etwas zuruckzusetzen gibt -
+     so wie in der Liste und in der Verwandtschaft. */
+  $('trFilReset').style.visibility = filActive() ? '' : 'hidden';
   var n=filteredPool().length, total=FP.count();
   $('trFilCount').textContent = filActive() ? (n+L(' of ')+total+L(' shown')) : '';
 }
@@ -5042,12 +5118,15 @@ $('trFilReset').onclick=function(){
 
 function renderDrop(q){
   var d=$('trDrop');
-  var toks=q.trim().toLowerCase().split(/\s+/).filter(Boolean);
   var pool=filteredPool();
-  items = !toks.length ? pool.slice(0,60)
-    : pool.filter(function(p){ return toks.every(function(t){ return p.search.indexOf(t)>-1; }); }).slice(0,60);
-  if(!items.length){ d.innerHTML='<div class="titem"><small>No matches</small></div>'; d.classList.add('show'); return; }
-  d.innerHTML=items.map(function(p,i){
+  items = FP.suchTreffer(q, pool, 60);
+  /* „Keine Treffer" allein liess offen, woran es lag. Jetzt steht dabei,
+     worin gesucht wurde - und solange nichts getippt ist, wie man sucht.
+     Beides kommt aus FP, damit in allen fuenf Feldern dasselbe steht. */
+  if(!items.length){ d.innerHTML='<div class="shint">'+esc(FP.suchLeer())+'</div>';
+    d.classList.add('show'); return; }
+  var hint = q.trim() ? '' : '<div class="shint">'+esc(FP.suchWie())+'</div>';
+  d.innerHTML=hint+items.map(function(p,i){
     return '<div class="titem'+(i===hi?' hi':'')+'" data-id="'+esc(p.id)+'">'+esc(p.name)+
            (p.meta?'<small>'+esc(p.meta)+'</small>':'')+'</div>'; }).join('');
   d.classList.add('show');
@@ -5060,7 +5139,19 @@ $('trClear').onclick=function(){
   renderDrop(''); $('trSearch').focus();
 };
 $('trSearch').addEventListener('input', function(){ hi=-1; toggleClear(); renderDrop(this.value); });
-$('trSearch').addEventListener('focus', function(){ if(FP.hasData()) renderDrop(this.value); });
+/* Im Feld steht nach der Wahl der Name der Person, samt Jahren in
+   Klammern: „William Edward Hayes (1902-1978)". Beim Hineinklicken wurde
+   genau danach gesucht - und nichts gefunden, weil „(1902-1978)" in
+   keinem Suchtext steht. Die App sagte also „Keine Treffer" ueber die
+   Person, die gerade im Feld steht. Jetzt zeigt das Feld beim
+   Hineinklicken die ganze Liste und markiert den Text, sodass das erste
+   Zeichen ihn ersetzt. Dasselbe in der Tafel und in der Verwandtschaft. */
+function zeigtGewaehlte(){ return !!FOCUS && $('trSearch').value===FP.label(FOCUS); }
+$('trSearch').addEventListener('focus', function(){
+  if(!FP.hasData()) return;
+  if(zeigtGewaehlte()){ this.select && this.select(); renderDrop(''); }
+  else renderDrop(this.value);
+});
 $('trSearch').addEventListener('keydown', function(e){
   var d=$('trDrop'); if(!d.classList.contains('show')) return;
   if(e.key==='ArrowDown'){ hi=Math.min(items.length-1,hi+1); renderDrop(this.value); e.preventDefault(); }
@@ -6241,17 +6332,21 @@ function searchHay(id){
           p.deathDate, fmtDate(p.deathDate||''), '#'+id].filter(Boolean).join(' ').toLowerCase();
 }
 var dropHi=-1, dropItems=[];
+/* Die Tafel suchte als einziges Feld in einem eigenen Heuhaufen: Vor-
+   und Nachname, beide Datumsschreibweisen und die Kennung - aber NICHT
+   den Geburtsort, den die vier anderen Felder durchsuchen. Wer in der
+   Liste „Ashford" eintippen konnte und hier nicht, hatte keine
+   Moeglichkeit, das zu wissen. Jetzt derselbe Weg wie ueberall. */
 function renderDrop(q){
   var drop=$('rootDrop');
-  var terms=q.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  var ids=Object.keys(DB.indi);
-  if(terms.length) ids=ids.filter(function(id){ var hay=searchHay(id);
-    return terms.every(function(t){ return hay.indexOf(t)>-1; }); });
-  ids.sort(function(a,b){ return personLabel(a).localeCompare(personLabel(b),'de'); });
-  dropItems=ids.slice(0,80);
-  if(!dropItems.length){ drop.innerHTML='<div class="item muted">no matches</div>'; drop.style.display='block'; return; }
-  drop.innerHTML=dropItems.map(function(id,i){
-    return '<div class="item '+(i===dropHi?'hi':'')+'" data-id="'+id+'">'+personLabel(id)+' <small>#'+id+'</small></div>';
+  var treffer=FP.suchTreffer(q, FP.index(), 80);
+  dropItems=treffer.map(function(e){ return e.id; });
+  if(!dropItems.length){ drop.innerHTML='<div class="shint">'+FP.esc(FP.suchLeer())+'</div>';
+    drop.style.display='block'; return; }
+  var hint = q.trim() ? '' : '<div class="shint">'+FP.esc(FP.suchWie())+'</div>';
+  drop.innerHTML=hint+treffer.map(function(e,i){
+    return '<div class="item '+(i===dropHi?'hi':'')+'" data-id="'+FP.esc(e.id)+'">'+FP.esc(e.name)+
+      (e.meta?' <small>'+FP.esc(e.meta)+'</small>':'')+'</div>';
   }).join('');
   drop.style.display='block';
   drop.querySelectorAll('.item[data-id]').forEach(function(it){ it.onclick=function(){ chooseRoot(it.dataset.id); }; });
@@ -6304,7 +6399,13 @@ $('rootClear').onclick=function(){
   if(!rs.disabled){ rs.focus(); renderDrop(''); }
 };
 rs.addEventListener('input', function(){ dropHi=-1; toggleRootClear(); renderDrop(rs.value); });
-rs.addEventListener('focus', function(){ if(!rs.disabled) renderDrop(rs.value); });
+/* Wie im Stammbaum: Im Feld steht der Name der Wurzelperson mit ihrem
+   Geburtsdatum. Danach zu suchen fand nichts. */
+rs.addEventListener('focus', function(){
+  if(rs.disabled) return;
+  if(ROOT && DB.indi[ROOT] && rs.value===personLabel(ROOT)){ rs.select && rs.select(); renderDrop(''); }
+  else renderDrop(rs.value);
+});
 rs.addEventListener('keydown', function(e){
   var drop=$('rootDrop');
   if(drop.style.display==='none') return;
@@ -6546,7 +6647,6 @@ FP.on(function(type, restored){
   if(type==='load'){
     SET={}; SELECTED=null; ROOT=null;
     rsEl.disabled=false; rsEl.value='';
-    rsEl.placeholder=T('Search root person (')+FP.count()+T(' people)…');
     /* the same file as last time – put the chart back the way it was left */
     if(restored ? !restoreChart() : (SHEET_TITLE='', $('sheetTitle').value='', true)){
       /* start with a chart instead of an empty screen: take the person the tree
@@ -6589,7 +6689,7 @@ SHELL.onTab(function(name){
 });
 window.addEventListener('resize', function(){ if(SHELL.currentTab()==='chart') applyZoom(); });
 syncDB();
-if(FP.hasData()){ $('rootSearch').disabled=false; $('rootSearch').placeholder=T('Search root person (')+FP.count()+T(' people)…'); }
+if(FP.hasData()){ $('rootSearch').disabled=false; }
 toggleRootClear();
 SHEET_TITLE=$('sheetTitle').value||'';   /* the browser restores form fields on reload */
 showDefaultPanel();
@@ -6992,13 +7092,12 @@ function setupCombo(inputId,listId,onPick){
   var input=$(inputId), list=$(listId), active=-1, current=[];
   function close(){ list.classList.remove('show'); active=-1; }
   function open(q){
-    var toks=q.trim().toLowerCase().split(/\s+/).filter(Boolean);
     var pool=filtered();
-    current = !toks.length ? pool.slice(0,60)
-      : pool.filter(function(p){ return toks.every(function(t){ return p.search.indexOf(t)>-1; }); }).slice(0,60);
-    if(!current.length){ list.innerHTML='<div class="opt"><span class="meta">'+(de()?'Keine Treffer':'No matches')+'</span></div>';
+    current = FP.suchTreffer(q, pool, 60);
+    if(!current.length){ list.innerHTML='<div class="shint">'+esc(FP.suchLeer())+'</div>';
       list.classList.add('show'); return; }
-    list.innerHTML=current.map(function(p,i){
+    var hint = q.trim() ? '' : '<div class="shint">'+esc(FP.suchWie())+'</div>';
+    list.innerHTML=hint+current.map(function(p,i){
       return '<div class="opt" data-i="'+i+'"><div class="nm">'+esc(p.name)+'</div>'+
         (p.meta?'<div class="meta">'+esc(p.meta)+'</div>':'')+'</div>'; }).join('');
     list.classList.add('show'); active=-1;
@@ -7018,8 +7117,17 @@ function setupCombo(inputId,listId,onPick){
        jemand anderen waehlen, nicht ein leeres Feld betrachten. */
     open('');
   };
-  function pick(p){ input.value=p.name+(p.year?' ('+p.year+')':''); onPick(p.id); close(); zeigeX(); }
-  input.addEventListener('focus',function(){ open(input.value); zeigeX(); });
+  /* Was zuletzt gewaehlt wurde, steht so im Feld: „Thomas Hayes (1986)".
+     Beim Hineinklicken wurde danach gesucht, und „(1986)" steht in
+     keinem Suchtext - die Liste sagte „Keine Treffer" ueber die Person,
+     die im Feld steht. Jetzt: ganze Liste zeigen, Text markieren. */
+  var gewaehlt='';
+  function pick(p){ input.value=p.name+(p.year?' ('+p.year+')':''); gewaehlt=input.value;
+    onPick(p.id); close(); zeigeX(); }
+  input.addEventListener('focus',function(){
+    if(this.value && this.value===gewaehlt){ this.select && this.select(); open(''); }
+    else open(this.value);
+    zeigeX(); });
   input.addEventListener('input',function(){ onPick(null); open(input.value); zeigeX(); });
   input.addEventListener('keydown',function(e){
     var open=list.classList.contains('show');
@@ -7040,7 +7148,8 @@ function setupCombo(inputId,listId,onPick){
   document.addEventListener('click',function(e){
     if(!e.target.closest('#'+inputId) && !e.target.closest('#'+listId)
        && !e.target.closest('#'+knopfId)) close(); });
-  return {reopen:function(){ if(document.activeElement===input) open(input.value); }};
+  return {reopen:function(){ if(document.activeElement===input) open(input.value); },
+          merkeWert:function(){ gewaehlt=input.value; }};
 }
 var cA=setupCombo('inA','listA',function(id){ selA=id; render(); rememberPair(); });
 var cB=setupCombo('inB','listB',function(id){ selB=id; render(); rememberPair(); });
@@ -7058,6 +7167,7 @@ SHELL.onRelGo(function(id){
   $('inB').value=selB?fieldFor(selB):'';
   $('clearA').classList.toggle('show', !!$('inA').value);
   $('clearB').classList.toggle('show', !!$('inB').value);
+  cA.merkeWert(); cB.merkeWert();
   render(); rememberPair();
 });
 
@@ -7085,11 +7195,14 @@ $('clearY').addEventListener('click',function(){ $('minY').value=''; $('maxY').v
 $('relBtnFilter').onclick=function(){
   var open=$('relFilter').classList.toggle('show');
   this.classList.toggle('on', open || filterOn());
+  paintRelFilter();
   if(open) $('minY').focus();
 };
 function filterOn(){ return minY!=null || maxY!=null; }
 function paintRelFilter(){
-  $('relFilterDot').classList.toggle('show', filterOn());
+  var fz=0; if(minY!=null) fz++; if(maxY!=null) fz++;
+  $('relFilterDot').textContent = fz ? ' ('+fz+')' : '';
+  $('clearY').style.visibility = fz ? '' : 'hidden';
   $('relBtnFilter').classList.toggle('on', filterOn() || $('relFilter').classList.contains('show'));
 }
 $('swap').addEventListener('click',function(){
@@ -8094,14 +8207,15 @@ function filterStand(){
   $('listFiltN').textContent = n ? ' ('+n+')' : '';
 }
 function trefferP(){
-  var toks=$('listQ').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
   var stamm=$('listStamm').value, g=jahre(), I=FP.indi();
-  return FP.index().filter(function(e){
+  /* Erst die Filter, dann die Suche - und die Suche durch dieselbe
+     Funktion wie in den vier anderen Feldern, damit „Ashford" hier
+     nicht etwas anderes bedeutet als im Stammbaum. */
+  var pool=FP.index().filter(function(e){
     if(stamm && (I[e.id]||{}).stamm!==stamm) return false;
-    if(!jahrPasst(e.year, g)) return false;
-    for(var i=0;i<toks.length;i++) if(e.search.indexOf(toks[i])<0) return false;
-    return true;
+    return jahrPasst(e.year, g);
   });
+  return FP.suchTreffer($('listQ').value, pool, 1e9);
 }
 /* Eine Familie wird ueber die Namen ihrer Mitglieder gesucht - danach
    sucht man sie ja, nicht nach ihrer Kennung. Der Suchtext wird einmal
@@ -8196,14 +8310,20 @@ function zeichne(){
   var teil=treffer.slice(0, GEZEIGT);
   box.innerHTML = treffer.length
     ? teil.map(ANSICHT==='p'?zeilePerson:zeileFamilie).join('')
-    : '<div class="lempty">'+esc(T('Nothing matches.','Keine Treffer.'))+'</div>';
-  $('listCount').textContent = treffer.length
+    : '<div class="lempty">'+esc(FP.suchLeer())+'</div>';
+  var zahl = treffer.length
     ? (teil.length<treffer.length
         ? treffer.length+' '+T('found','gefunden')+', '+teil.length+' '+T('shown','gezeigt')
         : treffer.length+' '+(ANSICHT==='p'
             ? T(treffer.length===1?'person':'people', treffer.length===1?'Person':'Personen')
             : T(treffer.length===1?'family':'families', treffer.length===1?'Familie':'Familien')))
     : '';
+  /* In den vier Klappfeldern steht der Hinweis im aufgehenden Kasten. Die
+     Liste hat keinen - ihre Treffer stehen immer da -, deshalb steht er
+     hier in der Zaehlzeile und nur, solange nichts getippt ist. Er
+     verschwindet beim ersten Zeichen und belegt dann keinen Platz mehr. */
+  $('listCount').textContent = $('listQ').value.trim()
+    ? zahl : (zahl ? zahl+' \u00B7 '+FP.suchWie() : '');
   $('listReset').style.visibility = filterAktiv() ? '' : 'hidden';
   filterStand();
   var mehr=$('listMore');
