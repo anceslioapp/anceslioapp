@@ -3177,9 +3177,36 @@ function setData(newD, type, restored){
   emit(type||'load', !!restored);
   scheduleSave();
 }
+/* ---------- Viele Änderungen auf einmal ----------
+   Jede einzelne Änderung zieht bisher das Verzeichnis nach, meldet
+   allen Teilen der App Bescheid und stösst das Speichern an. Für eine
+   Änderung ist das richtig. Für viertausend ist es verheerend:
+   Gemessen am Übernehmen von 200 Platzhalterdaten in einer Datei mit
+   11.700 Personen - 2.048 ms, also hochgerechnet 44 Sekunden für
+   4.295 Stück, und zwar mit vollständig blockiertem Browser. Joachim
+   hat genau das erlebt: Er drückte auf „Alle 4.295 übernehmen" und
+   die Seite stand.
+
+   Deshalb FP.batch(fn): Innerhalb der Klammer wird nur vermerkt, DASS
+   sich etwas geändert hat. Am Ende wird einmal das Verzeichnis
+   gebaut, einmal gemeldet, einmal gespeichert. Jede künftige
+   Massenänderung soll hier hindurchgehen. */
+var stapel=0, stapelOffen=false;
 function changed(id){
+  if(stapel){ stapelOffen=true; return; }
   if(id!=null) touchIndex(id); else rebuildIndex();
   emit('edit'); scheduleSave();
+}
+function batch(fn){
+  stapel++;
+  try{ fn(); }
+  finally{
+    stapel--;
+    if(!stapel && stapelOffen){
+      stapelOffen=false;
+      rebuildIndex(); emit('edit'); scheduleSave();
+    }
+  }
 }
 
 /* search index
@@ -3669,6 +3696,7 @@ window.FP = {
     D=parsed; hasData=true; rebuildIndex(); emit('edit'); scheduleSave();
   },
   touchAll:function(){ changed(); },
+  batch:batch,
   addPerson:addPerson, updatePerson:updatePerson, deletePerson:deletePerson,
   setParent:setParent, removeParent:removeParent,
   addPartner:addPartner, removePartner:removePartner, setMarriage:setMarriage,
@@ -9388,15 +9416,26 @@ function anwenden(liste){
   /* liste: Befunde mit feld/alt/neu. Alles in einem Zug, mit einem
      Stand davor für das Zurücknehmen. */
   var vorher=FP.serialize(), n=0, P=FP.indi(), F=FP.fam();
-  liste.forEach(function(b){
-    if(!b.feld) return;
-    if(b.famId){ var f=F[b.famId]; if(f&&f[b.feld]===b.alt){ f[b.feld]=b.neu; n++; } return; }
-    var id=b.ids[0], p=P[id]; if(!p) return;
-    if(p[b.feld]!==b.alt) return;                /* zwischenzeitlich geändert */
-    var fe={}; fe[b.feld]=b.neu;
-    FP.updatePerson(id, fe); n++;
+  /* In einem Zug. Ohne diese Klammer zieht jede einzelne Änderung die
+     ganze App nach - bei 4.295 Platzhalterdaten waren das gemessene
+     vierundvierzig Sekunden mit stehendem Browser. */
+  FP.batch(function(){
+    liste.forEach(function(b){
+      if(!b.feld) return;
+      /* Familien werden unmittelbar geschrieben; FP.touchAll() meldet
+         der Klammer nur, DASS sich etwas geändert hat. Gemeldet wird
+         am Ende trotzdem genau einmal. */
+      if(b.famId){ var f=F[b.famId];
+        if(f&&f[b.feld]===b.alt){ f[b.feld]=b.neu; n++; FP.touchAll(); } return; }
+      var id=b.ids[0], p=P[id]; if(!p) return;
+      if(p[b.feld]!==b.alt) return;                /* zwischenzeitlich geändert */
+      var fe={}; fe[b.feld]=b.neu;
+      FP.updatePerson(id, fe); n++;
+    });
   });
-  if(n) FP.touchAll();
+  /* Kein touchAll() hier: Die Klammer oben hat schon einmal gemeldet.
+     Ein zweiter Aufruf wäre ein zweiter Durchlauf durch die halbe
+     App - die Prüfreihe besteht deshalb auf genau einer Meldung. */
   return {n:n, vorher:vorher};
 }
 
@@ -9405,7 +9444,17 @@ function anwenden(liste){
    Das Fenster
    =================================================================== */
 var ERG=null, BAND='w', RUECK=[], OFFEN={}, ERLEDIGT={};
-var ZEIGE=12;          /* so viele Fälle je Regel auf einmal */
+/* OFFEN[regel] ist die Zahl der gezeigten Fälle: 0 heisst
+   zugeklappt. Aufgeklappt sind es erst zwölf, und jeder Druck auf
+   „mehr" legt zweihundert dazu.
+
+   Warum nicht alle auf einmal: Bei 4.813 Befunden brauchte das
+   Zeichnen aller Zeilen gemessene 2.160 ms bei vierfacher Drosselung,
+   und danach standen 4.813 Zeilen mit je zwei Knöpfen im Fenster, was
+   jede weitere Bewegung zäh machte. Niemand liest viertausend
+   Zeilen - man sieht sich ein paar an und übernimmt dann alle. Der
+   Schritt von zweihundert kostet rund 90 ms und bleibt unmerklich. */
+var ZEIGE=12, SCHRITT=200, MAXZEIG=1000;
 
 function bandName(b){
   return b==='w' ? T('Contradiction','Widerspruch')
@@ -9450,12 +9499,11 @@ function zeichneListe(){
   }
   leer.hidden=true;
   liste.forEach(function(g){
-    var r=g.regel, auf=!!OFFEN[r.k];
+    var r=g.regel, wieviel=OFFEN[r.k]||0, auf=wieviel>0;
     var mit=offenVorschlaege(g);
     var d=document.createElement('div');
     d.className='dupecard pruefcard';
-    var zeigen = auf ? g.befunde : g.befunde.slice(0,0);
-    var faelle = zeigen.slice(0, OFFEN[r.k]===2 ? 1e9 : ZEIGE).map(function(b){
+    var faelle = g.befunde.slice(0, wieviel).map(function(b){
       var erl=ERLEDIGT[schluessel(b)];
       return '<div class="pfall'+(erl?' weg':'')+'" data-k="'+esc(schluessel(b))+'">'+
         '<span class="ptext">'+esc(b.text)+'</span>'+
@@ -9465,9 +9513,20 @@ function zeichneListe(){
           (b.feld&&!erl ? '<button class="btn small" data-tun="eins">'+esc(T('Take over','Übernehmen'))+'</button>' : '')+
         '</span></div>';
     }).join('');
-    var mehr = auf && OFFEN[r.k]!==2 && g.befunde.length>ZEIGE
-      ? '<div class="pmehr"><button class="btn small" data-tun="alle">'+
-        esc(T('Show all ('+g.befunde.length+')','Alle zeigen ('+g.befunde.length+')'))+'</button></div>' : '';
+    var rest = g.befunde.length - wieviel;
+    /* Bei tausend gezeigten Zeilen ist Schluss. Wer wirklich alle
+       viertausend lesen will, nimmt „Liste speichern" - eine
+       Textdatei liest sich ohnehin besser als viertausend Zeilen in
+       einem Fenster, und die Seite bleibt flink. */
+    var mehr = !auf || rest<=0 ? ''
+      : wieviel>=MAXZEIG
+        ? '<div class="pmehr perkl">'+esc(T('The first '+wieviel+' of '+g.befunde.length+' are shown. '+
+            'All of them are in Save list.',
+            'Gezeigt werden die ersten '+wieviel+' von '+g.befunde.length+'. Alle stehen in „Liste speichern".'))+'</div>'
+        : '<div class="pmehr"><button class="btn small" data-tun="mehr">'+
+          esc(rest<=SCHRITT ? T('Show the remaining '+rest,'Die restlichen '+rest+' zeigen')
+                            : T('Show '+SCHRITT+' more (of '+rest+')','Weitere '+SCHRITT+' zeigen (von '+rest+')'))+
+          '</button></div>';
     d.innerHTML=
       '<div class="pkopf" data-tun="klapp">'+
         '<span class="pzahl">'+g.befunde.length+'</span>'+
@@ -9484,8 +9543,8 @@ function zeichneListe(){
     d.addEventListener('click', function(ev){
       var btn=ev.target.closest('[data-tun]'); if(!btn) return;
       var tun=btn.dataset.tun;
-      if(tun==='klapp'){ OFFEN[r.k]=OFFEN[r.k]?0:1; zeichneListe(); return; }
-      if(tun==='alle'){ OFFEN[r.k]=2; zeichneListe(); return; }
+      if(tun==='klapp'){ OFFEN[r.k]=OFFEN[r.k]?0:ZEIGE; zeichneListe(); return; }
+      if(tun==='mehr'){ OFFEN[r.k]=Math.min(MAXZEIG, (OFFEN[r.k]||0)+SCHRITT); zeichneListe(); return; }
       if(tun==='regel'){ uebernehmen(offenVorschlaege(g), true); return; }
       var zeile=btn.closest('.pfall'); if(!zeile) return;
       var b=null;
@@ -9509,10 +9568,28 @@ function zeichneListe(){
    der Dublettenprüfung. Neu gerechnet wird nur, wenn eine ganze
    Regel auf einmal übernommen wurde, denn dann ändert sich genug,
    dass die Zahlen sonst täuschen. */
+var LAEUFT=false;
+/* Bei grossen Mengen erst sagen, dass es losgeht, und dem Browser
+   einen Augenblick geben, das auch zu zeichnen - sonst steht die
+   Seite stumm, und wer nicht weiss, was los ist, drückt noch einmal.
+   Deshalb zusätzlich die Sperre: Ein zweiter Druck, während der
+   erste läuft, wird verworfen. */
 function uebernehmen(liste, neuRechnenDanach){
-  if(!liste.length) return;
+  if(!liste.length || LAEUFT) return;
+  if(liste.length>=200){
+    LAEUFT=true;
+    $('pruefSum').textContent=T('Taking over '+liste.length+' entries, one moment …',
+                                'Übernehme '+liste.length+' Angaben, einen Augenblick …');
+    $('pruefList').querySelectorAll('button').forEach(function(b){ b.disabled=true; });
+    setTimeout(function(){ LAEUFT=false; wirklichUebernehmen(liste, neuRechnenDanach); }, 40);
+    return;
+  }
+  wirklichUebernehmen(liste, neuRechnenDanach);
+}
+function wirklichUebernehmen(liste, neuRechnenDanach){
   var r=PRUEF.anwenden(liste);
-  if(!r.n){ SHELL.toast(T('Nothing left to change there.','Dort war nichts mehr zu ändern.')); return; }
+  if(!r.n){ SHELL.toast(T('Nothing left to change there.','Dort war nichts mehr zu ändern.'));
+    summe(); zeichneListe(); return; }
   RUECK.push({text:r.vorher, n:r.n});
   if(RUECK.length>10) RUECK.shift();
   liste.forEach(function(b){ ERLEDIGT[schluessel(b)]=1; });
