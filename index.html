@@ -118,9 +118,28 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 .listfield{position:relative; flex:1 1 220px; min-width:0}
 .listfield input{width:100%; padding:9px 38px 9px 11px; border:1px solid var(--line);
   border-radius:9px; font-size:15.5px; background:var(--field); color:var(--ink)}
-#listStamm{flex:0 1 auto; max-width:50%; padding:8px 9px; border:1px solid var(--line);
+#listStamm{flex:1 1 150px; max-width:100%; padding:8px 9px; border:1px solid var(--line);
   border-radius:9px; background:var(--field); color:var(--ink); font-size:13.5px}
+.listfilters{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin:0 0 9px}
+#listFilt{flex:0 0 auto; white-space:nowrap}
+#listFilt.on{border-color:var(--accent); color:var(--accent)}
+#listFiltN{font-variant-numeric:tabular-nums}
 .listcount{font-size:12.5px; color:var(--muted); margin:0 0 8px}
+.listyears{display:flex; align-items:center; gap:7px; flex-wrap:nowrap}
+.listyears label{display:inline-flex; align-items:center; gap:4px; font-size:12.5px; color:var(--muted)}
+.listyears input{width:74px; padding:7px 8px; border:1px solid var(--line); border-radius:8px;
+  background:var(--field); color:var(--ink); font-size:13.5px}
+/* Die Familienzeile nach dem Vorbild gedruckter Familienbuecher und der
+   App, die Joachim gezeigt hat: links das Paar, rechts die Kinder, durch
+   einen Strich getrennt. Zwei Spalten statt einer langen Zeile, damit
+   lange Namen eine eigene Breite bekommen statt den Satz zu zerreissen. */
+.lrow.fam{display:grid; grid-template-columns:1fr 1fr; gap:0}
+.lrow.fam .lsp{padding-right:11px}
+.lrow.fam .lsp+.lsp{padding-left:11px; border-left:1px solid var(--line)}
+.lrow.fam .lnm{font-size:14.5px; line-height:1.4}
+.lrow.fam .lmeta{margin-top:3px}
+.lrow.fam .lacts{grid-column:1 / -1}
+.lrow.fam .leer{color:var(--muted); font-size:13px}
 .listmore{text-align:center; padding:4px 0 2px}
 .lrow{border-bottom:1px solid var(--line); padding:8px 2px; cursor:pointer}
 .lrow:last-child{border-bottom:none}
@@ -134,7 +153,27 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 .lempty{color:var(--muted); font-size:14.5px; padding:14px 0}
 @media (max-width:860px){
   #listStamm{max-width:100%; flex:1 1 100%}
+  /* Bei 320 px brach der Filterknopf unter das Suchfeld, weil dessen
+     Grundbreite 220 px war und daneben nur 26 uebrig blieben. */
+  .listfield{flex:1 1 140px}
   .lacts .btn{flex:1 1 auto; justify-content:center}
+  /* Auf 360 px passen Stamm und die beiden Jahresfelder nicht in eine
+     Zeile. Jede bekommt deshalb eine eigene, aber die Jahresfelder
+     behalten ihre feste Breite - lassen sie sie wachsen, zerfaellt die
+     Zeile "Geboren ab [  ] bis [  ]" in drei. Zurueckgesetzt wird
+     daneben, denn der Knopf erscheint nur, wenn etwas gesetzt ist. */
+  /* Zwei Zeilen statt drei: oben der Stamm und daneben Zuruecksetzen,
+     darunter die Jahre. Gemessen bei 360 px: nebeneinander brauchen
+     Jahre und Zuruecksetzen 350 px, zur Verfuegung stehen 294 - der
+     Stamm dagegen teilt sich die Zeile muehelos. Das spart 52 px, also
+     eine weitere Namenszeile. */
+  .listfilters{display:grid; grid-template-columns:1fr auto; align-items:center}
+  #listStamm{grid-area:1 / 1; max-width:none; flex:none}
+  #listReset{grid-area:1 / 2; flex:none}
+  .listyears{grid-area:2 / 1 / auto / span 2; flex-wrap:nowrap}
+  /* Ohne Staemme in der Datei faellt die obere Zeile weg. */
+  .listfilters.ohnestamm .listyears{grid-area:1 / 1 / auto / span 2}
+  .listfilters.ohnestamm #listReset{grid-area:2 / 1; justify-self:start}
 }
 /* The tick keeps its place whether it is showing or not. */
 #dataTick{flex:0 0 auto; width:10px; text-align:center; color:var(--ok); visibility:hidden}
@@ -1351,7 +1390,25 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
           <button type="button" class="clearbtn" id="listClear" data-i18n-title="Clear the search field"
                   title="Clear the search field" aria-label="Clear">&#10005;</button>
         </div>
+        <!-- Die Filter liegen hinter einem Knopf, wie die Jahre im
+             Stammbaum hinter "Optionen". Auf einem 360-px-Telefon nahmen
+             Stamm und Jahre offen 112 von 640 px ein, bevor die erste
+             Person zu sehen war; gesucht wird aber fast immer ueber das
+             Namensfeld. Ist ein Filter gesetzt, steht die Zahl am Knopf
+             und das Feld oeffnet sich von selbst. -->
+        <button class="btn small" id="listFilt" aria-expanded="false" aria-controls="listFilters"
+                data-i18n-title="Show filters" title="Show filters"><span
+                data-i18n="Filter">Filter</span><span id="listFiltN"></span></button>
+      </div>
+      <div class="listfilters" id="listFilters" hidden>
         <select id="listStamm" aria-label="Branch"></select>
+        <span class="listyears">
+          <label class="muted"><span data-i18n="Born from">Born from</span>
+            <input type="number" id="listFrom" inputmode="numeric" placeholder="1800"></label>
+          <label class="muted"><span data-i18n="to">to</span>
+            <input type="number" id="listTo" inputmode="numeric" placeholder="1980"></label>
+        </span>
+        <button class="btn small" id="listReset" data-i18n="Reset">Reset</button>
       </div>
       <div class="listcount" id="listCount"></div>
       <div id="listRows"></div>
@@ -1759,6 +1816,7 @@ var DE = {
 
 /* ---- kinship tab ---- */
 'Reset':'Zurücksetzen','from':'von','to':'bis',
+'Filter':'Filter','Show filters':'Filter anzeigen','Hide filters':'Filter ausblenden',
 'Name or year, e.g. Thomas 1986':'Name oder Jahr, z. B. Thomas 1986',
 'Name or year, e.g. Clara 1955':'Name oder Jahr, z. B. Clara 1955',
 'Swap person A and B':'Person A und B tauschen',
@@ -2105,6 +2163,11 @@ window.I18N={
         as a file, copy to the clipboard, or show the text so you can copy it by hand. Any of them gives you a
         complete GEDCOM file. Do this after larger edits, and always before switching devices or clearing your
         browser.</p>
+        <p>The saved file is named after the family and the moment: the surname that occurs most often in the
+        file, then the date and the time to the minute, for instance <b>Hayes_2026-10-10_2214.ged</b>. Two exports
+        on the same day are therefore easy to tell apart. If no surname clearly stands out &ndash; a file holding
+        many unrelated families &ndash; the name falls back to <b>family_</b>, because an arbitrary name would be
+        worse than none.</p>
         <div class="note"><b>Important:</b> clearing browsing data, or uninstalling the app, also clears the stored
         family tree. With an exported .ged file that is a minor annoyance; without one the changes are gone.</div>
         <p>How long the automatic copy survives depends on where you are using this. In the <b>app from the Play
@@ -2145,11 +2208,14 @@ window.I18N={
         <h4>The list of people and families</h4>
         <p>The number at the top right says how many people are in the open file. It is also a button: press it,
         or take <b>Data &rsaquo; People and families</b>, and the whole file appears as a list. Search by name,
-        year or place, narrow it down by branch, and switch between people and families.</p>
+        year or place, and switch between people and families. <b>Filter</b> opens the two narrower
+        settings, branch and year of birth; they stay out of the way until you want them, and the number
+        beside the button says how many are set. The year filter works in both bands: a family matches
+        when any of its members was born in the range.</p>
         <p>Tap a row and it opens, with everything you can do with that person: put them at the centre of the
         <b>tree</b>, make them the root of a <b>descendant chart</b>, carry them into the <b>kinship</b> tab, mark
-        them as the person this file should open on, or delete them. A family row shows the couple and how many
-        children; the names appear when the row is opened.</p>
+        them as the person this file should open on, or delete them. A family row is set in two columns, the couple on the left and the
+        children on the right, the way a printed family book sets them.</p>
         <p>In a large file not everything is drawn at once &ndash; the list would take a second to appear on a
         phone. It shows the first few hundred and says how many there are in total; <b>Show all</b> brings the rest
         whenever you want it.</p>
@@ -2448,6 +2514,11 @@ window.I18N={
         an &ndash; als Datei speichern, in die Zwischenablage kopieren oder den Text anzeigen, um ihn von Hand zu
         kopieren. Jeder davon liefert eine vollst&auml;ndige GEDCOM-Datei. Das sollte man nach gr&ouml;&szlig;eren
         Bearbeitungen tun, und immer vor einem Ger&auml;tewechsel oder bevor man die Browserdaten l&ouml;scht.</p>
+        <p>Die gespeicherte Datei tr&auml;gt den Namen der Familie und den Zeitpunkt: den Nachnamen, der in der
+        Datei am h&auml;ufigsten vorkommt, dann Datum und Uhrzeit bis zur Minute, etwa
+        <b>Hayes_2026-10-10_2214.ged</b>. Zwei Exporte am selben Tag lassen sich so auseinanderhalten. Sticht kein
+        Nachname hervor &ndash; eine Datei mit vielen Familien, die nichts miteinander zu tun haben &ndash;, hei&szlig;t
+        sie wieder <b>family_</b>, denn ein willk&uuml;rlicher Name w&auml;re schlechter als keiner.</p>
         <div class="note"><b>Wichtig:</b> Browserdaten zu l&ouml;schen oder die App zu deinstallieren l&ouml;scht auch
         den gespeicherten Stammbaum. Mit einer exportierten .ged-Datei ist das eine Kleinigkeit; ohne sie sind die
         &Auml;nderungen verloren.</div>
@@ -2495,13 +2566,16 @@ window.I18N={
         <h4>Die Liste aller Personen und Familien</h4>
         <p>Oben rechts steht, wie viele Personen in der ge&ouml;ffneten Datei sind. Das ist zugleich ein Knopf:
         darauf dr&uuml;cken, oder &uuml;ber <b>Daten &rsaquo; Personen und Familien</b> gehen, und die ganze Datei
-        erscheint als Liste. Gesucht wird nach Name, Jahr oder Ort, eingegrenzt nach Stamm, und zwischen Personen
-        und Familien l&auml;sst sich umschalten.</p>
+        erscheint als Liste. Gesucht wird nach Name, Jahr oder Ort, und zwischen Personen und Familien
+        l&auml;sst sich umschalten. <b>Filter</b> klappt die beiden engeren Einstellungen auf, Stamm und
+        Geburtsjahrgang; sie bleiben aus dem Weg, bis man sie braucht, und die Zahl neben dem Knopf sagt,
+        wie viele gesetzt sind. Der Jahresfilter greift in beiden B&auml;ndern: Eine Familie passt, wenn
+        eines ihrer Mitglieder in der Spanne geboren wurde.</p>
         <p>Eine Zeile antippen, und sie klappt auf, mit allem, was sich mit dieser Person tun l&auml;sst: sie in
         die Mitte des <b>Stammbaums</b> holen, sie zur Wurzel einer <b>Nachfahrentafel</b> machen, sie in die
         <b>Verwandtschaft</b> mitnehmen, sie als die Person merken, bei der diese Datei k&uuml;nftig &ouml;ffnet,
-        oder sie l&ouml;schen. Eine Familienzeile nennt das Paar und die Zahl der Kinder; die Namen stehen da,
-        sobald die Zeile offen ist.</p>
+        oder sie l&ouml;schen. Eine Familienzeile steht in zwei Spalten, links das Paar, rechts die
+        Kinder, so wie ein gedrucktes Familienbuch sie setzt.</p>
         <p>Bei einer gro&szlig;en Datei wird nicht alles auf einmal gezeichnet &ndash; die Liste br&auml;uchte auf
         dem Handy sonst eine Sekunde, bis sie da ist. Gezeigt werden die ersten paar hundert, dazu steht, wie viele
         es insgesamt sind; <b>Alle zeigen</b> holt den Rest, wann immer man ihn braucht.</p>
@@ -3660,14 +3734,55 @@ function copyText(text, okMsg){
     navigator.clipboard.writeText(text).then(function(){ toast(okMsg); }, fallback);
   } else fallback();
 }
-function stamp(){
+function stamp(withTime){
   var d=new Date();
   function p(n){ return (n<10?'0':'')+n; }
-  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  var tag=d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  return withTime ? tag+'_'+p(d.getHours())+p(d.getMinutes()) : tag;
+}
+/* Der Nachname, der in dieser Datei am haeufigsten vorkommt. Er steht im
+   Dateinamen, damit man im Downloadordner nicht drei Dateien namens
+   family_2026-10-10.ged nebeneinander hat und raten muss.
+
+   Gezaehlt wird normalisiert, damit Mueller und Mueller nicht als zwei
+   Namen gelten, und ohne Adelspartikel.
+
+   Wann gilt ein Name als der der Datei? Erst stand hier "mindestens ein
+   Fuenftel". Das war falsch gemessen: In einem gewachsenen Stammbaum
+   heiraten die Nachfahren weg, und in der Pruefdatei mit 8.661 Personen
+   traegt der namengebende Stamm nur 1.089 Eintraege, also 13 Prozent -
+   die Datei hiesse dann family_. Der zweite Name kommt dort aber nur 99
+   Mal vor. Also zaehlt nicht der Anteil am Ganzen, sondern der Abstand
+   zum naechsten: dreimal so haeufig wie der Zweite, oder ein Fuenftel
+   des Bestands. Ist beides nicht erfuellt, steht kein Name im
+   Dateinamen - in einer Datei aus lauter verschiedenen Familien waere
+   jede Wahl willkuerlich, und das ist schlechter als keine. */
+function hauptName(){
+  var zahl={}, roh={}, n=0, id, best='', bestN=0;
+  var I=FP.indi();
+  for(id in I){
+    var sn=(I[id].surname||'').trim();
+    if(!sn) continue;
+    var k=sn.toLowerCase().replace(/ß/g,'ss').replace(/ä/g,'ae').replace(/ö/g,'oe')
+            .replace(/ü/g,'ue').replace(/[^a-z\s]/g,'').trim();
+    k=k.replace(/^(von|van|de|du|di|da|zu|zur|of|le|la|den|der|ten|ter)\s+/,'');
+    if(!k) continue;
+    n++;
+    zahl[k]=(zahl[k]||0)+1;
+    if(!roh[k]) roh[k]=sn;
+    if(zahl[k]>bestN){ bestN=zahl[k]; best=k; }
+  }
+  var zweit=0;
+  for(var k2 in zahl) if(k2!==best && zahl[k2]>zweit) zweit=zahl[k2];
+  if(!n) return '';
+  if(bestN < n/5 && bestN < zweit*3) return '';
+  return (roh[best]||'').replace(/[^\p{L}\p{N} \-]/gu,'').trim()
+          .replace(/\s+/g,'-').slice(0,40);
 }
 function exportGed(){
   if(!FP.count()){ ask(L('Nothing to export'),L('There are no people in the file yet.'),null,'OK'); return; }
-  var ged=FP.serialize(), name='family_'+stamp()+'.ged';
+  var hn=hauptName();
+  var ged=FP.serialize(), name=(hn?hn+'_':'family_')+stamp(true)+'.ged';
   $('expInfo').textContent=FP.count()+' people, '+Math.max(1,Math.round(ged.length/1024))+' KB · '+name;
   $('expText').value=ged;
   $('expText').classList.add('hidden');
@@ -3867,7 +3982,24 @@ var SAMPLE = [
 
 /* The sample no longer pushes anything aside – it opens as a file of its own,
    next to whatever was already there. */
-function loadSample(){ loadText(SAMPLE, L('Sample family')); }
+/* Im deutschen Beispiel stehen auch die Daten auf Deutsch. Ortsnamen
+   bleiben, wie sie sind - eine englische Familie wohnt in Ashford, nicht
+   in Aschfurt -, Berufe und Staemme nicht: Die zeigt die App als Text
+   neben dem Namen und im Stammfilter, und "Western branch" in einer
+   deutschen Oberflaeche sieht nach einer Luecke aus, weil es eine ist. */
+var SAMPLE_DE = {
+  'Miller':'M\u00FCller', 'Schoolmaster':'Lehrer', 'Surveyor':'Landvermesser',
+  'Forester':'F\u00F6rster', 'Engineer':'Ingenieur', 'Teacher':'Lehrer',
+  'Northern branch':'N\u00F6rdlicher Zweig', 'Western branch':'Westlicher Zweig'
+};
+function sampleText(){
+  if(I18N.lang()!=='de') return SAMPLE;
+  var t=SAMPLE;
+  for(var k in SAMPLE_DE)
+    t=t.split('1 OCCU '+k).join('1 OCCU '+SAMPLE_DE[k]).split('1 FACT '+k).join('1 FACT '+SAMPLE_DE[k]);
+  return t;
+}
+function loadSample(){ loadText(sampleText(), L('Sample family')); }
 $('miSample').onclick=loadSample;
 $('btnSample').onclick=loadSample;
 
@@ -6879,7 +7011,12 @@ function setupCombo(inputId,listId,onPick){
   var clear=$(inputId==='inA'?'clearA':'clearB');
   function zeigeX(){ if(clear) clear.classList.toggle('show', !!input.value); }
   if(clear) clear.onclick=function(){
-    input.value=''; onPick(null); close(); zeigeX(); input.focus();
+    input.value=''; onPick(null); zeigeX(); input.focus();
+    /* Nach dem Leeren die Liste zeigen statt sie zu schliessen: Das Feld
+       steht jetzt genauso da wie beim Hineinklicken, also soll es sich
+       auch genauso verhalten. Wer das ✕ drueckt, will meist gleich
+       jemand anderen waehlen, nicht ein leeres Feld betrachten. */
+    open('');
   };
   function pick(p){ input.value=p.name+(p.year?' ('+p.year+')':''); onPick(p.id); close(); zeigeX(); }
   input.addEventListener('focus',function(){ open(input.value); zeigeX(); });
@@ -6895,8 +7032,14 @@ function setupCombo(inputId,listId,onPick){
     opts.forEach(function(o,i){ o.classList.toggle('active',i===active); });
     if(opts[active]) opts[active].scrollIntoView({block:'nearest'});
   });
+  /* Ein Klick irgendwohin schliesst die Liste - das ✕ gehoert aber zum
+     Feld und darf nicht dazuzaehlen. Sonst oeffnet es die Liste und
+     dieser Zuhoerer schliesst sie im selben Klick wieder; sie war
+     gefuellt, aber unsichtbar. */
+  var knopfId = inputId==='inA' ? 'clearA' : 'clearB';
   document.addEventListener('click',function(e){
-    if(!e.target.closest('#'+inputId)&&!e.target.closest('#'+listId)) close(); });
+    if(!e.target.closest('#'+inputId) && !e.target.closest('#'+listId)
+       && !e.target.closest('#'+knopfId)) close(); });
   return {reopen:function(){ if(document.activeElement===input) open(input.value); }};
 }
 var cA=setupCombo('inA','listA',function(id){ selA=id; render(); rememberPair(); });
@@ -7643,11 +7786,16 @@ function alsText(gruppen2){
 var GEFUNDEN=[], ANSICHT='sicher', RUECK=[], ERLEDIGT={};
 
 function esc(x){ return FP.esc(String(x==null?'':x)); }
+/* Dieselbe Schreibweise wie in der Liste und im Stammbaum: "* 9. Apr
+   1902 \u00B7 \u2020 17. Dez 1978" statt der rohen Zeile aus der Datei. Wer
+   zwei Eintraege nebeneinander vergleichen soll, soll nicht zwischen
+   zwei Datumsformaten uebersetzen muessen. */
 function kurz(p){
   var t=[];
-  if(p.birthDate) t.push('* '+p.birthDate);
-  if(p.deathDate) t.push('+ '+p.deathDate);
-  return t.join('   ');
+  if(p.birthDate) t.push('* '+FP.gedToText(p.birthDate));
+  if(p.birthPlace) t.push(p.birthPlace);
+  if(p.deathDate) t.push('\u2020 '+FP.gedToText(p.deathDate));
+  return t.join(' \u00B7 ');
 }
 function umfeld(id){
   var P=FP.indi(), F=FP.fam(), p=P[id], z=[];
@@ -7668,8 +7816,11 @@ function umfeld(id){
   });
   if(pa.length) z.push((de()?'Ehe: ':'Spouse: ')+pa.join(', '));
   if(ki.length) z.push((de()?'Kinder: ':'Children: ')+ki.join(', '));
-  if(p.occ) z.push(p.occ);
-  if(p.stamm) z.push((de()?'Stamm ':'Branch ')+p.stamm);
+  /* Beruf und Stamm bekommen ihre Beschriftung wie die Zeilen darueber -
+     ohne sie stand "Lehrer" allein unter den Kindern und sah aus wie
+     noch ein Kind. */
+  if(p.occ) z.push((de()?'Beruf: ':'Occupation: ')+p.occ);
+  if(p.stamm) z.push((de()?'Stamm: ':'Branch: ')+p.stamm);
   return z;
 }
 function schluessel(gr){ return gr.ids.slice().sort().join('+'); }
@@ -7901,6 +8052,7 @@ function stammListe(){
   for(var k in I){ var v=(I[k].stamm||'').trim(); if(v && !seen[v]){ seen[v]=1; vals.push(v); } }
   vals.sort(function(a,b){ return a.localeCompare(b, de()?'de':'en'); });
   sel.style.display = vals.length ? '' : 'none';
+  $('listFilters').classList.toggle('ohnestamm', !vals.length);
   if(!vals.length){ sel.innerHTML=''; return; }
   var cur=sel.value;
   sel.innerHTML='<option value="">'+esc(T('All branches','Alle Stämme'))+'</option>'+
@@ -7908,11 +8060,45 @@ function stammListe(){
   sel.value=cur; if(sel.value!==cur) sel.value='';
 }
 
+function zahl(v){ v=String(v||'').trim(); return /^-?\d{1,4}$/.test(v) ? +v : null; }
+function jahre(){ return {von:zahl($('listFrom').value), bis:zahl($('listTo').value)}; }
+function jahrPasst(j, g){
+  if(g.von==null && g.bis==null) return true;
+  if(j==null) return false;          /* ohne Jahr nicht einordenbar */
+  if(g.von!=null && j<g.von) return false;
+  if(g.bis!=null && j>g.bis) return false;
+  return true;
+}
+function filterZahl(){
+  var g=jahre(), n=0;
+  if($('listStamm').value) n++;
+  if(g.von!=null) n++;
+  if(g.bis!=null) n++;
+  return n;
+}
+function filterAktiv(){ return filterZahl()>0; }
+/* Das Feld auf- oder zuklappen. Gesetzte Filter bleiben gesetzt, auch
+   wenn es zu ist - deshalb steht ihre Zahl am Knopf, und deshalb geht
+   es beim Oeffnen des Fensters von selbst auf, wenn etwas gesetzt ist.
+   Sonst waere die Liste kuerzer, als sie sein sollte, und man saehe
+   nicht, warum. */
+function filterZeigen(auf){
+  var f=$('listFilters'), k=$('listFilt');
+  f.hidden = !auf;
+  k.setAttribute('aria-expanded', auf?'true':'false');
+  k.title = auf ? T('Hide filters','Filter ausblenden') : T('Show filters','Filter anzeigen');
+}
+function filterStand(){
+  var n=filterZahl();
+  $('listFilt').classList.toggle('on', n>0);
+  $('listFiltN').textContent = n ? ' ('+n+')' : '';
+}
 function trefferP(){
   var toks=$('listQ').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  var stamm=$('listStamm').value, I=FP.indi();
+  var stamm=$('listStamm').value, g=jahre(), I=FP.indi();
   return FP.index().filter(function(e){
     if(stamm && (I[e.id]||{}).stamm!==stamm) return false;
+    if(!jahrPasst(e.year, g)) return false;
     for(var i=0;i<toks.length;i++) if(e.search.indexOf(toks[i])<0) return false;
     return true;
   });
@@ -7941,6 +8127,12 @@ function famIndex(){
          weil je Familie alle Kindernamen durchlaufen werden. */
       html:null,
       staemme:leute.map(function(x){ return I[x].stamm||''; }),
+      /* Der Jahrgangsfilter greift auch hier: Eine Familie passt, wenn
+         irgendein Mitglied im Bereich geboren wurde. Das ist dieselbe
+         Regel wie beim Stamm und beantwortet die Frage, die Joachim
+         gestellt hat - es geht sehr wohl, es fehlte nur. */
+      jahre:leute.map(function(x){ return FP.yearOf(I[x].birthDate); })
+                 .filter(function(j){ return j!=null; }),
       search:(leute.map(function(x){ return FP.fullName(I[x]); }).join(' ')+' '+
               (f.marrDate||'')+' '+(f.marrPlace||'')+' #'+id).toLowerCase()
     });
@@ -7950,9 +8142,10 @@ function famIndex(){
 }
 function trefferF(){
   var toks=$('listQ').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  var stamm=$('listStamm').value;
+  var stamm=$('listStamm').value, g=jahre();
   return famIndex().filter(function(f){
     if(stamm && f.staemme.indexOf(stamm)<0) return false;
+    if((g.von!=null || g.bis!=null) && !f.jahre.some(function(j){ return jahrPasst(j,g); })) return false;
     for(var i=0;i<toks.length;i++) if(f.search.indexOf(toks[i])<0) return false;
     return true;
   });
@@ -7966,25 +8159,35 @@ function zeilePerson(e){
             : (p.stamm?'<div class="lmeta">'+esc(p.stamm)+'</div>':''))+
     '</div>';
 }
+/* Zwei Spalten statt einer Zeile, nach dem Vorbild gedruckter
+   Familienbuecher: links das Paar, rechts die Kinder, dazwischen ein
+   Strich. Lange Namen bekommen so eine eigene Breite, statt den Satz zu
+   zerreissen - das war der Grund, warum die Kindernamen vorher gar nicht
+   in der Zeile standen. */
+var KINDER_MAX=8;
 function zeileFamilie(f){
   if(f.html!=null) return f.html;
   var I=FP.indi();
-  var paar=f.paar.filter(Boolean).map(function(x){ return I[x]?FP.fullName(I[x]):''; })
-            .filter(Boolean).join('  \u26AD  ') || T('(couple unknown)','(Paar unbekannt)');
+  var paar=f.paar.filter(function(x){ return x && I[x]; });
   var zz=[];
   if(f.fam.marrDate) zz.push('\u26AD '+FP.gedToText(f.fam.marrDate));
   if(f.fam.marrPlace) zz.push(f.fam.marrPlace);
-  /* Nur die Zahl, nicht die Namen. Eine Zeile, die acht Kindernamen
-     auffuehrt, bricht dreifach um: Die Liste wird unlesbar, und der
-     Umbruch von 400 solchen Zeilen kostete auf einem gedrosselten
-     Telefon 300 ms gegen 85 bei den Personen. Die Namen stehen im
-     aufgeklappten Zustand, wo man sie auch wirklich liest. */
-  zz.push(f.kinder.length
-    ? f.kinder.length+' '+T(f.kinder.length===1?'child':'children', f.kinder.length===1?'Kind':'Kinder')
-    : T('no children','keine Kinder'));
-  f.html='<div class="lrow" data-fid="'+esc(f.id)+'">'+
-    '<div class="lnm"><b>'+esc(paar)+'</b></div>'+
-    '<div class="lmeta">'+esc(zz.join(' \u00B7 '))+'</div></div>';
+  var links = paar.length
+    ? paar.map(function(x){ return '<div class="lnm">'+esc(FP.fullName(I[x]))+'</div>'; }).join('')
+    : '<div class="leer">'+esc(T('(couple unknown)','(Paar unbekannt)'))+'</div>';
+  if(zz.length) links+='<div class="lmeta">'+esc(zz.join(' \u00B7 '))+'</div>';
+  var ki=f.kinder, rechts;
+  if(!ki.length){
+    rechts='<div class="leer">'+esc(T('no children','keine Kinder'))+'</div>';
+  } else {
+    rechts=ki.slice(0,KINDER_MAX).map(function(x){
+      return '<div class="lnm">'+esc(FP.fullName(I[x]))+'</div>'; }).join('');
+    if(ki.length>KINDER_MAX)
+      rechts+='<div class="lmeta">'+esc(T('and '+(ki.length-KINDER_MAX)+' more',
+        'und '+(ki.length-KINDER_MAX)+' weitere'))+'</div>';
+  }
+  f.html='<div class="lrow fam" data-fid="'+esc(f.id)+'">'+
+    '<div class="lsp">'+links+'</div><div class="lsp">'+rechts+'</div></div>';
   return f.html;
 }
 
@@ -8001,6 +8204,8 @@ function zeichne(){
             ? T(treffer.length===1?'person':'people', treffer.length===1?'Person':'Personen')
             : T(treffer.length===1?'family':'families', treffer.length===1?'Familie':'Familien')))
     : '';
+  $('listReset').style.visibility = filterAktiv() ? '' : 'hidden';
+  filterStand();
   var mehr=$('listMore');
   mehr.hidden = teil.length>=treffer.length;
   mehr.textContent = T('Show all','Alle zeigen')+' ('+treffer.length+')';
@@ -8028,8 +8233,10 @@ function aufklappen(el){
     var f=FP.fam()[fid], I=FP.indi();
     var erste=(f&&(f.husb||f.wife||(f.children||[])[0]))||null;
     var kinder=f ? (f.children||[]).filter(function(x){ return I[x]; }) : [];
-    var kopf = kinder.length
-      ? '<div class="lmeta" style="flex:1 1 100%">'+esc(T('Children: ','Kinder: ')+
+    /* Die Kinder stehen schon in der rechten Spalte. Hier kommen nur die
+       dazu, die dort wegen der Begrenzung fehlen. */
+    var kopf = kinder.length>KINDER_MAX
+      ? '<div class="lmeta" style="flex:1 1 100%">'+esc(T('All children: ','Alle Kinder: ')+
           kinder.map(function(x){ return FP.fullName(I[x]); }).join(', '))+'</div>'
       : '';
     d.innerHTML = kopf + (erste
@@ -8088,6 +8295,7 @@ function oeffnen(welche){
   $('listTabP').classList.toggle('on', ANSICHT==='p');
   $('listTabF').classList.toggle('on', ANSICHT!=='p');
   stammListe(); fassen(); zeichne();
+  filterZeigen(filterAktiv());
   $('listClear').classList.toggle('show', !!$('listQ').value);
   SHELL.openModal('mdList');
 }
@@ -8106,7 +8314,14 @@ function aufsetzen(){
     $('listClear').classList.toggle('show', !!this.value); zeichne(); };
   $('listClear').onclick=function(){
     $('listQ').value=''; this.classList.remove('show'); GEZEIGT=deckel(); zeichne(); $('listQ').focus(); };
+  $('listFilt').onclick=function(){ filterZeigen($('listFilters').hidden); };
   $('listStamm').onchange=function(){ GEZEIGT=deckel(); zeichne(); };
+  $('listFrom').oninput=function(){ GEZEIGT=deckel(); zeichne(); };
+  $('listTo').oninput=function(){ GEZEIGT=deckel(); zeichne(); };
+  $('listReset').onclick=function(){
+    $('listStamm').value=''; $('listFrom').value=''; $('listTo').value='';
+    GEZEIGT=deckel(); zeichne();
+  };
   $('listMore').onclick=function(){ GEZEIGT=1e9; zeichne(); };
   /* Ein Zuhoerer am Kasten statt einer je Zeile: Das Binden von 400
      Zuhoerern kostete 4 ms und musste bei jedem Tastendruck neu geschehen;
@@ -8125,7 +8340,7 @@ function aufsetzen(){
   });
 }
 
-return { boot:aufsetzen, oeffnen:oeffnen, _deckel:function(){ return {p:DECKEL_P, f:DECKEL_F}; } };
+return { boot:aufsetzen, oeffnen:oeffnen, _filterZahl:filterZahl, _deckel:function(){ return {p:DECKEL_P, f:DECKEL_F}; } };
 })();
 </script>
 <script>
