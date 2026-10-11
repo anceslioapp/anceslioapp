@@ -2327,7 +2327,8 @@ window.I18N={
         nine or of fifty-two, a life of 118 years, two siblings born four months apart. Most of these are typing
         errors in a year. <b>Notation</b> holds the cases where nothing is factually wrong and only the writing is
         off &ndash; a double space, a place ending in a comma, a family name shouted in capitals, a name particle
-        glued to the name as in &raquo;vonBergmann&laquo;. There the app does suggest, and shows the replacement beside the entry.</p>
+        glued to the name as in &raquo;vonBergmann&laquo; or abbreviated to &raquo;v.&laquo;. There the app
+        does suggest, and shows the replacement beside the entry.</p>
         <p>The findings are grouped <b>by rule, not by person</b>. A file of several thousand people can hold
         thousands of the same small thing, and as thousands of cards that would be unusable; as one line with a
         number and a button it is done in a moment. Each rule says what it looks for and why that is suspicious.
@@ -2712,7 +2713,8 @@ window.I18N={
         ein Leben von 118 Jahren, zwei Geschwister vier Monate auseinander. Das meiste davon sind Zahlendreher in
         einer Jahreszahl. <b>Schreibweise</b> sammelt, wo sachlich alles stimmt und nur die Notation nicht &ndash;
         ein doppeltes Leerzeichen, ein Ort, der auf ein Komma endet, ein Nachname in Gro&szlig;buchstaben,
-        ein Namenszusatz ohne Leerzeichen wie &raquo;vonBergmann&laquo;. Dort schl&auml;gt die App etwas vor und zeigt die Ersetzung neben dem Eintrag.</p>
+        ein Namenszusatz ohne Leerzeichen wie &raquo;vonBergmann&laquo; oder ein abgek&uuml;rzter wie
+        &raquo;v.&laquo;. Dort schl&auml;gt die App etwas vor und zeigt die Ersetzung neben dem Eintrag.</p>
         <p>Gruppiert wird <b>nach Regel, nicht nach Person</b>. Eine Datei mit mehreren tausend Personen
         enth&auml;lt oft tausende Male dieselbe Kleinigkeit; als tausende Karten w&auml;re das unbenutzbar, als eine
         Zeile mit einer Zahl und einem Knopf ist es in einem Augenblick erledigt. Zu jeder Regel steht, wonach sie
@@ -8996,6 +8998,11 @@ function vorEltern(P,F,id){
    nur, was auch bei der grosszügigsten Lesart ein Widerspruch
    bleibt.
    =================================================================== */
+/* Zwei gleiche Zusaetze nebeneinander gibt es in keinem Namen. Beide
+   Namensregeln raeumen das auf, wenn sie beim Ausschreiben entstehen
+   wuerden ("von" vor einem angeklebten oder abgekuerzten v). */
+var DOPPELT=/\b(von|van|vom|zu|zur|zum|de|del|di|da|la|le|den|der|dem|ten|ter)\s+\1\b/gi;
+
 var REGELN=[
 /* ---------------- Band 1: Widerspruch ---------------- */
 {k:'tod_vor_geburt', band:'w',
@@ -9340,7 +9347,8 @@ var REGELN=[
      - im Wortinneren nur von, vom, zu, zur, zum, denn auf die endet
        kein gewoehnlicher Name,
      - das einzelne v nur nach einem Mitlaut: in "Lindhorst|v" ist es
-       ein Zusatz, in "Gusta|v" und "Detle|v" eine Namensendung,
+       ein Zusatz, in "Gusta|v" und "Detle|v" eine Namensendung; im
+       Vorschlag steht dann das ausgeschriebene von,
      - jeder Zusatz auch dann, wenn davor nur ein zweiter Zusatz steht
        ("Dela" = De+la, "Vanden" = Van+den).
    So gemessen: 0 Fehlschnitte bei 3.669 Kontrollpaaren, 57 richtige
@@ -9381,7 +9389,12 @@ var REGELN=[
          /* "...tzu..." ist nicht zu entscheiden: "Markwitzu" heisst
             entweder "Markwitz u." oder "Markwit zu". Melden, nicht raten. */
          if(zu==='zu' && /t$/.test(vor)) return false;
-         return (vor ? vor+' ' : '')+(zu==='v' ? 'v.' : zu)+' '+nach;
+         /* Das einzelne v wird ausgeschrieben. Es ist die Abkuerzung
+            fuer von, und wer eine Schreibweise glattzieht, will nicht
+            die eine Abkuerzung gegen die naechste tauschen - sondern
+            im ganzen Bestand dasselbe Wort stehen haben, damit
+            Sortierung und Suche greifen. */
+         return (vor ? vor+' ' : '')+(zu==='v' ? 'von' : zu)+' '+nach;
        }
      }
      return null;
@@ -9403,6 +9416,11 @@ var REGELN=[
        text=teile.join('');
        if(!nochmal) break;
      }
+     /* Steht vor dem angeklebten v schon ein ausgeschriebenes von,
+        entstünde beim Ausschreiben "von von Oestreich". Zwei gleiche
+        Zusätze nebeneinander gibt es in keinem Namen, also bleibt
+        einer stehen. */
+     if(geaendert) text=text.replace(DOPPELT, '$1');
      var kopf=nm(id)+' — '+T(bez,bezD)+': »'+v+'«';
      /* Steht in einem Feld beides, wird erst der Vorschlag gezeigt;
         die unklare Stelle meldet der nächste Durchlauf, wenn der
@@ -9415,6 +9433,76 @@ var REGELN=[
        out.push({ids:[id], text:kopf+' — '+
          T('cannot be read either way','nicht eindeutig zu lesen')});
      }
+   }
+   for(var id in P){
+     pruefe(id,'given','Given name','Vorname');
+     pruefe(id,'surname','Family name','Nachname');
+   }
+ }},
+/* Abgekuerzte Namenszusaetze: "v." statt "von". Das ist die
+   Schwester der Regel darueber - dort klebt der Zusatz am Namen, hier
+   steht er als eigenes Wort, aber abgekuerzt. Wer eine Schreibweise
+   glattzieht, will im ganzen Bestand dasselbe Wort stehen haben;
+   sonst sortiert und sucht es an zwei Stellen.
+
+   Ausgeschrieben wird nur, was eindeutig ist:
+     v.  v        ->  von
+     v. d.        ->  von der   (das d. gehoert zum v., allein waere
+                                 es nicht zu lesen)
+   NICHT ausgeschrieben wird das einzelne d. Es steht in gewachsenen
+   Dateien fuer Beinamen - "Heinrich 2 d Heilige", aber "Elisabeth d
+   Heilige" -, und ob der, die oder das gemeint ist, weiss die App
+   nicht. Ebenso bleiben Titelkuerzel (Frhr., Frn.) und das gen. fuer
+   genannt stehen: das sind keine Namenszusaetze.
+
+   Ein grosses V. ist eine Initiale und kein Zusatz; deshalb greift
+   die Regel nur bei Kleinschreibung. */
+{k:'name_abkuerzung', band:'s',
+ t:['Name particle abbreviated','Namenszusatz abgekürzt'],
+ e:['Entries such as »Lindhorst v. Hagedorn« instead of »Lindhorst von Hagedorn«. Both spellings in one file means sorting and searching find the name in two places.',
+    'Einträge wie »Lindhorst v. Hagedorn« statt »Lindhorst von Hagedorn«. Beide Schreibweisen in einer Datei heißt: Sortierung und Suche finden den Namen an zwei Stellen.'],
+ f:function(P,F,out){
+   var NAME=/^[A-ZÄÖÜ]/;
+   function istV(w){ return w==='v' || w==='v.'; }
+   function istD(w){ return w==='d' || w==='d.'; }
+   function schreibAus(wert){
+     var teile=String(wert).split(/(\s+)/), raus=[], i, w, naechst, geaendert=false;
+     function nachWort(ab){
+       for(var k=ab;k<teile.length;k++) if(!/^\s*$/.test(teile[k])) return k;
+       return -1;
+     }
+     for(i=0;i<teile.length;i++){
+       w=teile[i];
+       if(/^\s*$/.test(w)){ raus.push(w); continue; }
+       if(w==='v.d.' || w==='v.d' || w==='vd.'){
+         naechst=nachWort(i+1);
+         if(naechst>=0 && NAME.test(teile[naechst])){ raus.push('von der'); geaendert=true; continue; }
+       }
+       if(istV(w)){
+         naechst=nachWort(i+1);
+         if(naechst<0){ raus.push(w); continue; }
+         if(istD(teile[naechst])){
+           var danach=nachWort(naechst+1);
+           if(danach>=0 && NAME.test(teile[danach])){
+             raus.push('von der');
+             /* das d. und das Leerzeichen davor überspringen */
+             while(i+1<=naechst){ i++; }
+             geaendert=true; continue;
+           }
+         }
+         if(NAME.test(teile[naechst])){ raus.push('von'); geaendert=true; continue; }
+       }
+       raus.push(w);
+     }
+     if(!geaendert) return null;
+     return raus.join('').replace(/\s+/g,' ').trim().replace(DOPPELT,'$1');
+   }
+   function pruefe(id, feld, bez, bezD){
+     var v=P[id][feld]; if(!v) return;
+     var n2=schreibAus(v);
+     if(n2===null || n2===v) return;
+     out.push({ids:[id], text:nm(id)+' — '+T(bez,bezD)+': »'+v+'« → »'+n2+'«',
+               feld:feld, alt:v, neu:n2});
    }
    for(var id in P){
      pruefe(id,'given','Given name','Vorname');
