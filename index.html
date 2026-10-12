@@ -907,6 +907,15 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   #stageWrap,#trStageWrap{position:static !important; overflow:visible !important; height:auto !important}
   #stage,#trStage{transform:none !important; margin:0 !important}
 }
+
+/* Dateien abgleichen */
+.mergefile{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0;background:var(--card)}
+.mergepick{margin:8px 0}
+#mergeLib{margin:4px 0 10px}
+.mergelibhead{font-size:.85em;color:var(--muted);margin:6px 0 4px}
+.mergeunion{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;background:var(--card)}
+.mergeunion h4{margin:0 0 6px}
+.mergeunion p{margin:6px 0}
 </style>
 <script>
 /* The theme has to sit on the html element before the first pixel is drawn.
@@ -958,6 +967,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <button id="miList" data-i18n="☰ People and families">&#9776; People and families</button>
         <button id="miDupe" data-i18n="⧉ Check for duplicates">&#10697; Check for duplicates</button>
         <button id="miPruef" data-i18n="⚠ Check the data">&#9888; Check the data</button>
+        <button id="miMerge" data-i18n="⇄ Compare files">&#8644; Compare files</button>
         <hr>
         <button id="miExport" data-i18n="💾 Export GEDCOM (.ged)">&#128190; Export GEDCOM (.ged)</button>
         <hr>
@@ -1524,6 +1534,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <div class="dupetabs">
           <button class="btn small on" id="dupeTabA"></button>
           <button class="btn small" id="dupeTabB"></button>
+          <button class="btn small" id="dupeFremd" hidden></button>
         </div>
         <div id="dupeList"></div>
         <div id="dupeNone" class="dupenone" hidden></div>
@@ -1534,6 +1545,58 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
       <button class="btn small" id="dupeUndo" hidden></button>
       <button class="btn small" id="dupeSave" hidden data-i18n="Save list">Save list</button>
       <button class="btn" id="dupeClose" data-i18n="Close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Dateien abgleichen =====================
+     Zwei Schritte statt einer Betriebsart: erst der Bericht, der
+     nichts veraendert, dann auf Wunsch das Vereinigen zu EINER neuen
+     Datei. Das Erkennen und Zusammenlegen uebernimmt danach die
+     vorhandene Dublettenpruefung - deshalb steht hier kein zweites
+     Punktesystem und kein zweiter Datenbestand. -->
+<div class="modal" id="mdMerge">
+  <div class="modalbox">
+    <h3><span data-lang="en">Compare files</span><span data-lang="de">Dateien abgleichen</span></h3>
+    <div class="modalbody" id="mergeBody">
+
+      <div id="mergeStart">
+        <p>
+          <span data-lang="en">Got a GEDCOM file from a relative? This compares it with the file you
+          have open and tells you what is in it: who is already in your file, who is new, and where
+          the other file knows something yours does not.</span>
+          <span data-lang="de">Du hast eine GEDCOM-Datei aus der Verwandtschaft bekommen? Hier wird sie
+          mit Deiner geöffneten Datei verglichen, und Du erfährst, was darin steckt: wer schon bei Dir
+          steht, wer neu ist, und wo die andere Datei etwas wei&szlig;, das Deiner fehlt.</span>
+        </p>
+        <p class="onlylook">
+          <span data-lang="en">The report changes nothing at all. Merging, if you want it, writes a
+          new file and leaves yours untouched.</span>
+          <span data-lang="de">Der Bericht ver&auml;ndert nichts. Das Vereinigen, wenn Du es willst,
+          schreibt eine neue Datei und l&auml;sst Deine unangetastet.</span>
+        </p>
+        <div class="mergefile" id="mergeA"></div>
+        <div class="mergepick">
+          <button class="btn" id="mergePick"><span data-i18n="Choose a file…">Choose a file&hellip;</span></button>
+          <input type="file" id="mergeFile" accept=".ged,.gedcom,text/plain" hidden>
+        </div>
+        <div id="mergeLib" hidden></div>
+        <div class="mergefile" id="mergeB" hidden></div>
+        <button class="btn primary" id="mergeGo" disabled data-i18n="Create the report">Create the report</button>
+        <span id="mergeBusy" class="dupebusy" hidden></span>
+      </div>
+
+      <div id="mergeResult" hidden>
+        <div class="dupesum" id="mergeSum"></div>
+        <div id="mergeUnionBox" class="mergeunion" hidden></div>
+        <div id="mergeList"></div>
+      </div>
+
+    </div>
+    <div class="modalfoot">
+      <button class="btn small" id="mergeSave" hidden data-i18n="Save report">Save report</button>
+      <button class="btn small primary" id="mergeUnion" hidden data-i18n="Merge the files…">Merge the files&hellip;</button>
+      <button class="btn" id="mergeClose" data-i18n="Close">Close</button>
     </div>
   </div>
 </div>
@@ -1947,6 +2010,14 @@ var DE = {
 'No matches. The search looked at the names of all members, the marriage (date and place) and the ID.':'Keine Treffer. Gesucht wurde in den Namen aller Mitglieder, der Heirat (Datum und Ort) und der Kennung.',
 'Name or marriage':'Name oder Heirat',
 '\u26A0 Check the data':'\u26A0 Daten pr\u00fcfen','Check now':'Jetzt pr\u00fcfen',
+/* Dateien abgleichen */
+'\u21C4 Compare files':'\u21C4 Dateien abgleichen',
+'Choose a file\u2026':'Datei w\u00e4hlen\u2026',
+'Create the report':'Bericht erstellen',
+'Save report':'Bericht speichern',
+'Merge the files\u2026':'Dateien vereinigen\u2026',
+'Read as ':'Gelesen als ','the file says':'die Datei sagt',
+
 
 'Narrow down who can be picked':'Eingrenzen, wer zur Auswahl steht',
 
@@ -2342,6 +2413,28 @@ window.I18N={
         <p>Nothing is changed without you, the last ten steps can be undone, and <b>Save list</b> writes everything
         to a text file &ndash; the way to go when the corrections have to be made in a spreadsheet somewhere else.</p>
       </section>
+      <section class="sec" id="h8d" data-nav="Compare">
+        <h4>Comparing two files</h4>
+        <p>A relative sends you a GEDCOM file. Does it hold anything you do not have? <b>Data &rsaquo;
+        Compare files</b> answers that without changing a thing. Pick the other file, and the app tells
+        you how many of its people are already in yours, how many are new, and where the other file
+        knows something yours does not &ndash; a date of death, a place, an occupation. <b>Save report</b>
+        writes all of it to a text file.</p>
+        <p>The report alone is often the whole answer. Nineteen new people and twenty additions are
+        quicker typed in by hand than merged by machine.</p>
+        <p>If you do want them joined, <b>Merge the files</b> writes <b>one new file</b>: yours
+        unchanged, plus every record from the other one. Your open file is never touched &ndash; the
+        result is a new file you keep or download. Identifiers from the other file are given fresh
+        numbers so that nothing collides, and every record carries a line saying which file it came
+        from and what it was called there.</p>
+        <p>The merged file still holds the duplicates. That is deliberate: finding and joining them is
+        what <b>Check for duplicates</b> already does well. Run it afterwards and switch on <b>only
+        pairs from different files</b> &ndash; then it shows just the pairs that span the two files and
+        leaves your own file alone.</p>
+        <p>Files from older programs are read correctly even when they are not UTF-8 &ndash; ANSEL and
+        Windows-1252 are recognised, and the app says which one it used. Sources, notes and media
+        records from both files are carried through unchanged.</p>
+      </section>
       <section class="sec" id="h7" data-nav="Saving">
         <h4>Saving and backups</h4>
         <p>Your data and every change are kept <b>automatically</b> in this browser or app, so everything is still
@@ -2730,6 +2823,30 @@ window.I18N={
         <b>Liste speichern</b> schreibt alles in eine Textdatei &ndash; der Weg, wenn die Korrekturen in einer
         Tabelle woanders gemacht werden m&uuml;ssen.</p>
       </section>
+      <section class="sec" id="d8d" data-nav="Abgleichen">
+        <h4>Zwei Dateien abgleichen</h4>
+        <p>Ein Verwandter schickt Dir eine GEDCOM-Datei. Steht darin etwas, das Du nicht hast?
+        <b>Daten &rsaquo; Dateien abgleichen</b> beantwortet das, ohne irgendetwas zu ver&auml;ndern.
+        Die andere Datei w&auml;hlen, und die App sagt Dir, wie viele ihrer Personen schon bei Dir
+        stehen, wie viele neu sind und wo die andere Datei etwas wei&szlig;, das Deiner fehlt &ndash;
+        ein Sterbedatum, ein Ort, ein Beruf. <b>Bericht speichern</b> schreibt alles in eine Textdatei.</p>
+        <p>Oft ist der Bericht schon die ganze Antwort. Neunzehn neue Personen und zwanzig
+        Erg&auml;nzungen sind von Hand schneller nachgetragen als maschinell zusammengef&uuml;hrt.</p>
+        <p>Willst Du sie doch verbinden, schreibt <b>Dateien vereinigen</b> <b>eine neue Datei</b>:
+        Deine unver&auml;ndert, dazu jeden Satz aus der anderen. Deine ge&ouml;ffnete Datei wird dabei
+        nicht angefasst &ndash; das Ergebnis ist eine neue Datei, die Du beh&auml;ltst oder
+        herunterl&auml;dst. Die Kennungen aus der anderen Datei bekommen neue Nummern, damit keine
+        zusammensto&szlig;en, und jeder Satz tr&auml;gt eine Zeile mit, aus welcher Datei er stammt und
+        wie er dort hie&szlig;.</p>
+        <p>Die Dubletten stehen danach noch in der Datei. Das ist so gewollt: Sie zu finden und
+        zusammenzulegen kann <b>Dubletten pr&uuml;fen</b> bereits gut. Danach also die
+        Dublettenpr&uuml;fung laufen lassen und <b>nur Paare aus verschiedenen Dateien</b> einschalten
+        &ndash; dann zeigt sie allein die Paare, die &uuml;ber die Dateigrenze gehen, und l&auml;sst
+        Deine eigene Datei in Ruhe.</p>
+        <p>Dateien aus &auml;lteren Programmen werden auch dann richtig gelesen, wenn sie nicht UTF-8
+        sind &ndash; ANSEL und Windows-1252 werden erkannt, und die App sagt, womit sie gelesen hat.
+        Quellen, Notizen und Bilder aus beiden Dateien kommen unver&auml;ndert mit.</p>
+      </section>
       <section class="sec" id="d7" data-nav="Speichern">
         <h4>Speichern und Sicherungen</h4>
         <p>Die Daten und jede &Auml;nderung werden <b>automatisch</b> in dieser App auf diesem Ger&auml;t behalten, es
@@ -2882,7 +2999,105 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='3.9';
+var APPVERSION='4.0';
+
+/* ====================================================================
+   Welche Kodierung hat die Datei?
+
+   Bis 3.9 wurde jede Datei als UTF-8 gelesen, ohne auf die Zeile
+   "1 CHAR" zu schauen, in der die Datei selbst es sagt. Fuer Dateien
+   aus heutigen Programmen geht das gut. Aeltere deutsche Programme
+   schreiben ANSEL oder Windows-1252; deren Umlaute kamen als
+   Ersatzzeichen an, und zwar endgueltig - aus einem kaputten Namen
+   wird nie wieder ein richtiger. Beim Abgleich mit der Datei eines
+   Verwandten waere genau das der haeufige Fall.
+
+   Entschieden wird in dieser Reihenfolge: Bytemarke am Anfang, dann
+   die CHAR-Zeile, dann die Probe. Die Probe ist noetig, weil Programme
+   "UTF-8" schreiben und ANSI meinen - gegen eine Luege hilft nur
+   Nachsehen, ob die Bytes ueberhaupt gueltiges UTF-8 ergeben.
+   ==================================================================== */
+var ANSEL_EINZEL={
+  0xA1:'Ł',0xA2:'Ø',0xA3:'Đ',0xA4:'Þ',0xA5:'Æ',0xA6:'Œ',
+  0xA7:'ʹ',0xA8:'·',0xA9:'♭',0xAA:'®',0xAB:'±',0xAC:'Ơ',
+  0xAD:'Ư',0xAE:'ʼ',0xB0:'ʻ',0xB1:'ł',0xB2:'ø',0xB3:'đ',
+  0xB4:'þ',0xB5:'æ',0xB6:'œ',0xB7:'ʺ',0xB8:'ı',0xB9:'£',
+  0xBA:'ð',0xC0:'°',0xC1:'ℓ',0xC2:'℗',0xC3:'©',0xC4:'♯',
+  0xC5:'¿',0xC6:'¡',0xCF:'ß'
+};
+/* Die Verbindungszeichen stehen in ANSEL VOR dem Buchstaben. Sie
+   werden als nachgestelltes Unicode-Verbindungszeichen ausgegeben und
+   danach zusammengezogen - damit braucht es keine Tabelle fuer jede
+   Buchstabe-Zeichen-Paarung. */
+var ANSEL_ZEICHEN={
+  0xE0:'̉',0xE1:'̀',0xE2:'́',0xE3:'̂',0xE4:'̃',0xE5:'̄',
+  0xE6:'̆',0xE7:'̇',0xE8:'̈',0xE9:'̌',0xEA:'̊',0xEB:'︠',
+  0xEC:'︡',0xED:'̕',0xEE:'̋',0xEF:'̐',0xF0:'̧',0xF1:'̨',
+  0xF2:'̣',0xF3:'̤',0xF4:'̥',0xF5:'̳',0xF6:'̲',0xF7:'̦',
+  0xF8:'̜',0xF9:'̮',0xFA:'︢',0xFB:'︣',0xFE:'̓'
+};
+function ausAnsel(by){
+  var out=[], marken=[], i, b, z;
+  for(i=0;i<by.length;i++){
+    b=by[i];
+    if(b>=0xE0 && b<=0xFE){ marken.push(ANSEL_ZEICHEN[b]||''); continue; }
+    z = b<0x80 ? String.fromCharCode(b) : (ANSEL_EINZEL[b]||String.fromCharCode(b));
+    out.push(z+marken.join('')); marken=[];
+  }
+  var t=out.join('')+marken.join('');
+  try{ return t.normalize('NFC'); }catch(e){ return t; }
+}
+function ausBytes(by, kodierung){
+  try{ return new TextDecoder(kodierung).decode(by); }
+  catch(e){
+    /* Ohne den gewuenschten Decoder lieber Zeichen fuer Zeichen als gar nicht */
+    var s2='', i; for(i=0;i<by.length;i++) s2+=String.fromCharCode(by[i]);
+    return s2;
+  }
+}
+function istUtf8(by){
+  try{ new TextDecoder('utf-8',{fatal:true}).decode(by); return true; }
+  catch(e){ return false; }
+}
+function dekodiere(buf){
+  var by=new Uint8Array(buf);
+  if(by.length>=3 && by[0]===0xEF && by[1]===0xBB && by[2]===0xBF)
+    return {text:ausBytes(by.subarray(3),'utf-8'), kodierung:'UTF-8', gesagt:'BOM'};
+  if(by.length>=2 && by[0]===0xFF && by[1]===0xFE)
+    return {text:ausBytes(by.subarray(2),'utf-16le'), kodierung:'UTF-16', gesagt:'BOM'};
+  if(by.length>=2 && by[0]===0xFE && by[1]===0xFF)
+    return {text:ausBytes(by.subarray(2),'utf-16be'), kodierung:'UTF-16', gesagt:'BOM'};
+  /* Die CHAR-Zeile steht im Kopfsatz, also in den ersten Zeilen. Fuer das
+     blosse Suchen danach genuegt eine Byte-fuer-Byte-Lesung. */
+  var kopf='', n=Math.min(by.length, 4000), i;
+  for(i=0;i<n;i++) kopf+=String.fromCharCode(by[i]);
+  var m=kopf.match(/^\s*1\s+CHAR\s+(.+)$/mi);
+  var gesagt=m ? m[1].trim() : '';
+  var g=gesagt.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  var hoch=false;
+  for(i=0;i<by.length;i++) if(by[i]>=0x80){ hoch=true; break; }
+  if(!hoch) return {text:ausBytes(by,'utf-8'), kodierung:'ASCII', gesagt:gesagt};
+  if(g==='ANSEL') return {text:ausAnsel(by), kodierung:'ANSEL', gesagt:gesagt};
+  if(g==='UTF8' || g==='UNICODE'){
+    if(istUtf8(by)) return {text:ausBytes(by,'utf-8'), kodierung:'UTF-8', gesagt:gesagt};
+    return {text:ausBytes(by,'windows-1252'), kodierung:'Windows-1252', gesagt:gesagt, gelogen:true};
+  }
+  if(g==='ANSI'||g==='WINDOWS1252'||g==='CP1252'||g==='IBMWINDOWS'||g==='LATIN1'||g==='ISO88591')
+    return {text:ausBytes(by,'windows-1252'), kodierung:'Windows-1252', gesagt:gesagt};
+  /* Nichts gesagt oder etwas Unbekanntes: nachsehen. Gueltiges UTF-8
+     entsteht nicht aus Versehen, also ist die Probe belastbar. */
+  if(istUtf8(by)) return {text:ausBytes(by,'utf-8'), kodierung:'UTF-8', gesagt:gesagt, geraten:true};
+  /* ANSEL setzt das Verbindungszeichen VOR den Buchstaben. Folgt also auf
+     ein hohes Byte auffaellig oft ein gewoehnlicher Buchstabe, ist es ANSEL. */
+  var vor=0, ges=0;
+  for(i=0;i<by.length-1;i++){
+    if(by[i]>=0xE0 && by[i]<=0xFE){ ges++; if(/[A-Za-z]/.test(String.fromCharCode(by[i+1]))) vor++; }
+    else if(by[i]>=0x80) ges++;
+  }
+  if(ges && vor/ges>0.6) return {text:ausAnsel(by), kodierung:'ANSEL', gesagt:gesagt, geraten:true};
+  return {text:ausBytes(by,'windows-1252'), kodierung:'Windows-1252', gesagt:gesagt, geraten:true};
+}
+
 (function(){
 "use strict";
 var L=I18N.L;
@@ -2922,6 +3137,18 @@ function parseGedcom(text){
   var lines = joinContinuations(String(text).replace(/\r\n?/g,'\n').split('\n'));
   var indi={}, fam={}, order={indi:[],fam:[]};
   var rec=null, kind=null, l1=null, block=null, ev=null;
+  /* Eine GEDCOM-Datei kennt mehr als Personen und Familien: Quellen
+     (SOUR), Notizen (NOTE), Bilder (OBJE), Archive (REPO), den
+     Einsender (SUBM). Die App wertet sie nicht aus - aber sie muss
+     sie heil zurueckgeben, sonst stehen nach einem Durchlauf in den
+     Personen Verweise auf Saetze, die es nicht mehr gibt. Gemessen
+     vor dieser Aenderung: von fuenf solchen Saetzen ueberlebte
+     keiner, waehrend alle Verweise darauf stehen blieben. Sie werden
+     deshalb Zeile fuer Zeile gemerkt und unveraendert wieder
+     ausgegeben - dasselbe, was innerhalb einer Person schon mit
+     "extra" geschieht. */
+  var rest=[], restBlock=null, headSubm=null;
+  function pushRest(){ if(restBlock && restBlock.length) rest.push(restBlock); restBlock=null; }
   /* Remembering the record order used to cost a scan of everything read so far
      for every record – on a file of several thousand people that is millions of
      comparisons and by far the slowest part of opening the app. */
@@ -2939,7 +3166,7 @@ function parseGedcom(text){
     var lvl=+m[1], xref=m[2]||null, tag=m[3].toUpperCase(), val=(m[4]||'').trim();
 
     if(lvl===0){
-      pushBlock(); l1=null; ev=null;
+      pushBlock(); pushRest(); l1=null; ev=null;
       if(xref && tag==='INDI'){
         var idI=xref.replace(/@/g,'');
         rec=indi[idI]={id:idI, given:'', surname:'', sex:'', birthDate:'', birthPlace:'',
@@ -2953,9 +3180,18 @@ function parseGedcom(text){
                       marrSub:[], extra:[]};
         if(!seenF[idF]){ seenF[idF]=1; order.fam.push(idF); }
         kind='FAM';
-      } else { rec=null; kind=null; }
+      } else if(tag==='HEAD'){ rec=null; kind='HEAD'; }
+      else if(tag==='TRLR'){ rec=null; kind=null; }
+      else { rec=null; kind='REST'; restBlock=[raw]; }
       continue;
     }
+    /* Ein fremder Satz auf Ebene 0 wandert unveraendert in die Ablage. */
+    if(kind==='REST'){ if(restBlock) restBlock.push(raw); continue; }
+    /* Vom Kopfsatz wird nur der Verweis auf den Einsender behalten -
+       alles andere darin beschreibt das schreibende Programm, und das
+       ist beim Zurueckschreiben Anceslio. Ohne diesen Verweis stuende
+       der mitgenommene SUBM-Satz allein da. */
+    if(kind==='HEAD'){ if(lvl===1 && tag==='SUBM' && /^@[^@]+@$/.test(val)) headSubm=val; continue; }
     if(!rec) continue;
 
     if(lvl===1){
@@ -2999,9 +3235,9 @@ function parseGedcom(text){
       else if(block) block.push(raw);
     }
   }
-  pushBlock();
+  pushBlock(); pushRest();
   linkFamilies(indi, fam);
-  return {indi:indi, fam:fam, order:order};
+  return {indi:indi, fam:fam, order:order, rest:rest, headSubm:headSubm};
 }
 
 /* A GEDCOM records every family link twice: once in the FAM record (HUSB,
@@ -3043,6 +3279,7 @@ function serializeGedcom(D){
   out.push('0 HEAD','1 SOUR Anceslio','2 NAME Anceslio (family tree, descendant chart, kinship)',
            '1 GEDC','2 VERS 5.5.1','2 FORM LINEAGE-LINKED','1 CHAR UTF-8',
            '1 DATE '+gedToday());
+  if(D.headSubm) out.push('1 SUBM '+D.headSubm);
   var ids=orderedIds(D,'indi'), fids=orderedIds(D,'fam'), i, j;
   for(i=0;i<ids.length;i++){
     var p=D.indi[ids[i]]; if(!p) continue;
@@ -3083,6 +3320,10 @@ function serializeGedcom(D){
     for(j=0;j<(f.children||[]).length;j++) if(D.indi[f.children[j]]) out.push('1 CHIL @'+f.children[j]+'@');
     for(j=0;j<(f.extra||[]).length;j++) out=out.concat(f.extra[j].map(function(x){return x.trim();}));
   }
+  /* Die fremden Saetze stehen nach den Familien und vor dem Abschluss,
+     in der Reihenfolge, in der sie in der Datei standen. */
+  for(i=0;i<(D.rest||[]).length;i++)
+    out=out.concat(D.rest[i].map(function(x){ return x.replace(/\s+$/,''); }));
   out.push('0 TRLR');
   var wrapped=[];
   for(i=0;i<out.length;i++) pushGedLine(wrapped, out[i]);
@@ -3623,6 +3864,7 @@ window.FP = {
   index:function(){ return INDEX; },
   on:function(fn){ listeners.push(fn); },
   parse:parseGedcom,
+  dekodiere:dekodiere,
   serialize:function(){ return serializeGedcom(D); },
   loadText:function(text, name){
     var parsed=parseGedcom(text);
@@ -3650,6 +3892,13 @@ window.FP = {
         opened:e.opened||0, start:e.start||null, current:e.id===LIB.current}; });
   },
   currentFile:function(){ return LIB.current; },
+  /* Den Text einer anderen Datei der Bibliothek lesen, ohne sie zu
+     oeffnen - der Abgleich braucht das, und oeffnen wuerde den
+     geladenen Bestand ersetzen. */
+  fileText:function(id){
+    if(!entryOf(id)) return null;
+    try{ return localStorage.getItem(gedKey(id)); }catch(e){ return null; }
+  },
   fileName:function(){ var e=curEntry(); return e ? e.name : ''; },
   maxFiles:MAXFILES,
   openFile:function(id){
@@ -4006,10 +4255,27 @@ function loadText(text, name){
 function readFile(f){
   setStatus(L('Reading ')+f.name+' …');
   var nice=String(f.name||'').replace(/\.[a-z0-9]+$/i,'').replace(/[_-]+/g,' ').trim().slice(0,60);
+  leseDatei(f, function(d){
+    setStatus(L('Processing …'));
+    setTimeout(function(){
+      loadText(d.text, nice);
+      /* Nur sagen, wenn es etwas zu sagen gibt: Bei UTF-8 interessiert
+         es niemanden, bei einer alten Datei schon. */
+      if(d.kodierung!=='UTF-8' && d.kodierung!=='ASCII')
+        setTimeout(function(){ toast(L('Read as ')+d.kodierung+(d.gelogen?' ('+L('the file says')+' '+d.gesagt+')':'')); }, 1800);
+    },30);
+  }, function(){ setStatus(L('The file could not be read – please try another one.'),'err'); });
+}
+/* Eine Datei als Bytes lesen und selbst entscheiden, wie sie zu lesen ist. */
+function leseDatei(f, fertig, schief){
   var rd=new FileReader();
-  rd.onload=function(){ setStatus(L('Processing …')); setTimeout(function(){ loadText(rd.result, nice); },30); };
-  rd.onerror=function(){ setStatus(L('The file could not be read – please try another one.'),'err'); };
-  try{ rd.readAsText(f,'UTF-8'); }catch(e){ setStatus(L('The file could not be read.'),'err'); }
+  rd.onload=function(){
+    var d;
+    try{ d=dekodiere(rd.result); }catch(e){ if(schief) schief(e); return; }
+    fertig(d);
+  };
+  rd.onerror=function(){ if(schief) schief(); };
+  try{ rd.readAsArrayBuffer(f); }catch(e){ if(schief) schief(e); }
 }
 $('gedFile').addEventListener('change', function(e){ var f=e.target.files[0]; if(f) readFile(f); e.target.value=''; });
 var drop=$('drop');
@@ -4482,7 +4748,7 @@ window.SHELL = {
   noteFocus:function(id){ treeFocusId=id; }, treeFocus:function(){ return treeFocusId; },
   onTab:function(fn){ tabListeners.push(fn); },
   ask:ask, pickPerson:pickPerson, splitName:splitName,
-  download:download, copyText:copyText, exportGed:exportGed,
+  download:download, copyText:copyText, exportGed:exportGed, leseDatei:leseDatei,
   openModal:openModal, closeModal:closeModal,
   closeDataMenu:closeDataMenu,
   openOverlay:openOverlay, closeOverlay:closeOverlay, setStatus:setStatus, loadText:loadText, toast:toast,
@@ -8183,6 +8449,37 @@ function alsText(gruppen2){
 /* ---------------- Oberflaeche ---------------- */
 var GEFUNDEN=[], ANSICHT='sicher', RUECK=[], ERLEDIGT={};
 
+/* Nach einem Abgleich stehen zwei Dateien in einer. Dann will man die
+   eigene Datei nicht gleichzeitig aufraeumen, sondern nur die Paare
+   sehen, bei denen einer aus der einen und einer aus der anderen
+   Datei kommt. Das ist kein zweites Suchverfahren, sondern ein
+   Filter auf das Ergebnis: Woher eine Person stammt, steht bei ihr in
+   der Datei. Der Schalter erscheint nur, wenn es ueberhaupt mehr als
+   eine Herkunft gibt. */
+var NURFREMD=false;
+function herkunftVon(p){
+  return (window.ABGLEICH && p) ? ABGLEICH.herkunft(p) : '';
+}
+function ausMehrerenDateien(gr){
+  var P=FP.indi(), gesehen={}, n=0, i, h;
+  for(i=0;i<gr.ids.length;i++){
+    h=herkunftVon(P[gr.ids[i]]);
+    if(gesehen[h]===undefined){ gesehen[h]=1; n++; if(n>1) return true; }
+  }
+  return false;
+}
+function mehrereHerkuenfte(){
+  var P=FP.indi(), gesehen={}, n=0, id, h;
+  for(id in P){
+    h=herkunftVon(P[id]);
+    if(gesehen[h]===undefined){ gesehen[h]=1; n++; if(n>1) return true; }
+  }
+  return false;
+}
+function sichtbar(){
+  return NURFREMD ? GEFUNDEN.filter(ausMehrerenDateien) : GEFUNDEN;
+}
+
 function esc(x){ return FP.esc(String(x==null?'':x)); }
 /* Dieselbe Schreibweise wie in der Liste und im Stammbaum: "* 9. Apr
    1902 \u00B7 \u2020 17. Dez 1978" statt der rohen Zeile aus der Datei. Wer
@@ -8225,7 +8522,7 @@ function schluessel(gr){ return gr.ids.slice().sort().join('+'); }
 
 function zeichneListe(){
   var box=$('dupeList'), leer=$('dupeNone');
-  var liste=GEFUNDEN.filter(function(gr){
+  var liste=sichtbar().filter(function(gr){
     return ANSICHT==='sicher' ? gr.best>=SCHWELLE.sicher
                               : (gr.best<SCHWELLE.sicher && gr.best>=SCHWELLE.pruefen);
   });
@@ -8326,8 +8623,9 @@ function felderZeigen(karte, gr){
 }
 
 function fassen(){
-  var ges=GEFUNDEN.length;
-  var sicher=GEFUNDEN.filter(function(g2){ return g2.best>=SCHWELLE.sicher; }).length;
+  var SICHT=sichtbar();
+  var ges=SICHT.length;
+  var sicher=SICHT.filter(function(g2){ return g2.best>=SCHWELLE.sicher; }).length;
   var pruef=ges-sicher;
   var fertig=0; for(var k in ERLEDIGT) fertig++;
   $('dupeTabA').textContent=(de()?'starker Verdacht':'strong suspicion')+' ('+sicher+')';
@@ -8354,6 +8652,14 @@ function starten(){
     $('dupeStart').hidden=true;
     $('dupeResult').hidden=false;
     $('dupeSave').hidden=!GEFUNDEN.length;
+    var schalter=$('dupeFremd');
+    if(schalter){
+      var zwei=mehrereHerkuenfte();
+      schalter.hidden=!zwei;
+      if(!zwei) NURFREMD=false;
+      schalter.classList.toggle('on', NURFREMD);
+      schalter.textContent=de()?'nur Paare aus verschiedenen Dateien':'only pairs from different files';
+    }
     ANSICHT = GEFUNDEN.some(function(g2){ return g2.best>=SCHWELLE.sicher; }) ? 'sicher' : 'pruefen';
     $('dupeTabA').classList.toggle('on', ANSICHT==='sicher');
     $('dupeTabB').classList.toggle('on', ANSICHT!=='sicher');
@@ -8374,6 +8680,12 @@ function aufsetzen(){
     SHELL.openModal('mdDupe');
   };
   $('dupeGo').onclick=starten;
+  var fr=$('dupeFremd');
+  if(fr) fr.onclick=function(){
+    NURFREMD=!NURFREMD;
+    fr.classList.toggle('on', NURFREMD);
+    fassen(); zeichneListe();
+  };
   $('dupeClose').onclick=function(){ SHELL.closeModal('mdDupe'); };
   $('dupeTabA').onclick=function(){ ANSICHT='sicher';
     this.classList.add('on'); $('dupeTabB').classList.remove('on'); zeichneListe(); };
@@ -8385,7 +8697,7 @@ function aufsetzen(){
        URL.createObjectURL warf daraufhin, und der Nutzer bekam die Meldung
        "Speichern ist hier nicht möglich" zu sehen, die eigentlich für
        App-Hüllen ohne Downloads gedacht ist. */
-    var txt=alsText(GEFUNDEN);
+    var txt=alsText(sichtbar());
     var name=(de()?'dubletten_':'duplicates_')+
       (FP.fileName()||'').replace(/[^\w\-]+/g,'_').slice(0,30)+'.txt';
     SHELL.download(new Blob([txt],{type:'text/plain;charset=utf-8'}), name);
@@ -8407,7 +8719,9 @@ return {
   boot:aufsetzen,
   /* nur fuer die Testreihe */
   _koelner:koelner, _zeitraum:zeitraum, _genau:genau, _ruesten:ruesten, _punkte:punkte,
-  _stand:function(){ return {gefunden:GEFUNDEN, erledigt:ERLEDIGT, rueck:RUECK.length}; }
+  _stand:function(){ return {gefunden:GEFUNDEN, erledigt:ERLEDIGT, rueck:RUECK.length,
+                             sichtbar:sichtbar().length, nurFremd:NURFREMD}; },
+  _nurFremd:function(v){ NURFREMD=!!v; }
 };
 })();
 </script>
@@ -9915,10 +10229,503 @@ return {
 })();
 </script>
 <script>
+/* =====================================================================
+   DATEIEN ABGLEICHEN
+
+   Zwei Dateien zusammenzuführen heißt in dieser App NICHT, einen
+   zweiten Datenbestand neben dem geöffneten zu halten. Das wäre die
+   naheliegende Bauweise und die gefährliche: Die App speichert den
+   geöffneten Bestand 600 Millisekunden nach jeder Änderung in die
+   aktuelle Datei zurück - ein zweiter Bestand daneben hieße, dass ein
+   Fehler die Hauptdatei überschreibt. Und sie bekäme eine zweite
+   Betriebsart ("außer während eines Abgleichs"), die jede künftige
+   Änderung mitdenken müsste.
+
+   Deshalb ist die Aufgabe in zwei Schritte zerlegt, die einzeln
+   harmlos sind:
+
+     VEREINIGEN   reine Textarbeit. Zwei Texte hinein, einer heraus.
+                  Kein Bestand, keine Bibliothek, kein Speichern. Die
+                  Kennungen aus B werden neu vergeben, damit keine mit
+                  A zusammenstößt, und jeder Satz aus B bekommt seine
+                  Herkunft mitgeschrieben.
+     ERKENNEN     die vorhandene Dublettenprüfung. Jede Person aus B,
+                  die dieselbe ist wie eine aus A, IST in der
+                  vereinigten Datei eine Dublette.
+
+   Davor steht der BERICHT, der nichts verändert: Er rechnet dasselbe
+   aus, legt aber nichts zusammen, sondern sagt nur, was in B steckt.
+   Für die meisten Fälle ist das schon die ganze Antwort.
+
+   Gerechnet wird mit den Teilen der Dublettenprüfung - derselben
+   Normalisierung, denselben Körben, demselben Punktesystem. Dafür
+   musste an ihr nichts geändert werden: Nachdem die Kennungen aus B
+   neu vergeben sind, stoßen sie mit denen aus A nicht mehr zusammen,
+   und die beiden Tabellen lassen sich einfach übereinanderlegen.
+   ===================================================================== */
+window.ABGLEICH = (function(){
+var $=FP.$, esc=FP.esc;
+function de(){ return I18N.lang()==='de'; }
+function T(en,dt){ return de()?dt:en; }
+
+/* Die Zeile, mit der ein Satz aus B seine Herkunft mitträgt. Sie
+   landet beim Einlesen in "extra" und kommt beim Schreiben
+   unverändert wieder heraus - dieselbe Mechanik wie bei _UID oder RIN
+   aus fremden Programmen. Kurz gehalten, weil sie je Satz einmal
+   vorkommt: bei zwölftausend Sätzen zählt jedes Zeichen. */
+var HERKUNFT='_ANCF';
+
+/* ---------------------------------------------------------------
+   1. Kennungen
+   --------------------------------------------------------------- */
+function kennungenVon(text){
+  var k={}, z=String(text).split(/\r?\n/), i, m;
+  for(i=0;i<z.length;i++){ m=/^0\s+@([^@]+)@\s/.exec(z[i]); if(m) k[m[1]]=1; }
+  return k;
+}
+/* Die neue Kennung behält den Buchstabenteil der alten - aus @I17@
+   wird @I8700@ und nicht @X1@. Wer die Datei später von Hand ansieht,
+   erkennt daran weiter, was eine Person und was eine Familie ist. */
+function frei(alt, belegt, zaehler){
+  var m=/^([A-Za-z_]*)(\d*)$/.exec(alt);
+  var pre=(m && m[1]) ? m[1] : 'X';
+  var n=zaehler[pre]||1;
+  while(belegt[pre+n]) n++;
+  zaehler[pre]=n+1; belegt[pre+n]=1;
+  return pre+n;
+}
+/* Ersetzt wird NUR an zwei Stellen: die Kennung am Satzanfang und ein
+   Wert, der genau aus einer Kennung besteht. Ein @ mitten in einem
+   Text (in GEDCOM als @@ geschrieben) wird nicht angefasst. */
+function umnummerieren(text, belegt){
+  var z=String(text).replace(/\r\n?/g,'\n').split('\n');
+  var karte={}, zurueck={}, zaehler={}, i, m;
+  for(i=0;i<z.length;i++){
+    m=/^0\s+@([^@]+)@\s/.exec(z[i]);
+    if(m && !karte[m[1]]){ karte[m[1]]=frei(m[1], belegt, zaehler); zurueck[karte[m[1]]]=m[1]; }
+  }
+  var raus=[], t, lvl, xr, tag, val, v;
+  for(i=0;i<z.length;i++){
+    t=/^(\d+)\s+(?:@([^@]+)@\s+)?(\S+)(?:\s([\s\S]*))?$/.exec(z[i]);
+    if(!t){ raus.push(z[i]); continue; }
+    lvl=t[1]; xr=t[2]; tag=t[3]; val=t[4];
+    if(xr && karte[xr]) xr=karte[xr];
+    if(val){
+      v=/^@([^@]+)@$/.exec(val.trim());
+      if(v && karte[v[1]]) val='@'+karte[v[1]]+'@';
+    }
+    raus.push(lvl+' '+(xr?('@'+xr+'@ '):'')+tag+(val?(' '+val):''));
+  }
+  return {zeilen:raus, karte:karte, zurueck:zurueck};
+}
+
+/* ---------------------------------------------------------------
+   2. Vereinigen
+   --------------------------------------------------------------- */
+function vereinigen(textA, textB, nameB){
+  var belegt=kennungenVon(textA);
+  var u=umnummerieren(textB, belegt);
+  var ausB=[], imKopf=false, i, z, m, tag, neu, alt, saetze=0;
+  for(i=0;i<u.zeilen.length;i++){
+    z=u.zeilen[i];
+    m=/^0\s+(?:@([^@]+)@\s+)?(\S+)/.exec(z);
+    if(m){
+      tag=m[2].toUpperCase();
+      /* Der Kopfsatz von B fällt weg - A's Kopf gilt. Ebenso der
+         Abschluss; der steht am Ende genau einmal. */
+      if(tag==='HEAD'){ imKopf=true; continue; }
+      if(tag==='TRLR'){ imKopf=false; continue; }
+      imKopf=false;
+      ausB.push(z);
+      neu=m[1];
+      if(neu){
+        alt=u.zurueck[neu]||neu;
+        ausB.push('1 '+HERKUNFT+' '+nameB+' @'+alt+'@');
+        saetze++;
+      }
+      continue;
+    }
+    if(imKopf) continue;
+    ausB.push(z);
+  }
+  /* A bleibt, wie es ist - nur der Abschluss weicht, damit B
+     dahinterpasst. Keine Zeile aus A wird angefasst. */
+  var zA=String(textA).replace(/\r\n?/g,'\n').split('\n');
+  while(zA.length && (!zA[zA.length-1].trim() || /^0\s+TRLR/.test(zA[zA.length-1]))) zA.pop();
+  var alles=zA.concat(ausB, ['0 TRLR']);
+  return {text:alles.join('\r\n')+'\r\n', karte:u.karte, zurueck:u.zurueck, saetze:saetze};
+}
+
+/* ---------------------------------------------------------------
+   3. Der Bericht
+   --------------------------------------------------------------- */
+/* Woher stammt eine Person? Die Herkunftszeile steht in "extra". */
+function herkunft(p){
+  var e=p && p.extra, i, j, m;
+  if(!e) return '';
+  for(i=0;i<e.length;i++) for(j=0;j<e[i].length;j++){
+    m=new RegExp('^\\s*1\\s+'+HERKUNFT+'\\s+(.*?)\\s*(@[^@]+@)?\\s*$').exec(e[i][j]);
+    if(m) return m[1]||'?';
+  }
+  return '';
+}
+
+function berichten(textB, nameB){
+  var t0=Date.now();
+  var textA=FP.serialize();
+  var u=umnummerieren(textB, kennungenVon(textA));
+  var B=FP.parse(u.zeilen.join('\n'));
+  var PA=FP.indi(), FA=FP.fam(), PB=B.indi, k;
+  var RA=DUPE._ruesten(PA), RB=DUPE._ruesten(PB);
+  var R={}, F={};
+  for(k in RA) R[k]=RA[k];
+  for(k in RB) R[k]=RB[k];
+  for(k in FA) F[k]=FA[k];
+  for(k in B.fam) F[k]=B.fam[k];
+  var ausA={}; for(k in PA) ausA[k]=1;
+
+  /* Körbe wie in der Dublettenprüfung, aber es werden nur Paare
+     bewertet, bei denen einer aus A und einer aus B kommt. */
+  var koerbe={}, c;
+  for(k in R){ c=R[k].code||'?'; (koerbe[c]=koerbe[c]||[]).push(k); }
+  var nachDatum={};
+  for(k in R) if(R[k].gb){ c=R[k].gb.join('-'); (nachDatum[c]=nachDatum[c]||[]).push(k); }
+
+  var bestes={}, vergleiche=0, gesehen={};
+  function paare(gruppen){
+    var g, ids, i, j, a, b, key, r;
+    for(g in gruppen){
+      ids=gruppen[g];
+      for(i=0;i<ids.length;i++) for(j=i+1;j<ids.length;j++){
+        a=ids[i]; b=ids[j];
+        if(ausA[a]===ausA[b]) continue;              /* beide aus derselben Datei */
+        if(ausA[b]){ var h=a; a=b; b=h; }            /* a aus A, b aus B */
+        key=a+'|'+b; if(gesehen[key]) continue; gesehen[key]=1;
+        vergleiche++;
+        r=DUPE._punkte(R[a],R[b],R,F,null,false);
+        if(r.aus) continue;
+        if(!bestes[b] || r.s>bestes[b].s) bestes[b]={s:r.s, a:a, gruende:r.gruende};
+      }
+    }
+  }
+  paare(koerbe); paare(nachDatum);
+
+  var S=DUPE.SCHWELLE;
+  var sicher=[], unklar=[], neu=[], ergaenzung={}, ergListe=[];
+  for(k in PB){
+    var best=bestes[k];
+    if(best && best.s>=S.sicher){
+      var fehlt=vergleichFelder(PA[best.a], PB[k]);
+      sicher.push({b:k, a:best.a, s:best.s, fehlt:fehlt});
+      if(fehlt.length){
+        ergListe.push({b:k, a:best.a, fehlt:fehlt});
+        fehlt.forEach(function(f){ ergaenzung[f.k]=(ergaenzung[f.k]||0)+1; });
+      }
+    }
+    else if(best && best.s>=S.pruefen) unklar.push({b:k, a:best.a, s:best.s, gruende:best.gruende});
+    else neu.push({b:k});
+  }
+  function sortN(x,y){ return (y.s||0)-(x.s||0); }
+  unklar.sort(sortN); sicher.sort(sortN);
+  return {
+    nameB:nameB, zahlA:Object.keys(PA).length, zahlB:Object.keys(PB).length,
+    famB:Object.keys(B.fam).length,
+    sicher:sicher, unklar:unklar, neu:neu, ergaenzung:ergaenzung, ergListe:ergListe,
+    vergleiche:vergleiche, ms:Date.now()-t0,
+    PB:PB, FB:B.fam, PA:PA, textB:textB
+  };
+}
+/* Was hat B, das A nicht hat? Nur das Fehlen zählt - ein Widerspruch
+   ist Sache der Dublettenprüfung, die ihn Feld für Feld vorlegt. */
+function vergleichFelder(a, b){
+  var raus=[];
+  if(!a||!b) return raus;
+  DUPE.FELDER.forEach(function(f){
+    var va=String(a[f.k]||'').trim(), vb=String(b[f.k]||'').trim();
+    if(!va && vb) raus.push({k:f.k, t:DUPE.feldName(f), wert:vb});
+  });
+  return raus;
+}
+
+/* ---------------------------------------------------------------
+   4. Bericht als Text
+   --------------------------------------------------------------- */
+function alsText(e){
+  var z=[], nm=function(p){ return FP.fullName(p)||T('(no name)','(ohne Namen)'); };
+  z.push(T('COMPARISON REPORT','ABGLEICHBERICHT'));
+  z.push('');
+  z.push(T('Open file','Geöffnete Datei')+': '+(FP.fileName()||'-')+'   ('+e.zahlA+' '+T('people','Personen')+')');
+  z.push(T('Compared with','Verglichen mit')+': '+e.nameB+'   ('+e.zahlB+' '+T('people','Personen')+', '+e.famB+' '+T('families','Familien')+')');
+  z.push(T('Date','Datum')+': '+new Date().toLocaleString(de()?'de-DE':'en-GB'));
+  z.push('');
+  z.push(T('Already in your file (certain)','Schon in Deiner Datei (sicher)')+': '+e.sicher.length);
+  z.push(T('Unclear','Unklar')+': '+e.unklar.length);
+  z.push(T('New','Neu')+': '+e.neu.length);
+  z.push('');
+  z.push(T('NOTHING WAS CHANGED. This report only reads.',
+           'ES WURDE NICHTS GEÄNDERT. Dieser Bericht liest nur.'));
+  z.push('');
+  if(e.ergListe.length){
+    z.push('--- '+T('What the other file adds','Was die andere Datei ergänzt')+' ---');
+    e.ergListe.forEach(function(x){
+      z.push('  '+nm(e.PA[x.a])+'   <-   '+nm(e.PB[x.b]));
+      x.fehlt.forEach(function(f){ z.push('      '+f.t+': '+f.wert); });
+    });
+    z.push('');
+  }
+  if(e.neu.length){
+    z.push('--- '+T('Not in your file','Nicht in Deiner Datei')+' ('+e.neu.length+') ---');
+    e.neu.forEach(function(x){ z.push('  '+nm(e.PB[x.b])); });
+    z.push('');
+  }
+  if(e.unklar.length){
+    z.push('--- '+T('Unclear – please look','Unklar – bitte ansehen')+' ('+e.unklar.length+') ---');
+    e.unklar.forEach(function(x){
+      z.push('  '+x.s+' '+T('points','Punkte')+'   '+nm(e.PA[x.a])+'   ?   '+nm(e.PB[x.b]));
+      (x.gruende||[]).forEach(function(g){ z.push('      '+g); });
+    });
+    z.push('');
+  }
+  if(e.sicher.length){
+    z.push('--- '+T('Certainly the same person','Sicher dieselbe Person')+' ('+e.sicher.length+') ---');
+    e.sicher.forEach(function(x){
+      z.push('  '+x.s+' '+T('points','Punkte')+'   '+nm(e.PA[x.a])+'   =   '+nm(e.PB[x.b]));
+    });
+  }
+  return z.join('\r\n')+'\r\n';
+}
+
+/* ---------------------------------------------------------------
+   5. Oberfläche
+   --------------------------------------------------------------- */
+var ERGEBNIS=null, TEXTB=null, NAMEB=null, ZEIGE=12;
+
+function platzFrei(){
+  /* Wie viel passt noch in die Ablage dieses Browsers? Gemessen wird
+     nicht geschätzt: schreiben, bis es klemmt, wäre zu grob - also
+     einmal einen Block probieren und wieder wegnehmen. */
+  var probe='x'.repeat(64*1024), i=0, k='__anc_probe__';
+  try{
+    for(i=0;i<80;i++) localStorage.setItem(k+i, probe);
+  }catch(e){}
+  var frei=i*64;
+  for(var j=0;j<=i;j++){ try{ localStorage.removeItem(k+j); }catch(e){} }
+  return frei;  /* in KB */
+}
+
+function zeigeStart(){
+  $('mergeStart').hidden=false; $('mergeResult').hidden=true;
+  $('mergeSave').hidden=true; $('mergeUnion').hidden=true;
+  $('mergeUnionBox').hidden=true;
+  $('mergeB').hidden=true; $('mergeGo').disabled=true;
+  TEXTB=null; NAMEB=null; ERGEBNIS=null;
+  $('mergeA').innerHTML='<b>'+esc(FP.fileName()||'-')+'</b> &middot; '+
+    FP.count()+' '+esc(T('people','Personen'));
+  bibliothek();
+}
+function bibliothek(){
+  var box=$('mergeLib'); if(!box) return;
+  var andere=FP.files().filter(function(f){ return !f.current; });
+  if(!andere.length){ box.innerHTML=''; box.hidden=true; return; }
+  box.hidden=false;
+  box.innerHTML='<div class="mergelibhead">'+esc(T('…or from the library','…oder aus der Bibliothek'))+'</div>'+
+    andere.map(function(f){
+      return '<button class="btn small" data-lib="'+esc(f.id)+'">'+esc(f.name)+
+             ' <span class="muted">'+(f.count||0)+'</span></button>';
+    }).join(' ');
+  box.querySelectorAll('[data-lib]').forEach(function(btn){
+    btn.onclick=function(){
+      var t=FP.fileText(btn.dataset.lib);
+      if(t==null){ SHELL.toast(T('That file could not be read.','Diese Datei ließ sich nicht lesen.')); return; }
+      gewaehlt(t, btn.textContent.trim().replace(/\s+\d+$/,''), 'UTF-8');
+    };
+  });
+}
+function gewaehlt(text, name, kodierung){
+  TEXTB=text; NAMEB=name;
+  var n=(text.match(/^0\s+@[^@]+@\s+INDI/gm)||[]).length;
+  $('mergeB').hidden=false;
+  $('mergeB').innerHTML='<b>'+esc(name)+'</b> &middot; '+n+' '+esc(T('people','Personen'))+
+    (kodierung && kodierung!=='UTF-8' && kodierung!=='ASCII'
+      ? ' &middot; <span class="muted">'+esc(T('read as ','gelesen als ')+kodierung)+'</span>' : '');
+  $('mergeGo').disabled = !n;
+  if(!n) SHELL.toast(T('No people found in that file.','In dieser Datei stehen keine Personen.'));
+}
+
+function erstellen(){
+  if(!TEXTB) return;
+  $('mergeBusy').hidden=false;
+  $('mergeBusy').textContent=T('Comparing …','Wird verglichen …');
+  $('mergeGo').disabled=true;
+  setTimeout(function(){
+    try{ ERGEBNIS=berichten(TEXTB, NAMEB); }
+    catch(e){ $('mergeBusy').hidden=true; $('mergeGo').disabled=false;
+      SHELL.toast(T('The comparison failed.','Der Abgleich ist fehlgeschlagen.')); return; }
+    $('mergeBusy').hidden=true;
+    zeichne();
+  }, 40);
+}
+
+function zeichne(){
+  var e=ERGEBNIS; if(!e) return;
+  $('mergeStart').hidden=true; $('mergeResult').hidden=false;
+  $('mergeSave').hidden=false; $('mergeUnion').hidden=false;
+  var nm=function(p){ return esc(FP.fullName(p)||T('(no name)','(ohne Namen)')); };
+  $('mergeSum').innerHTML=
+    '<b>'+esc(e.nameB)+'</b> '+esc(T('holds','enthält'))+' '+e.zahlB+' '+esc(T('people','Personen'))+'. '+
+    '<b>'+e.sicher.length+'</b> '+esc(T('are already in your file, ','sind sicher schon in Deiner Datei, '))+
+    '<b>'+e.neu.length+'</b> '+esc(T('are new, ','sind neu, '))+
+    '<b>'+e.unklar.length+'</b> '+esc(T('unclear.','unklar.'))+
+    ' <span class="muted">'+e.vergleiche.toLocaleString(de()?'de-DE':'en-GB')+' '+
+    esc(T('comparisons in ','Vergleiche in '))+e.ms+' ms</span>'+
+    '<div class="onlylook">'+esc(T('Nothing has been changed. This report only reads.',
+                                   'Es wurde nichts geändert. Dieser Bericht liest nur.'))+'</div>';
+
+  var h=[];
+  function block(titel, erkl, eintraege, zeichner){
+    if(!eintraege.length) return;
+    h.push('<div class="pruefcard"><div class="pkopf"><span class="pzahl">'+eintraege.length+'</span>'+
+      '<span class="pname">'+esc(titel)+'</span></div>'+
+      '<div class="perkl">'+esc(erkl)+'</div><div class="pfaelle">'+
+      eintraege.slice(0,ZEIGE).map(zeichner).join('')+
+      (eintraege.length>ZEIGE
+        ? '<div class="pmehr perkl">'+esc(T('The first ','Gezeigt werden die ersten ')+ZEIGE+
+            T(' of ',' von ')+eintraege.length+T('. All of them are in Save report.','. Alle stehen in „Bericht speichern".'))+'</div>'
+        : '')+
+      '</div></div>');
+  }
+  var erg=Object.keys(e.ergaenzung);
+  if(erg.length){
+    h.push('<div class="pruefcard"><div class="pkopf"><span class="pzahl">'+e.ergListe.length+'</span>'+
+      '<span class="pname">'+esc(T('What the other file adds','Was die andere Datei ergänzt'))+'</span></div>'+
+      '<div class="perkl">'+esc(T('These people are in both files, and the other one has something yours does not.',
+        'Diese Personen stehen in beiden Dateien, und die andere hat etwas, das Deiner fehlt.'))+'</div>'+
+      '<div class="pfaelle">'+
+        erg.map(function(k){
+          var f=DUPE.FELDER.filter(function(x){ return x.k===k; })[0];
+          return '<div class="pfall">'+esc(f?DUPE.feldName(f):k)+': <b>'+e.ergaenzung[k]+'</b></div>';
+        }).join('')+
+        e.ergListe.slice(0,ZEIGE).map(function(x){
+          return '<div class="pfall">'+nm(e.PA[x.a])+' &larr; '+
+            x.fehlt.map(function(f){ return esc(f.t)+' <b>'+esc(f.wert)+'</b>'; }).join(', ')+'</div>';
+        }).join('')+
+      '</div></div>');
+  }
+  block(T('Not in your file','Nicht in Deiner Datei'),
+    T('No match was found for these. They would be added by merging.',
+      'Zu diesen wurde nichts Passendes gefunden. Beim Vereinigen kämen sie dazu.'),
+    e.neu, function(x){ return '<div class="pfall">'+nm(e.PB[x.b])+'</div>'; });
+  block(T('Unclear – please look','Unklar – bitte ansehen'),
+    T('Enough in common to ask, not enough to be sure. The duplicate check shows these pair by pair.',
+      'Genug Gemeinsames, um zu fragen, zu wenig für Gewissheit. Die Dublettenprüfung legt sie Paar für Paar vor.'),
+    e.unklar, function(x){
+      return '<div class="pfall">'+nm(e.PA[x.a])+' &nbsp;?&nbsp; '+nm(e.PB[x.b])+
+        ' <span class="muted">'+x.s+' '+esc(T('points','Punkte'))+'</span></div>'; });
+  block(T('Certainly the same person','Sicher dieselbe Person'),
+    T('Same name, same dates, same surroundings.','Gleicher Name, gleiche Daten, gleiches Umfeld.'),
+    e.sicher, function(x){
+      return '<div class="pfall">'+nm(e.PA[x.a])+' &nbsp;=&nbsp; '+nm(e.PB[x.b])+
+        ' <span class="muted">'+x.s+' '+esc(T('points','Punkte'))+'</span></div>'; });
+  $('mergeList').innerHTML=h.join('');
+}
+
+function vereinigenZeigen(){
+  var e=ERGEBNIS; if(!e) return;
+  var box=$('mergeUnionBox');
+  var textA=FP.serialize();
+  var gross=Math.round((textA.length+e.textB.length+e.zahlB*40)/1024);
+  var frei=platzFrei();
+  box.hidden=false;
+  box.innerHTML=
+    '<h4>'+esc(T('Merge the two files','Die beiden Dateien vereinigen'))+'</h4>'+
+    '<p>'+esc(T('One new file is written: your file unchanged, plus every record from the other one with fresh identifiers and its origin noted. Your open file is not touched.',
+      'Geschrieben wird EINE neue Datei: Deine unverändert, dazu jeder Satz aus der anderen mit neuen Kennungen und mitgeschriebener Herkunft. Deine geöffnete Datei wird nicht angefasst.'))+'</p>'+
+    '<p>'+esc(T('The duplicates stay in it for now – that is the point. Afterwards run Check for duplicates and switch on „only pairs from different files".',
+      'Die Dubletten stehen zunächst darin – das ist so gewollt. Danach „Dubletten prüfen" laufen lassen und „nur Paare aus verschiedenen Dateien" einschalten.'))+'</p>'+
+    '<p class="muted">'+esc(T('The result needs about ','Das Ergebnis braucht etwa ')+gross+' KB. '+
+      T('Free in this browser: ','Frei in diesem Browser: ')+frei+' KB.')+'</p>'+
+    '<div class="dupeacts">'+
+      '<button class="btn small primary" id="mergeDown">'+esc(T('Download as .ged','Als .ged herunterladen'))+'</button>'+
+      '<button class="btn small" id="mergeKeep"'+(frei>gross+200?'':' disabled')+'>'+
+        esc(T('Keep as a new file','Als neue Datei behalten'))+'</button>'+
+    '</div>'+
+    (frei>gross+200?'':'<p class="muted">'+esc(T('Not enough room to keep it here – the download always works.',
+      'Zum Behalten reicht der Platz nicht – das Herunterladen geht immer.'))+'</p>');
+  $('mergeDown').onclick=function(){ fertig(false); };
+  var keep=$('mergeKeep'); if(keep) keep.onclick=function(){ fertig(true); };
+}
+
+function dateiName(){
+  var a=(FP.fileName()||'A').replace(/[^\w\-]+/g,'_').slice(0,24);
+  var b=(NAMEB||'B').replace(/[^\w\-]+/g,'_').slice(0,24);
+  var d=new Date(), zwei=function(n){ return (n<10?'0':'')+n; };
+  return a+'+'+b+'_'+d.getFullYear()+'-'+zwei(d.getMonth()+1)+'-'+zwei(d.getDate())+'.ged';
+}
+function fertig(behalten){
+  var e=ERGEBNIS; if(!e) return;
+  var r;
+  try{ r=vereinigen(FP.serialize(), e.textB, NAMEB); }
+  catch(err){ SHELL.toast(T('The merge failed.','Das Vereinigen ist fehlgeschlagen.')); return; }
+  if(behalten){
+    var name=((FP.fileName()||'A')+' + '+NAMEB).slice(0,60);
+    var ging=false;
+    try{ FP.loadText(r.text, name); ging=true; }catch(err2){ ging=false; }
+    if(ging){
+      SHELL.closeModal('mdMerge');
+      SHELL.toast(T('Merged file opened.','Vereinigte Datei geöffnet.'));
+      var weg=FP.lastDropped?FP.lastDropped():[];
+      if(weg.length) setTimeout(function(){
+        SHELL.toast(T('No room left – removed: ','Kein Platz mehr – entfernt: ')+weg.join(', ')); }, 3400);
+      return;
+    }
+    SHELL.toast(T('No room left – downloading instead.','Kein Platz mehr – wird heruntergeladen.'));
+  }
+  SHELL.download(new Blob([r.text],{type:'text/plain;charset=utf-8'}), dateiName());
+  SHELL.toast(T('Merged file saved.','Vereinigte Datei gespeichert.'));
+}
+
+function aufsetzen(){
+  var mi=$('miMerge');
+  if(mi) mi.onclick=function(){
+    SHELL.closeDataMenu && SHELL.closeDataMenu();
+    if(!FP.hasData() || !FP.count()){
+      SHELL.toast(T('Open a file first.','Erst eine Datei öffnen.')); return;
+    }
+    zeigeStart();
+    SHELL.openModal('mdMerge');
+  };
+  $('mergePick').onclick=function(){ $('mergeFile').click(); };
+  $('mergeFile').addEventListener('change', function(ev){
+    var f=ev.target.files[0]; ev.target.value='';
+    if(!f) return;
+    var nice=String(f.name||'').replace(/\.[a-z0-9]+$/i,'').replace(/[_-]+/g,' ').trim().slice(0,60);
+    SHELL.leseDatei(f, function(d){ gewaehlt(d.text, nice, d.kodierung); },
+      function(){ SHELL.toast(T('The file could not be read.','Die Datei ließ sich nicht lesen.')); });
+  });
+  $('mergeGo').onclick=erstellen;
+  $('mergeUnion').onclick=vereinigenZeigen;
+  $('mergeSave').onclick=function(){
+    if(!ERGEBNIS) return;
+    var n=(de()?'abgleich_':'comparison_')+(NAMEB||'').replace(/[^\w\-]+/g,'_').slice(0,30)+'.txt';
+    SHELL.download(new Blob([alsText(ERGEBNIS)],{type:'text/plain;charset=utf-8'}), n);
+  };
+  $('mergeClose').onclick=function(){ SHELL.closeModal('mdMerge'); };
+}
+
+return {
+  boot:aufsetzen, vereinigen:vereinigen, berichten:berichten, alsText:alsText,
+  herkunft:herkunft, HERKUNFT:HERKUNFT,
+  /* nur fuer die Testreihe */
+  _umnummerieren:umnummerieren, _kennungen:kennungenVon
+};
+})();
+</script>
+<script>
 /* Stored data is loaded only once all three tabs are ready. */
 DUPE.boot();
 PRUEF.boot();
 LISTE.boot();
+ABGLEICH.boot();
 SHELL.boot();
 </script>
 </body>
