@@ -916,6 +916,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
 .mergeunion{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0;background:var(--card)}
 .mergeunion h4{margin:0 0 6px}
 .mergeunion p{margin:6px 0}
+
+.dupemehr{margin:10px 0;text-align:center}
 </style>
 <script>
 /* The theme has to sit on the html element before the first pixel is drawn.
@@ -4856,7 +4858,19 @@ function line(x1,y1,x2,y2,parent){
 }
 
 var _ctx=null, _cache={};
+/* Gemerkt wird nur, was kurz ist. Der Schluessel IST die Zeichenkette;
+   bei einer Angabe von 200.000 Zeichen legte der Zwischenspeicher
+   Schluessel dieser Laenge an - und zwar einen je Kuerzungsschritt.
+   Gemessen: 8.000 Zeichen brauchten 1,6 Sekunden, 20.000 schon 18,6,
+   und bei 200.000 stuerzte der Browser ab. */
 function textW(s,size,bold){
+  if(s.length>160){
+    try{ if(!_ctx) _ctx=document.createElement('canvas').getContext('2d');
+      _ctx.font=(bold?'600 ':'')+size+'px -apple-system,"Segoe UI",Roboto,Arial,sans-serif';
+      var w2=_ctx.measureText(s).width; if(w2>0) return w2;
+    }catch(e){}
+    return s.length*size*0.53;
+  }
   var key=(bold?'b':'n')+size+'|'+s;
   if(_cache[key]!==undefined) return _cache[key];
   try{ if(!_ctx) _ctx=document.createElement('canvas').getContext('2d');
@@ -4865,12 +4879,24 @@ function textW(s,size,bold){
   }catch(e){}
   return (_cache[key]=s.length*size*0.53);
 }
+/* Gekuerzt wird in zwei Schritten statt Zeichen fuer Zeichen. Die
+   alte Fassung nahm je Durchgang ein Zeichen weg und mass neu; bei
+   einem langen Wert waren das Zehntausende Messungen an jeweils
+   zehntausenden Zeichen. Jetzt wird erst grob abgeschnitten - mehr
+   als max/(size*0.18) Zeichen kann keine Schrift je unterbringen -
+   und dann binaer gesucht. Aus O(n*n) wird O(log n). */
 function fit(s,size,bold,max){
   s=String(s||''); if(!s) return '';
-  if(textW(s,size,bold)<=max) return s;
-  var t=s;
-  while(t.length>1 && textW(t+'…',size,bold)>max) t=t.slice(0,-1);
-  return t+'…';
+  var grob=Math.ceil(max/(size*0.18))+4, gekuerzt=false;
+  if(s.length>grob){ s=s.slice(0,grob); gekuerzt=true; }
+  if(!gekuerzt && textW(s,size,bold)<=max) return s;
+  var lo=1, hi=s.length, best=1, mid;
+  while(lo<=hi){
+    mid=(lo+hi)>>1;
+    if(textW(s.slice(0,mid)+'…',size,bold)<=max){ best=mid; lo=mid+1; }
+    else hi=mid-1;
+  }
+  return s.slice(0,best)+'…';
 }
 
 /* ---------- display text ---------- */
@@ -7010,6 +7036,16 @@ function pdfSafe(s){
     .split('').map(function(ch){ return ch.charCodeAt(0)<256 ? ch : '?'; }).join('');
 }
 function textWidthPx(str,size,bold){
+  /* Siehe textW im Stammbaum: Bei sehr langen Angaben wuerde der
+     Zwischenspeicher Schluessel dieser Laenge anlegen. */
+  if(str.length>160){
+    try{
+      if(!_measCtx) _measCtx=document.createElement('canvas').getContext('2d');
+      _measCtx.font=(bold?'bold ':'')+size+'px "Times New Roman",Times,serif';
+      var w3=_measCtx.measureText(str).width; if(w3>0) return w3;
+    }catch(e){}
+    return str.length*size*0.5;
+  }
   var key=(bold?'b':'n')+size+'|'+str;
   if(_measCache[key]!==undefined) return _measCache[key];
   try{
@@ -8480,6 +8516,18 @@ function sichtbar(){
   return NURFREMD ? GEFUNDEN.filter(ausMehrerenDateien) : GEFUNDEN;
 }
 
+/* Gezeichnet wird in Schritten, nicht alles auf einmal.
+
+   Gemessen an einer vereinigten Datei (zweimal 8.660 Personen, also
+   der Normalfall nach einem Abgleich): 12.086 Verdachtsgruppen,
+   daraus 8.174 Karten und 180.987 Knoten im Fenster, 8,8 Sekunden
+   auf dem Rechner. Auf einem Telefon ist das eine halbe Minute, in
+   der nichts geht - und danach eine Seite, die bei jeder Bewegung
+   ruckelt. Niemand liest achttausend Karten. Wer sie wirklich alle
+   braucht, nimmt „Liste speichern"; eine Textdatei liest sich
+   ohnehin besser. */
+var ZEIGE=12, SCHRITT=200, MAXZEIG=1000, GEZEIGT=ZEIGE;
+
 function esc(x){ return FP.esc(String(x==null?'':x)); }
 /* Dieselbe Schreibweise wie in der Liste und im Stammbaum: "* 9. Apr
    1902 \u00B7 \u2020 17. Dez 1978" statt der rohen Zeile aus der Datei. Wer
@@ -8536,7 +8584,8 @@ function zeichneListe(){
   }
   leer.hidden=true;
   var P=FP.indi();
-  liste.forEach(function(gr){
+  var teil=liste.slice(0, GEZEIGT);
+  teil.forEach(function(gr){
     var k=schluessel(gr), st=ERLEDIGT[k];
     var d=document.createElement('div');
     d.className='dupecard'+(st?' weg':'');
@@ -8573,6 +8622,23 @@ function zeichneListe(){
     };
     d.querySelector('[data-tun="gleich"]').onclick=function(){ felderZeigen(d, gr); };
   });
+  var rest=liste.length-teil.length;
+  if(rest>0){
+    var m=document.createElement('div');
+    m.className='dupemehr';
+    if(GEZEIGT>=MAXZEIG){
+      m.innerHTML='<div class="dupewhy">'+esc(de()
+        ? 'Gezeigt werden die ersten '+GEZEIGT+' von '+liste.length+'. Alle stehen in „Liste speichern".'
+        : 'The first '+GEZEIGT+' of '+liste.length+' are shown. All of them are in Save list.')+'</div>';
+    } else {
+      m.innerHTML='<button class="btn small" id="dupeMehr">'+esc(rest<=SCHRITT
+        ? (de()?'Die restlichen '+rest+' zeigen':'Show the remaining '+rest)
+        : (de()?'Weitere '+SCHRITT+' zeigen (von '+rest+')':'Show '+SCHRITT+' more (of '+rest+')'))+'</button>';
+    }
+    box.appendChild(m);
+    var mb=m.querySelector('#dupeMehr');
+    if(mb) mb.onclick=function(){ GEZEIGT=Math.min(MAXZEIG, GEZEIGT+SCHRITT); zeichneListe(); };
+  }
 }
 
 function felderZeigen(karte, gr){
@@ -8660,6 +8726,7 @@ function starten(){
       schalter.classList.toggle('on', NURFREMD);
       schalter.textContent=de()?'nur Paare aus verschiedenen Dateien':'only pairs from different files';
     }
+    GEZEIGT=ZEIGE;
     ANSICHT = GEFUNDEN.some(function(g2){ return g2.best>=SCHWELLE.sicher; }) ? 'sicher' : 'pruefen';
     $('dupeTabA').classList.toggle('on', ANSICHT==='sicher');
     $('dupeTabB').classList.toggle('on', ANSICHT!=='sicher');
@@ -8684,12 +8751,13 @@ function aufsetzen(){
   if(fr) fr.onclick=function(){
     NURFREMD=!NURFREMD;
     fr.classList.toggle('on', NURFREMD);
+    GEZEIGT=ZEIGE;
     fassen(); zeichneListe();
   };
   $('dupeClose').onclick=function(){ SHELL.closeModal('mdDupe'); };
-  $('dupeTabA').onclick=function(){ ANSICHT='sicher';
+  $('dupeTabA').onclick=function(){ ANSICHT='sicher'; GEZEIGT=ZEIGE;
     this.classList.add('on'); $('dupeTabB').classList.remove('on'); zeichneListe(); };
-  $('dupeTabB').onclick=function(){ ANSICHT='pruefen';
+  $('dupeTabB').onclick=function(){ ANSICHT='pruefen'; GEZEIGT=ZEIGE;
     this.classList.add('on'); $('dupeTabA').classList.remove('on'); zeichneListe(); };
   $('dupeSave').onclick=function(){
     /* SHELL.download nimmt einen Blob und DANN den Namen. Die erste Fassung
@@ -10500,17 +10568,25 @@ function alsText(e){
    --------------------------------------------------------------- */
 var ERGEBNIS=null, TEXTB=null, NAMEB=null, ZEIGE=12;
 
-function platzFrei(){
-  /* Wie viel passt noch in die Ablage dieses Browsers? Gemessen wird
-     nicht geschätzt: schreiben, bis es klemmt, wäre zu grob - also
-     einmal einen Block probieren und wieder wegnehmen. */
-  var probe='x'.repeat(64*1024), i=0, k='__anc_probe__';
+/* Passt das Ergebnis noch in die Ablage dieses Browsers?
+
+   Die erste Fassung schrieb achtzig Bloecke zu 64 KB hinein, bis es
+   klemmte, und raeumte wieder auf. Das beantwortet eine Frage, die
+   niemand gestellt hat ("wie viel passt insgesamt?"), kostet bis zu
+   fuenf Megabyte Schreibarbeit und laesst auf einem fast vollen
+   Speicher genau dort Muell liegen, wo gerade keiner mehr hinpasst.
+   Gefragt ist nur: Passt DIESE eine Datei? Also wird genau sie
+   probiert - ein Schreibvorgang, ein Loeschvorgang. */
+function passtNoch(zeichen){
+  var k='__anc_probe__';
   try{
-    for(i=0;i<80;i++) localStorage.setItem(k+i, probe);
-  }catch(e){}
-  var frei=i*64;
-  for(var j=0;j<=i;j++){ try{ localStorage.removeItem(k+j); }catch(e){} }
-  return frei;  /* in KB */
+    localStorage.setItem(k, new Array(zeichen+1).join('x'));
+    localStorage.removeItem(k);
+    return true;
+  }catch(e){
+    try{ localStorage.removeItem(k); }catch(e2){}
+    return false;
+  }
 }
 
 function zeigeStart(){
@@ -10633,8 +10709,9 @@ function vereinigenZeigen(){
   var e=ERGEBNIS; if(!e) return;
   var box=$('mergeUnionBox');
   var textA=FP.serialize();
-  var gross=Math.round((textA.length+e.textB.length+e.zahlB*40)/1024);
-  var frei=platzFrei();
+  var zeichen=textA.length+e.textB.length+e.zahlB*40;
+  var gross=Math.round(zeichen/1024);
+  var passt=passtNoch(zeichen);
   box.hidden=false;
   box.innerHTML=
     '<h4>'+esc(T('Merge the two files','Die beiden Dateien vereinigen'))+'</h4>'+
@@ -10643,13 +10720,14 @@ function vereinigenZeigen(){
     '<p>'+esc(T('The duplicates stay in it for now – that is the point. Afterwards run Check for duplicates and switch on „only pairs from different files".',
       'Die Dubletten stehen zunächst darin – das ist so gewollt. Danach „Dubletten prüfen" laufen lassen und „nur Paare aus verschiedenen Dateien" einschalten.'))+'</p>'+
     '<p class="muted">'+esc(T('The result needs about ','Das Ergebnis braucht etwa ')+gross+' KB. '+
-      T('Free in this browser: ','Frei in diesem Browser: ')+frei+' KB.')+'</p>'+
+      (passt ? T('There is room for it in this browser.','Dafür ist in diesem Browser Platz.')
+             : T('There is not enough room in this browser.','Dafür ist in diesem Browser kein Platz.')))+'</p>'+
     '<div class="dupeacts">'+
       '<button class="btn small primary" id="mergeDown">'+esc(T('Download as .ged','Als .ged herunterladen'))+'</button>'+
-      '<button class="btn small" id="mergeKeep"'+(frei>gross+200?'':' disabled')+'>'+
+      '<button class="btn small" id="mergeKeep"'+(passt?'':' disabled')+'>'+
         esc(T('Keep as a new file','Als neue Datei behalten'))+'</button>'+
     '</div>'+
-    (frei>gross+200?'':'<p class="muted">'+esc(T('Not enough room to keep it here – the download always works.',
+    (passt?'':'<p class="muted">'+esc(T('Not enough room to keep it here – the download always works.',
       'Zum Behalten reicht der Platz nicht – das Herunterladen geht immer.'))+'</p>');
   $('mergeDown').onclick=function(){ fertig(false); };
   var keep=$('mergeKeep'); if(keep) keep.onclick=function(){ fertig(true); };
