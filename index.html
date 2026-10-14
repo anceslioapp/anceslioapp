@@ -130,7 +130,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 .listyears input{width:74px; padding:7px 8px; border:1px solid var(--line); border-radius:8px;
   background:var(--field); color:var(--ink); font-size:13.5px}
 /* Die Familienzeile nach dem Vorbild gedruckter Familienbuecher und der
-   App, die Joachim gezeigt hat: links das Paar, rechts die Kinder, durch
+   App, die als Vorbild diente: links das Paar, rechts die Kinder, durch
    einen Strich getrennt. Zwei Spalten statt einer langen Zeile, damit
    lange Namen eine eigene Breite bekommen statt den Satz zu zerreissen. */
 .lrow.fam{display:grid; grid-template-columns:1fr 1fr; gap:0}
@@ -203,6 +203,27 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 #dataMenu .mifile.on{background:var(--hl); font-weight:600; color:var(--accent)}
 #dataMenu .mifiles-tick{flex:0 0 14px; color:var(--accent)}
 #dataMenu .mifiles-n{display:block; font-size:12.5px; font-weight:400; color:var(--muted)}
+#dataMenu .mihead.sub{color:var(--muted); text-transform:none; letter-spacing:0; padding-top:8px}
+#dataMenu .mistat{display:block; font-size:12.5px; font-weight:400; color:var(--muted); margin-top:2px}
+#dataMenu .mistat.warn,#dataMenu .mifiles-n .warnt,.filemeta .warnt{color:var(--warn); font-weight:600}
+#dataMenu button:disabled{opacity:.5; cursor:default}
+#dataMenu button:disabled:hover{background:none}
+/* Die Zahl sitzt auf der Ecke des Knopfs und nimmt keinen Platz in der
+   Zeile weg - bei 320 px ist dort keiner uebrig. */
+#btnData{position:relative}
+#dataBadge{position:absolute; top:-7px; right:-7px; min-width:19px; height:19px; padding:0 5px;
+  border-radius:10px; background:var(--warn); color:#fff; font-size:11.5px; font-weight:700;
+  line-height:19px; text-align:center; box-shadow:0 0 0 2px var(--panel); pointer-events:none}
+/* Die Leiste schwebt ueber dem Inhalt, statt ihn nach unten zu schieben.
+   In der ersten Fassung schob sie alles darunter um ihre Hoehe weiter -
+   und weil sie genau bei einer Aenderung erscheint, also mitten im
+   Antippen, landete der Tipp dann auf etwas anderem. */
+#backupBar{position:fixed; left:8px; right:8px; max-width:720px; margin:0 auto; z-index:50;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:9px 12px;
+  background:var(--hl); border:1px solid var(--gold); border-radius:11px;
+  box-shadow:0 8px 24px rgba(60,45,20,.18); font-size:13.5px; line-height:1.35}
+#backupMsg{flex:1 1 230px; min-width:0}
+#backupBar .btn{flex:0 0 auto}
 .filerow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:10px 0;
   border-bottom:1px dotted var(--line)}
 .filerow:last-of-type{border-bottom:none}
@@ -484,6 +505,14 @@ body.fullscreen #fullExit{display:flex}
 #trSide .fld{margin-bottom:9px}
 #trSide input[type=text],#trSide select{width:100%; padding:8px 9px; border:1px solid var(--line);
   border-radius:8px; font-size:15.5px; background:var(--field)}
+#trSide textarea{width:100%; padding:8px 9px; border:1px solid var(--line); border-radius:8px;
+  font-size:15.5px; background:var(--field); line-height:1.4; resize:vertical; min-height:44px; display:block}
+#trSide .qnhead{font-size:12.5px; font-weight:600; color:var(--muted); margin:10px 0 5px;
+  text-transform:uppercase; letter-spacing:.04em}
+#trSide details.sect>.qnhead:first-of-type{margin-top:2px}
+#trSide .qnfremd{border:1px dashed var(--line); border-radius:8px; padding:8px 9px; margin:0 0 9px;
+  font-size:14px; white-space:pre-wrap; overflow-wrap:anywhere; background:var(--panel)}
+#trSide .qnfremd .muted{white-space:normal; margin-top:3px}
 #trSide .two{display:flex; gap:8px}
 #trSide .two>*{flex:1; min-width:0}
 #trSide .rel{display:flex; align-items:center; gap:6px; padding:6px 0; border-bottom:1px dotted var(--line)}
@@ -951,8 +980,16 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   <div id="apptop">
     <span id="brand">Anceslio</span>
     <div id="dataMenuWrap">
-      <button class="btn" id="btnData"><span data-i18n="📁 Data">&#128193; Data</span> <span style="font-size:10px">&#9660;</span></button>
+      <button class="btn" id="btnData"><span data-i18n="📁 Data">&#128193; Data</span> <span style="font-size:10px">&#9660;</span><span id="dataBadge" hidden></span></button>
       <div id="dataMenu">
+        <!-- Drei Gruppen mit Ueberschrift statt elf Eintraegen am Stueck.
+             Sichern steht oben, weil es das Einzige ist, das man regelmaessig
+             tun sollte und das sonst niemand anstoesst. -->
+        <div class="mihead" data-i18n="Back up">Back up</div>
+        <button id="miBackup"><span data-i18n="💾 Back up now (.ged)">&#128190; Back up now (.ged)</span><small id="miBackupInfo" class="mistat"></small></button>
+        <button id="miExport" data-i18n="📤 Export GEDCOM – more ways…">&#128228; Export GEDCOM &ndash; more ways&hellip;</button>
+        <hr>
+        <div class="mihead" data-i18n="File">File</div>
         <button id="miLoad" data-i18n="📂 Open GEDCOM file">&#128194; Open GEDCOM file</button>
         <!-- The same offer as on the first screen. Without it, the way to start
              a family without a file disappeared as soon as one file was open,
@@ -960,21 +997,18 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <button id="miEmpty" data-i18n="➕ Start another family">&#10133; Start another family</button>
         <button id="miSample" data-i18n="🌳 Load sample family">&#127795; Load sample family</button>
         <div id="fileWrap" hidden>
-          <hr>
-          <div class="mihead" data-i18n="Recently opened">Recently opened</div>
+          <div class="mihead sub" data-i18n="Recently opened">Recently opened</div>
           <div id="fileList"></div>
           <button id="miFiles" data-i18n="✎ Rename or remove files…">&#9998; Rename or remove files&hellip;</button>
         </div>
         <hr>
+        <div class="mihead" data-i18n="Tools">Tools</div>
         <button id="miList" data-i18n="☰ People and families">&#9776; People and families</button>
         <button id="miDupe" data-i18n="⧉ Check for duplicates">&#10697; Check for duplicates</button>
         <button id="miPruef" data-i18n="⚠ Check the data">&#9888; Check the data</button>
         <button id="miMerge" data-i18n="⇄ Compare files">&#8644; Compare files</button>
         <hr>
-        <button id="miExport" data-i18n="💾 Export GEDCOM (.ged)">&#128190; Export GEDCOM (.ged)</button>
-        <hr>
         <button id="miSettings" data-i18n="⚙ Settings">&#9881; Settings</button>
-        <hr>
         <button id="miClear" class="danger" data-i18n="🗑 Clear data on this device">&#128465; Clear data on this device</button>
       </div>
     </div>
@@ -984,6 +1018,11 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
          header cannot grow a second row while somebody is typing. -->
     <span id="dataInfo"><button type="button" id="dataCount" data-i18n-title="Show all people and families"
         title="Show all people and families">no data loaded</button><span id="dataTick" aria-hidden="true">&#10003;</span></span>
+  </div>
+  <div id="backupBar" class="noprint" role="status" hidden>
+    <span id="backupMsg"></span>
+    <button class="btn small primary" id="backupNow"></button>
+    <button class="btn small" id="backupLater"></button>
   </div>
   <nav id="tabbar">
     <button class="tab active" data-tab="tree"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="2.4" width="6" height="4.4" rx="1.1"/><rect x="2.3" y="17.2" width="6" height="4.4" rx="1.1"/><rect x="15.7" y="17.2" width="6" height="4.4" rx="1.1"/><path d="M12 6.8v6.6M5.3 13.4h13.4M5.3 13.4v3.8M18.7 13.4v3.8"/></svg></span> <span data-i18n="Tree">Tree</span></button>
@@ -1125,8 +1164,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <button class="btn" id="btnSvg" data-i18n="Save SVG">Save SVG</button>
         <button class="btn" id="btnPng" data-i18n="Save PNG">Save PNG</button>
         <button class="btn" id="btnPreset" data-i18n="📐 Print preset (A3)" data-i18n-title="Compact, highly legible settings for A3 landscape" title="Compact, highly legible settings for A3 landscape">&#128208; Print preset (A3)</button>
-        <button class="btn" id="btnSave" data-i18n="💾 Save project">&#128190; Save project</button>
-        <button class="btn" id="btnProjLoad" data-i18n="Open project">Open project</button>
+        <button class="btn" id="btnSave" data-i18n="🗂 Save chart (.json)">&#128450; Save chart (.json)</button>
+        <button class="btn" id="btnProjLoad" data-i18n="Open chart (.json)">Open chart (.json)</button>
       </div>
 
     </div>
@@ -1733,11 +1772,11 @@ var DE = {
 '✎ Rename or remove files…':'✎ Dateien umbenennen oder entfernen …',
 'Your files':'Deine Dateien',
 'Everything is stored in this browser. Give a file a name you will recognise, or remove one you no longer need.':
-  'Alles liegt in diesem Browser. Gib einer Datei einen Namen, den du wiedererkennst, oder entferne eine, die du nicht mehr brauchst.',
+  'Alles liegt in diesem Browser. Geben Sie einer Datei einen Namen, den Sie wiedererkennen, oder entfernen Sie eine, die Sie nicht mehr brauchen.',
 'Remove this file':'Diese Datei entfernen',
 'Remove this file?':'Diese Datei entfernen?',
 'It is removed from this browser only. An exported GEDCOM file on your device is not touched.':
-  'Sie wird nur aus diesem Browser entfernt. Eine exportierte GEDCOM-Datei auf deinem Gerät bleibt unberührt.',
+  'Sie wird nur aus diesem Browser entfernt. Eine exportierte GEDCOM-Datei auf Ihrem Gerät bleibt unberührt.',
 'Yes, remove':'Ja, entfernen',
 'File removed':'Datei entfernt',
 'No files stored yet.':'Noch keine Dateien gespeichert.',
@@ -2044,6 +2083,47 @@ var DE = {
 'Put this person in the centre':'Diese Person in die Mitte stellen',
 'Undo this link (the person stays)':'Diese Verbindung lösen (die Person bleibt)',
 
+/* 4.1: Sicherung */
+'Back up':'Sichern', 'File':'Datei', 'Tools':'Werkzeuge',
+'💾 Back up now (.ged)':'💾 Jetzt sichern (.ged)',
+'📤 Export GEDCOM – more ways…':'📤 GEDCOM exportieren – weitere Wege …',
+'💾 Back up now':'💾 Jetzt sichern',
+'Got it':'Verstanden', 'Later':'Später',
+'1 change':'1 Änderung', ' changes':' Änderungen',
+' since the backup on ':' seit der Sicherung am ',
+'Backed up on ':'Gesichert am ', ' – unchanged since':' – seitdem unverändert',
+' since the file was opened – not backed up yet':' seit dem Öffnen der Datei – noch nicht gesichert',
+'Unchanged since the file was opened':'Unverändert seit dem Öffnen der Datei',
+' – never backed up':' – noch nie gesichert',
+'Merged in the app – never backed up':'In der App zusammengeführt – noch nie gesichert',
+'Never backed up with this app':'Noch nie mit dieser App gesichert',
+'<b>Good to know:</b> Anceslio keeps every change – but only inside this app. If the phone is lost or the app is removed, it is gone. A real backup is a .ged file outside the app.':
+  '<b>Gut zu wissen:</b> Anceslio behält jede Änderung – aber nur in dieser App. Geht das Handy verloren oder wird die App gelöscht, ist alles weg. Eine echte Sicherung ist eine .ged-Datei außerhalb der App.',
+' only inside the app':' nur in der App',
+'This file exists only inside the app':'Diese Datei gibt es nur in der App',
+'not backed up yet.':'noch nicht gesichert.',
+'Nothing to back up':'Nichts zu sichern',
+'not backed up':'nicht gesichert',
+'This file has changes that are not backed up.':'Diese Datei hat Änderungen, die noch nicht gesichert sind.',
+/* 4.1: Notizen und Quellen */
+'Notes &amp; sources':'Notizen &amp; Quellen', 'Notes':'Notizen', 'Sources':'Quellen',
+'Note':'Notiz', 'Source':'Quelle', '➕ Note':'➕ Notiz', '➕ Source':'➕ Quelle',
+'Further details from the file are kept.':'Weitere Angaben dazu aus der Datei bleiben erhalten.',
+'Record not found in the file':'Dieser Satz fehlt in der Datei',
+'Shared record':'Gemeinsamer Satz', 'read only here':'hier nur lesbar',
+'Also in the file: sources or notes ':'Außerdem in der Datei: Quellen oder Notizen ',
+'on the birth':'zur Geburt', 'on the death':'zum Tod',
+' – kept, but not edited here.':' – bleiben erhalten, werden hier aber nicht bearbeitet.',
+'A shared record is edited in the program it comes from – other people can point to the same record.':
+  'Ein gemeinsamer Satz wird im Programm bearbeitet, aus dem er stammt – andere Personen können auf denselben Satz zeigen.',
+'Written into the GEDCOM file as NOTE and SOUR, so other programs read them too.':
+  'Wird als NOTE und SOUR in die GEDCOM-Datei geschrieben und von anderen Programmen mitgelesen.',
+'Anything worth knowing about this person':'Was man über diese Person wissen sollte',
+'e.g. Parish register St Mary, baptisms 1823, p. 14':'z. B. Kirchenbuch St. Marien, Taufen 1823, S. 14',
+/* 4.1: Nachfahrentafel */
+'🗂 Save chart (.json)':'🗂 Tafel speichern (.json)', 'Open chart (.json)':'Tafel öffnen (.json)',
+'Notice':'Hinweis', 'Error':'Fehler',
+
 };
 
 /* ---- the app shell, when the page runs inside the Android app ----
@@ -2283,6 +2363,15 @@ window.I18N={
         day-first form <b>12.04.1901</b> works too. Anything the app does not recognise is kept exactly as typed, so
         notes like &bdquo;about 1780&ldquo; survive. Leave a field empty when the date is unknown; if you only know
         that somebody has died, tick <b>deceased</b>.</p>
+        <p><b>Notes &amp; sources</b> sit right below the details. A person can have several of each: tap
+        <b>&#10133; Note</b> or <b>&#10133; Source</b> and type. A source is simply where a piece of information comes
+        from &ndash; &bdquo;Parish register St Mary, baptisms 1823, p. 14&ldquo; is enough. Both are written into the
+        GEDCOM file as <span class="code">NOTE</span> and <span class="code">SOUR</span>, so every other genealogy
+        program reads them. To remove an entry, empty the field and leave it.</p>
+        <p>Larger programs often keep sources and notes as <b>shared records</b> that many people point to. Those are
+        shown with their title and marked <i>read only here</i>: changing one in Anceslio would change it for everybody
+        who points to it, without you seeing that. Edit them in the program they come from. Sources attached to the
+        birth or the death are kept and counted, but not edited here.</p>
         <p>The narrow coloured stripe on the left of each box shows sex: blue for male, rose for female, beige when
         nothing is recorded.</p>
 
@@ -2328,9 +2417,11 @@ window.I18N={
           <li><b>Export</b> as <b>PDF</b> (page size selectable, &bdquo;Auto&ldquo; picks the best fit), as
           <b>SVG</b> for further work in a graphics program, or as <b>PNG</b> for quick sharing.</li>
         </ol>
-        <p><b>Save project</b> writes a <b>.json</b> file that contains the family data <i>and</i> all chart settings
-        &ndash; root person, hidden branches, reference boxes, title. <b>Open project</b> brings that state back
-        exactly as it was, so you can keep several charts side by side without them interfering.</p>
+        <p><b>&#128450; Save chart (.json)</b> writes a <b>.json</b> file that contains the family data <i>and</i> all
+        chart settings &ndash; root person, hidden branches, reference boxes, title. <b>Open chart (.json)</b> brings that
+        state back exactly as it was, so you can keep several charts side by side without them interfering. The file
+        is meant for Anceslio itself; other programs cannot read it. The backup of your data is
+        <b>&#128190; Back up now</b> in the Data menu.</p>
       </section>
       <section class="sec" id="h6" data-nav="Kinship">
         <h4>The Kinship tab</h4>
@@ -2442,10 +2533,15 @@ window.I18N={
         <p>Your data and every change are kept <b>automatically</b> in this browser or app, so everything is still
         there the next time you open it. That store belongs to <b>this app on this device</b>: your phone knows
         nothing about what you edited on a laptop.</p>
-        <p>The real backup is the <b>export</b>: <b>Export GEDCOM (.ged)</b> in the data menu offers three ways out &ndash; save
-        as a file, copy to the clipboard, or show the text so you can copy it by hand. Any of them gives you a
-        complete GEDCOM file. Do this after larger edits, and always before switching devices or clearing your
-        browser.</p>
+        <p>Saving is therefore not the same as backing up. The real backup is a <b>.ged file outside the app</b>, and
+        <b>Data &rsaquo; &#128190; Back up now</b> writes one with a single tap &ndash; on a phone it lands in the
+        Downloads folder. The app cannot see whether the phone really stored it, so the first time, take a look
+        in that folder. Underneath, the menu says how many changes are not backed up yet and when you last backed up.
+        While there are such changes, a small number sits on the <b>Data</b> button. After ten of them, or after a
+        week, a line below the header reminds you; <b>Later</b> puts it off for a while.</p>
+        <p><b>&#128228; Export GEDCOM &ndash; more ways</b> offers the same file to copy into an e-mail, a note or a cloud
+        drive, or as text to copy by hand. Saving or copying from there counts as a backup too. Back up after larger
+        edits, and always before switching devices or clearing your browser.</p>
         <p>The saved file is named after the family and the moment: the surname that occurs most often in the
         file, then the date and the time to the minute, for instance <b>Hayes_2026-10-10_2214.ged</b>. Two exports
         on the same day are therefore easy to tell apart. If no surname clearly stands out &ndash; a file holding
@@ -2465,7 +2561,8 @@ window.I18N={
         working on, the sample. Every file you open is added to the list under <b>Data &rsaquo; Recently opened</b>, and
         one tap switches between them. Under <b>Rename or remove files</b> you can give each one a name you recognise,
         see how much room it takes and throw out what you no longer need. At most six are kept; when a seventh arrives
-        the oldest gives way, and the app says which one it was. Removing a file here touches only this browser &ndash;
+        the oldest gives way, and the app says which one it was. A file with changes that are not backed up is the last
+        to go, and the app tells you if it had to be one of those. Removing a file here touches only this browser &ndash;
         an exported .ged file on your device is not affected.</p>
         <p>A file does not have to come from anywhere: <b>Data &rsaquo; &#10133; Start another family</b> opens a new,
         empty one beside the others, and you build it up person by person. Nothing that is already there is touched.</p>
@@ -2508,17 +2605,19 @@ window.I18N={
         birth and death with date and place (BIRT, DEAT), occupation (OCCU), a lineage or house name stored as
         <span class="code">1 FACT &lt;name&gt;</span> with <span class="code">2 TYPE Lineage</span>, and the family
         links FAMC, FAMS, HUSB, WIFE, CHIL and MARR.</p>
-        <p>Everything the app does not interpret itself &ndash; sources, notes, custom facts &ndash; is
-        <b>written back unchanged</b> on export, so a round trip through Anceslio loses as little as possible.
+        <p>Notes and sources directly on a person (<span class="code">1 NOTE</span>, <span class="code">1 SOUR</span>)
+        can be edited. Everything else the app does not interpret itself &ndash; shared note and source records,
+        sources on events, media, custom facts &ndash; is <b>written back unchanged</b> on export, so a round trip
+        through Anceslio loses as little as possible.
         Existing identifiers such as <span class="code">@I137@</span> are kept; new people get the next free number.</p>
         <p>Files from other programs are not always tidy, so the app repairs what it can while reading: a long place
         name or note split across <span class="code">CONC</span> / <span class="code">CONT</span> lines is put back
         together, and a family link recorded on only one side &ndash; in the family record but not on the person, or
         the other way round &ndash; is completed, instead of leaving those people looking unrelated.</p>
-        <p>The data lives in this app&rsquo;s <span class="code">localStorage</span> under the key
-        <span class="code">anceslio.ged.v1</span>, stored as a complete GEDCOM &ndash; roughly 0.5&nbsp;MB for 3,000
-        people, which loads in a fraction of a second. If the browser refuses to store that much, the app says so and
-        carries on without the automatic backup; exporting still works.</p>
+        <p>The data lives in this app&rsquo;s <span class="code">localStorage</span>, one complete GEDCOM per file
+        under keys that begin with <span class="code">anceslio.</span> &ndash; roughly 0.5&nbsp;MB for 3,000 people,
+        which loads in a fraction of a second. If the browser refuses to store that much, the app says so and carries
+        on without saving automatically; backing up still works.</p>
         <p>The app also remembers <b>where you were</b>: the person in the middle of the tree, the
         <b>&#65291;&nbsp;Grandparents</b> and <b>&#65291;&nbsp;Grandchildren</b> switches, the root person and every
         chart edit &ndash; hidden branches, reference boxes, overwritten lines, the sheet title and the display
@@ -2670,6 +2769,16 @@ window.I18N={
         stehen, wie es eingegeben wurde &ndash; Notizen wie &bdquo;um 1780&ldquo; &uuml;berleben also. Ein Feld leer
         lassen, wenn das Datum unbekannt ist; wenn nur feststeht, dass jemand verstorben ist, das H&auml;kchen bei
         <b>verstorben</b> setzen.</p>
+        <p><b>Notizen &amp; Quellen</b> stehen gleich unter den Angaben. Eine Person kann von beidem mehrere haben:
+        <b>&#10133; Notiz</b> oder <b>&#10133; Quelle</b> antippen und schreiben. Eine Quelle ist einfach, woher eine
+        Angabe stammt &ndash; &bdquo;Kirchenbuch St. Marien, Taufen 1823, S. 14&ldquo; gen&uuml;gt. Beides wird als
+        <span class="code">NOTE</span> und <span class="code">SOUR</span> in die GEDCOM-Datei geschrieben, jedes andere
+        Ahnenprogramm liest es also mit. Um einen Eintrag zu entfernen, das Feld leeren und verlassen.</p>
+        <p>Gr&ouml;&szlig;ere Programme f&uuml;hren Quellen und Notizen oft als <b>gemeinsame S&auml;tze</b>, auf die viele
+        Personen zeigen. Die erscheinen mit ihrem Titel und dem Vermerk <i>hier nur lesbar</i>: Sie in Anceslio zu
+        &auml;ndern, w&uuml;rde sie bei allen &auml;ndern, die darauf zeigen, ohne dass man es sieht. Bearbeitet werden sie
+        im Programm, aus dem sie stammen. Quellen an Geburt oder Tod bleiben erhalten und werden gez&auml;hlt, hier aber
+        nicht bearbeitet.</p>
         <p>Der schmale farbige Streifen links an jedem Kasten zeigt das Geschlecht: blau f&uuml;r m&auml;nnlich, rosa
         f&uuml;r weiblich, beige, wenn nichts eingetragen ist.</p>
 
@@ -2724,10 +2833,12 @@ window.I18N={
           die beste Passung), als <b>SVG</b> zur Weiterarbeit in einem Grafikprogramm oder als <b>PNG</b> zum schnellen
           Weitergeben.</li>
         </ol>
-        <p><b>Projekt speichern</b> schreibt eine <b>.json</b>-Datei, die die Familiendaten <i>und</i> alle
-        Tafeleinstellungen enth&auml;lt &ndash; Wurzelperson, ausgeblendete Zweige, Verweisk&auml;sten, Titel.
-        <b>Projekt &ouml;ffnen</b> holt diesen Stand genau so zur&uuml;ck, sodass sich mehrere Tafeln nebeneinander
-        f&uuml;hren lassen, ohne sich gegenseitig zu st&ouml;ren.</p>
+        <p><b>&#128450; Tafel speichern (.json)</b> schreibt eine <b>.json</b>-Datei, die die Familiendaten <i>und</i>
+        alle Tafeleinstellungen enth&auml;lt &ndash; Wurzelperson, ausgeblendete Zweige, Verweisk&auml;sten, Titel.
+        <b>Tafel &ouml;ffnen (.json)</b> holt diesen Stand genau so zur&uuml;ck, sodass sich mehrere Tafeln nebeneinander
+        f&uuml;hren lassen, ohne sich gegenseitig zu st&ouml;ren. Die Datei ist f&uuml;r Anceslio selbst gedacht; andere
+        Programme k&ouml;nnen sie nicht lesen. Die Sicherung der Daten ist <b>&#128190; Jetzt sichern</b> im
+        Datenmen&uuml;.</p>
         <p class="muted">Die Tafel wird auch im dunklen Design auf wei&szlig;em Papier gezeigt, weil sie genau so
         gedruckt und exportiert wird.</p>
       </section>
@@ -2854,10 +2965,17 @@ window.I18N={
         <p>Die Daten und jede &Auml;nderung werden <b>automatisch</b> in dieser App auf diesem Ger&auml;t behalten, es
         ist also beim n&auml;chsten &Ouml;ffnen alles wieder da. Dieser Speicher geh&ouml;rt <b>dieser App auf diesem
         Ger&auml;t</b>: Das Handy wei&szlig; nichts davon, was am Rechner bearbeitet wurde.</p>
-        <p>Die eigentliche Sicherung ist der <b>Export</b>: <b>GEDCOM exportieren (.ged)</b> im Datenmen&uuml; bietet drei Wege
-        an &ndash; als Datei speichern, in die Zwischenablage kopieren oder den Text anzeigen, um ihn von Hand zu
-        kopieren. Jeder davon liefert eine vollst&auml;ndige GEDCOM-Datei. Das sollte man nach gr&ouml;&szlig;eren
-        Bearbeitungen tun, und immer vor einem Ger&auml;tewechsel oder bevor man die Browserdaten l&ouml;scht.</p>
+        <p>Speichern ist deshalb nicht dasselbe wie Sichern. Die eigentliche Sicherung ist eine <b>.ged-Datei
+        au&szlig;erhalb der App</b>, und <b>Daten &rsaquo; &#128190; Jetzt sichern</b> legt sie mit einem Tipp an &ndash;
+        auf dem Handy landet sie im Ordner Downloads. Ob das Handy sie wirklich abgelegt hat, kann die App nicht
+        sehen &ndash; beim ersten Mal lohnt deshalb ein Blick in diesen Ordner. Darunter steht im Men&uuml;, wie viele &Auml;nderungen noch nicht
+        gesichert sind und wann zuletzt gesichert wurde. Solange es solche &Auml;nderungen gibt, sitzt eine kleine Zahl
+        am Knopf <b>Daten</b>. Nach zehn davon oder nach einer Woche erinnert eine Zeile unter der Kopfzeile daran;
+        <b>Sp&auml;ter</b> verschiebt das eine Weile.</p>
+        <p><b>&#128228; GEDCOM exportieren &ndash; weitere Wege</b> bietet dieselbe Datei zum Kopieren an, f&uuml;r eine
+        E-Mail, eine Notiz oder einen Cloud-Speicher, oder als Text zum Abschreiben. Speichern oder Kopieren von dort
+        z&auml;hlt ebenfalls als Sicherung. Sichern sollte man nach gr&ouml;&szlig;eren Bearbeitungen, und immer vor einem
+        Ger&auml;tewechsel oder bevor man die Browserdaten l&ouml;scht.</p>
         <p>Die gespeicherte Datei tr&auml;gt den Namen der Familie und den Zeitpunkt: den Nachnamen, der in der
         Datei am h&auml;ufigsten vorkommt, dann Datum und Uhrzeit bis zur Minute, etwa
         <b>Hayes_2026-10-10_2214.ged</b>. Zwei Exporte am selben Tag lassen sich so auseinanderhalten. Sticht kein
@@ -2881,7 +2999,8 @@ window.I18N={
         <b>Daten &rsaquo; Zuletzt ge&ouml;ffnet</b>, und ein Tipp wechselt zwischen ihnen. Unter
         <b>Dateien umbenennen oder entfernen</b> l&auml;sst sich jeder ein wiedererkennbarer Name geben, man sieht,
         wie viel Platz sie braucht, und kann wegwerfen, was man nicht mehr braucht. H&ouml;chstens sechs werden
-        behalten; kommt eine siebte dazu, weicht die &auml;lteste, und die App sagt, welche es war. Entfernen wirkt
+        behalten; kommt eine siebte dazu, weicht die &auml;lteste, und die App sagt, welche es war. Eine Datei mit
+        ungesicherten &Auml;nderungen weicht als letzte, und die App sagt es dazu, falls es doch eine davon sein musste. Entfernen wirkt
         nur in diesem Browser &ndash; eine exportierte .ged-Datei auf dem Ger&auml;t bleibt unber&uuml;hrt.</p>
         <p>Eine Datei muss nicht von irgendwoher stammen: <b>Daten &rsaquo; &#10133; Weitere Familie anlegen</b>
         &ouml;ffnet eine neue, leere neben den anderen, die man Person f&uuml;r Person aufbaut. Was schon da ist,
@@ -2928,8 +3047,10 @@ window.I18N={
         Geschlecht (SEX), Geburt und Tod mit Datum und Ort (BIRT, DEAT), Beruf (OCCU), ein Stamm- oder Hausname in der
         Form <span class="code">1 FACT &lt;Name&gt;</span> mit <span class="code">2 TYPE Lineage</span> sowie die
         Familienverkn&uuml;pfungen FAMC, FAMS, HUSB, WIFE, CHIL und MARR.</p>
-        <p>Alles, was die App nicht selbst auswertet &ndash; Quellen, Notizen, eigene Merkmale &ndash;, wird beim
-        Export <b>unver&auml;ndert zur&uuml;ckgeschrieben</b>, sodass ein Durchlauf durch Anceslio so wenig wie
+        <p>Notizen und Quellen direkt an einer Person (<span class="code">1 NOTE</span>,
+        <span class="code">1 SOUR</span>) lassen sich bearbeiten. Alles andere, was die App nicht selbst auswertet
+        &ndash; gemeinsame Notiz- und Quellens&auml;tze, Quellen an Ereignissen, Medien, eigene Merkmale &ndash;, wird
+        beim Export <b>unver&auml;ndert zur&uuml;ckgeschrieben</b>, sodass ein Durchlauf durch Anceslio so wenig wie
         m&ouml;glich verliert. Vorhandene Kennungen wie <span class="code">@I137@</span> bleiben erhalten; neue
         Personen bekommen die n&auml;chste freie Nummer.</p>
         <p>Dateien aus anderen Programmen sind nicht immer sauber, deshalb repariert die App beim Lesen, was sie
@@ -2937,11 +3058,10 @@ window.I18N={
         <span class="code">CONT</span>-Zeilen verteilt ist, wird wieder zusammengesetzt, und eine
         Familienverkn&uuml;pfung, die nur auf einer Seite steht &ndash; im Familiensatz, aber nicht bei der Person,
         oder umgekehrt &ndash;, wird erg&auml;nzt, statt diese Personen unverwandt aussehen zu lassen.</p>
-        <p>Die Daten liegen im <span class="code">localStorage</span> dieser App unter dem Schl&uuml;ssel
-        <span class="code">anceslio.ged.v1</span>, gespeichert als vollst&auml;ndiges GEDCOM &ndash; etwa
-        0,5&nbsp;MB f&uuml;r 3.000 Personen, was in Sekundenbruchteilen l&auml;dt. Weigert sich der Browser, so viel zu
-        speichern, sagt die App das und arbeitet ohne die automatische Sicherung weiter; der Export funktioniert
-        trotzdem.</p>
+        <p>Die Daten liegen im <span class="code">localStorage</span> dieser App, je Datei ein vollst&auml;ndiges
+        GEDCOM unter Schl&uuml;sseln, die mit <span class="code">anceslio.</span> beginnen &ndash; etwa 0,5&nbsp;MB
+        f&uuml;r 3.000 Personen, was in Sekundenbruchteilen l&auml;dt. Weigert sich der Browser, so viel zu speichern,
+        sagt die App das und arbeitet ohne automatisches Speichern weiter; das Sichern funktioniert trotzdem.</p>
         <p>Die App merkt sich auch, <b>wo man war</b>: die Person in der Mitte des Stammbaums, die Schalter
         <b>&#65291;&nbsp;Gro&szlig;eltern</b> und <b>&#65291;&nbsp;Enkel</b>, die Wurzelperson und jede Bearbeitung
         der Nachfahrentafel &ndash; ausgeblendete Zweige, Verweisk&auml;sten, &uuml;berschriebene Zeilen, den Tafeltitel und die
@@ -3001,7 +3121,7 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='4.0';
+var APPVERSION='4.1';
 
 /* ====================================================================
    Welche Kodierung hat die Datei?
@@ -3128,7 +3248,12 @@ function joinContinuations(lines){
   for(i=0;i<lines.length;i++){
     m=/^\s*\d+\s+(CONC|CONT)(?:\s([\s\S]*))?$/.exec(lines[i]);
     if(m && out.length){
-      out[out.length-1] += (m[1]==='CONT' ? '\n' : '') + (m[2]||'');
+      var vor=out[out.length-1];
+      /* Beginnt der Wert erst in der Folgezeile („1 NOTE" / „2 CONC Text"),
+         darf er nicht an das Kennzeichen geklebt werden - das ergab
+         „1 NOTEText", und der Text war verloren. */
+      if(m[1]==='CONC' && /^\s*\d+\s+(?:@[^@]+@\s+)?\S+$/.test(vor)) vor+=' ';
+      out[out.length-1] = vor + (m[1]==='CONT' ? '\n' : '') + (m[2]||'');
       continue;
     }
     out.push(lines[i]);
@@ -3276,6 +3401,15 @@ function linkFamilies(indi, fam){
 }
 
 /* ---------- writing GEDCOM ---------- */
+/* Zeilen anhaengen, ohne die ganze Liste jedes Mal neu zu bauen. Bis 4.0
+   stand hier out=out.concat(...) - fuer jeden mitgefuehrten Block wurde
+   die gesamte bisherige Ausgabe kopiert. Gemessen an einer Datei mit
+   10.000 Personen und 4.000 Quellensaetzen: 4,2 s je Speichern, und
+   gespeichert wird nach jeder Aenderung. Die Ausgabe ist Byte fuer Byte
+   dieselbe. */
+function dazu(out, zeilen, ganz){
+  for(var i=0;i<zeilen.length;i++) out.push(ganz ? zeilen[i].trim() : zeilen[i].replace(/\s+$/,''));
+}
 function serializeGedcom(D){
   var out=[];
   out.push('0 HEAD','1 SOUR Anceslio','2 NAME Anceslio (family tree, descendant chart, kinship)',
@@ -3306,7 +3440,7 @@ function serializeGedcom(D){
     if(p.stamm){ out.push('1 FACT '+p.stamm); out.push('2 TYPE '+(p.stammType||'Lineage')); }
     for(j=0;j<(p.famc||[]).length;j++) if(D.fam[p.famc[j]]) out.push('1 FAMC @'+p.famc[j]+'@');
     for(j=0;j<(p.fams||[]).length;j++) if(D.fam[p.fams[j]]) out.push('1 FAMS @'+p.fams[j]+'@');
-    for(j=0;j<(p.extra||[]).length;j++) out=out.concat(p.extra[j].map(function(x){return x.trim();}));
+    for(j=0;j<(p.extra||[]).length;j++) dazu(out, p.extra[j], true);
   }
   for(i=0;i<fids.length;i++){
     var f=D.fam[fids[i]]; if(!f) continue;
@@ -3320,12 +3454,12 @@ function serializeGedcom(D){
       for(j=0;j<(f.marrSub||[]).length;j++) out.push(f.marrSub[j].trim());
     }
     for(j=0;j<(f.children||[]).length;j++) if(D.indi[f.children[j]]) out.push('1 CHIL @'+f.children[j]+'@');
-    for(j=0;j<(f.extra||[]).length;j++) out=out.concat(f.extra[j].map(function(x){return x.trim();}));
+    for(j=0;j<(f.extra||[]).length;j++) dazu(out, f.extra[j], true);
   }
   /* Die fremden Saetze stehen nach den Familien und vor dem Abschluss,
      in der Reihenfolge, in der sie in der Datei standen. */
   for(i=0;i<(D.rest||[]).length;i++)
-    out=out.concat(D.rest[i].map(function(x){ return x.replace(/\s+$/,''); }));
+    dazu(out, D.rest[i], false);
   out.push('0 TRLR');
   var wrapped=[];
   for(i=0;i<out.length;i++) pushGedLine(wrapped, out[i]);
@@ -3338,20 +3472,42 @@ var GED_MAX=200;
 function pushGedLine(out, line){
   /* almost every line is short and plain – do not pay for a regex on those */
   if(line.length<=GED_MAX && line.indexOf('\n')<0){ out.push(line); return; }
-  var m=/^(\d+) (@[^@]+@ \S+|\S+)(?: ([\s\S]*))?$/.exec(line);
+  /* Der Wert kann auch direkt mit einem Zeilenumbruch beginnen („1 NOTE",
+     dann „2 CONT Text"). Bis 4.0 passte so eine Zeile nicht ins Muster,
+     wurde roh mit dem Umbruch darin geschrieben - und beim naechsten
+     Lesen fiel der Text weg. */
+  var m=/^(\d+) (@[^@]+@ \S+|\S+)(?: ([\s\S]*)|(\n[\s\S]*))?$/.exec(line);
   if(!m){ out.push(line); return; }
-  var val=m[3]||'';
+  var val=m[3]!=null ? m[3] : (m[4]||'');
   if(val.length<=GED_MAX && val.indexOf('\n')<0){ out.push(line); return; }
   var lvl=+m[1], head=m[2], parts=val.split('\n'), k, seg, firstPiece;
   for(k=0;k<parts.length;k++){
     seg=parts[k]; firstPiece=true;
     do{
-      var piece=seg.slice(0,GED_MAX); seg=seg.slice(GED_MAX);
+      var cut=gedCut(seg), piece=seg.slice(0,cut); seg=seg.slice(cut);
       if(k===0 && firstPiece) out.push(lvl+' '+head+(piece?' '+piece:''));
       else out.push((lvl+1)+' '+((firstPiece && k>0)?'CONT':'CONC')+(piece?' '+piece:''));
       firstPiece=false;
     }while(seg.length);
   }
+}
+/* Wo ein zu langer Wert geteilt wird. Bis 4.0 genau nach 200
+   Zeichen - mitten in ein Emoji hinein (zwei Zeichen in JavaScript,
+   eines in UTF-8), das beim Schreiben der Datei dann zu „ " wurde, und
+   gern auch neben einem Leerzeichen, das manche Programme am Zeilenende
+   oder -anfang wegwerfen. Seit Notizen und Quellen in der App
+   geschrieben werden, kommen lange Texte mit beidem viel haeufiger vor.
+   Jetzt wird ein paar Zeichen frueher geteilt, wenn noetig. */
+function gedCut(s){
+  if(s.length<=GED_MAX) return s.length;
+  var c=GED_MAX, min=Math.floor(GED_MAX/2);
+  function schlecht(k){
+    var a=s.charCodeAt(k-1);
+    return (a>=0xD800 && a<=0xDBFF) || s.charAt(k-1)===' ' || s.charAt(k)===' ';
+  }
+  while(c>min && schlecht(c)) c--;
+  if(c<=min){ c=GED_MAX; var h=s.charCodeAt(c-1); if(h>=0xD800 && h<=0xDBFF) c--; }
+  return c;
 }
 function orderedIds(D,which){
   var ord=(D.order&&D.order[which])||[], seen={}, res=[], i;
@@ -3435,8 +3591,8 @@ function setData(newD, type, restored){
    Änderung ist das richtig. Für viertausend ist es verheerend:
    Gemessen am Übernehmen von 200 Platzhalterdaten in einer Datei mit
    11.700 Personen - 2.048 ms, also hochgerechnet 44 Sekunden für
-   4.295 Stück, und zwar mit vollständig blockiertem Browser. Joachim
-   hat genau das erlebt: Er drückte auf „Alle 4.295 übernehmen" und
+   4.295 Stück, und zwar mit vollständig blockiertem Browser. Genau das
+   ist im Test passiert: Ein Druck auf „Alle 4.295 übernehmen" und
    die Seite stand.
 
    Deshalb FP.batch(fn): Innerhalb der Klammer wird nur vermerkt, DASS
@@ -3447,6 +3603,7 @@ var stapel=0, stapelOffen=false;
 function changed(id){
   if(stapel){ stapelOffen=true; return; }
   if(id!=null) touchIndex(id); else rebuildIndex();
+  markUnsaved(id);
   emit('edit'); scheduleSave();
 }
 function batch(fn){
@@ -3456,7 +3613,7 @@ function batch(fn){
     stapel--;
     if(!stapel && stapelOffen){
       stapelOffen=false;
-      rebuildIndex(); emit('edit'); scheduleSave();
+      rebuildIndex(); markUnsaved(null); emit('edit'); scheduleSave();
     }
   }
 }
@@ -3497,6 +3654,7 @@ function reposition(){
   for(var i=0;i<INDEX.length;i++) INDEX_AT[INDEX[i].id]=i;
 }
 function rebuildIndex(){
+  REST_IDX=null;
   INDEX=[];
   for(var id in D.indi) INDEX.push(entryFor(id));
   INDEX.sort(byName);
@@ -3561,10 +3719,17 @@ var lastDropped=[];
 function trimLib(){
   lastDropped=[];
   if(LIB.files.length<=MAXFILES) return;
-  var sorted=LIB.files.slice().sort(function(a,b){ return (b.opened||0)-(a.opened||0); });
+  /* Behalten wird zuerst, was ungesicherte Aenderungen hat - davon gibt
+     es nirgends sonst eine Kopie -, dann das Neueste. Muss trotzdem
+     eine ungesicherte Datei gehen, steht das in der Meldung dabei. */
+  var sorted=LIB.files.slice().sort(function(a,b){
+    var c=(b.id===LIB.current?1:0)-(a.id===LIB.current?1:0); if(c) return c;
+    var r=(riskant(b)?1:0)-(riskant(a)?1:0);
+    return r || (b.opened||0)-(a.opened||0);
+  });
   for(var i=MAXFILES;i<sorted.length;i++){
     if(sorted[i].id===LIB.current) continue;
-    lastDropped.push(sorted[i].name);
+    lastDropped.push(sorted[i].name+(riskant(sorted[i]) ? ' ('+L('not backed up')+')' : ''));
     dropFile(sorted[i].id);
   }
 }
@@ -3587,9 +3752,16 @@ function libMigrate(){
 }
 libLoad(); libMigrate();
 
-function addFile(name, text){
+/* Woher eine Datei kommt, entscheidet, was „gesichert" fuer sie heisst:
+   'file' wurde aus einer Datei geoeffnet, die es draussen schon gibt;
+   'new' und 'merge' gibt es nur in der App; 'sample' ist die
+   Beispielfamilie, an die niemand erinnert werden muss. Eintraege aus
+   Fassungen vor 4.1 haben keine Herkunft - fuer sie ist unbekannt, ob
+   je gesichert wurde, und genau das sagt die App dann auch. */
+function addFile(name, text, origin){
   var id=newId();
-  LIB.files.push({id:id, name:name||defaultName(), bytes:(text||'').length, count:0, opened:Date.now()});
+  LIB.files.push({id:id, name:name||defaultName(), bytes:(text||'').length, count:0, opened:Date.now(),
+                  origin:origin||'file', unsaved:0});
   LIB.current=id;
   trimLib();
   libSave();
@@ -3647,6 +3819,154 @@ function restore(){
   }catch(e){ return false; }
 }
 function clearStorage(){ if(LIB.current){ dropFile(LIB.current); libSave(); } }
+
+/* ===================================================================
+   Sicherung
+   Die App behaelt jede Aenderung von selbst - aber nur in sich selbst.
+   Wer das fuer eine Sicherung haelt, verliert alles, sobald die App
+   geloescht, der Browser geleert oder das Handy verloren ist. Deshalb
+   fuehrt jede Datei Buch: wie viele Aenderungen seit der letzten
+   Sicherung, seit wann, und wann zuletzt gesichert wurde. Gesichert
+   heisst: als .ged ausserhalb der App abgelegt - gespeichert oder
+   kopiert.
+
+   Tippen in ein Feld sind viele kleine Aenderungen hintereinander.
+   Gezaehlt wird deshalb hoechstens eine je Person und vier Sekunden,
+   damit die Zahl ungefaehr dem entspricht, was man selbst „eine
+   Aenderung" nennen wuerde - und nicht jeden Tastendruck.
+   =================================================================== */
+var sicherCbs=[], letzteId=null, letzteZeit=0, letzteDatei=null;
+function sicherMelden(){
+  for(var i=0;i<sicherCbs.length;i++){ try{ sicherCbs[i](); }catch(e){ console.error(e); } }
+}
+function riskant(f){
+  return !!f && f.origin!=='sample' && ((f.unsaved||0)>0 || (f.origin==='merge' && !f.backup));
+}
+function markUnsaved(id){
+  var e=curEntry(); if(!e) return;
+  var jetzt=Date.now();
+  /* Jede Datei hat ein I1 - ohne den Dateivergleich blieb die erste
+     Aenderung in der naechsten Datei ungezaehlt. */
+  if(id!=null && id===letzteId && LIB.current===letzteDatei && jetzt-letzteZeit<4000){ letzteZeit=jetzt; return; }
+  letzteId=id; letzteZeit=jetzt; letzteDatei=LIB.current;
+  if(!e.unsaved) e.since=jetzt;
+  e.unsaved=(e.unsaved||0)+1;
+  sicherMelden();
+}
+function markBackedUp(){
+  var e=curEntry(); if(!e) return;
+  e.unsaved=0; e.since=null; e.backup=Date.now(); e.remind=null; e.remindAfter=null;
+  letzteId=null;
+  libSave(); sicherMelden();
+}
+
+/* ===================================================================
+   Quellen und Notizen
+   Sie stehen in der Person dort, wo sie schon immer standen: in den
+   Bloecken, die die App unveraendert durchreicht (p.extra). Nichts wird
+   herausgeloest, umsortiert oder neu geschrieben, solange niemand
+   etwas aendert - eine Datei kommt also Byte fuer Byte so heraus, wie
+   sie hereinkam.
+
+   GEDCOM kennt zwei Formen. Direkt an der Person:
+       1 NOTE Text            1 SOUR Kirchenbuch, Taufen 1823, S. 14
+   Diese bearbeitet die App. Und als Verweis auf einen eigenen Satz:
+       1 NOTE @N12@           1 SOUR @S3@  (mit 2 PAGE S. 14)
+   Ein solcher Satz kann von vielen Personen benutzt werden. Ihn hier zu
+   aendern, hiesse ihn bei allen zu aendern, die darauf zeigen - ohne
+   dass man es sieht. Er wird deshalb mit seinem Text angezeigt, aber
+   nur gelesen; bearbeitet wird er im Programm, aus dem er stammt.
+   =================================================================== */
+var REST_IDX=null;
+function restIndex(){
+  if(REST_IDX) return REST_IDX;
+  REST_IDX={};
+  var r=D.rest||[];
+  for(var i=0;i<r.length;i++){
+    var m=/^\s*0\s+@([^@]+)@\s+(\S+)/.exec(r[i][0]||'');
+    if(m) REST_IDX[m[1]]={tag:m[2].toUpperCase(), zeilen:r[i]};
+  }
+  return REST_IDX;
+}
+function qnKopf(z){
+  var m=/^\s*(\d+)\s+(\S+)(?: ([\s\S]*)|(\n[\s\S]*))?$/.exec(z||'');
+  return m ? {lvl:+m[1], tag:m[2].toUpperCase(), val:m[3]!=null ? m[3] : (m[4]||'')} : null;
+}
+function qnZeiger(v){ var m=/^@([^@]+)@$/.exec(String(v||'').trim()); return m ? m[1] : null; }
+/* Der lesbare Text eines Notiz- oder Quellensatzes; null, wenn es den
+   Satz in der Datei gar nicht gibt. */
+function satzText(ptr){
+  var r=restIndex()[ptr]; if(!r) return null;
+  if(r.tag==='NOTE'){
+    var m=/^\s*0\s+@[^@]+@\s+NOTE(?:\s([\s\S]*))?$/.exec(r.zeilen[0]||'');
+    return (m && m[1]) || '';
+  }
+  var titl='', abbr='', auth='', publ='';
+  for(var i=1;i<r.zeilen.length;i++){
+    var h=qnKopf(r.zeilen[i]); if(!h || h.lvl!==1) continue;
+    if(h.tag==='TITL') titl=h.val; else if(h.tag==='ABBR') abbr=h.val;
+    else if(h.tag==='AUTH') auth=h.val; else if(h.tag==='PUBL') publ=h.val;
+  }
+  return titl || abbr || [auth,publ].filter(Boolean).join(', ');
+}
+/* Ein @ am Anfang eines Werts muss in GEDCOM verdoppelt werden, sonst
+   haelt ein Leser „@S3@" fuer einen Verweis. */
+function qnAus(v){ return String(v||'').replace(/^@@/,'@'); }
+function qnEin(t){
+  t=String(t==null?'':t).replace(/\r\n?/g,'\n').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g,'').replace(/\s+$/,'');
+  t=t.replace(/^(?:[ \t]*\n)+/,'');
+  /* „  @S1@" waere nach dem Zurechtstutzen in jedem Leser ein Verweis */
+  t=t.replace(/^[ \t]+(?=@)/,'');
+  return /^@/.test(t) ? '@'+t : t;
+}
+function quellenNotizen(id){
+  var out={notes:[], sources:[], events:[]};
+  var p=D.indi[id]; if(!p) return out;
+  var ex=p.extra||[];
+  for(var i=0;i<ex.length;i++){
+    var bl=ex[i], h=qnKopf(bl[0]);
+    if(!h || h.lvl!==1 || (h.tag!=='NOTE' && h.tag!=='SOUR')) continue;
+    var ptr=qnZeiger(h.val), it={ref:bl, ptr:ptr, mehr:bl.length>1};
+    if(ptr){
+      var t=satzText(ptr);
+      it.text=t==null ? '' : t; it.fehlt=(t==null); it.edit=false;
+      for(var j=1;j<bl.length;j++){ var s=qnKopf(bl[j]); if(s && s.lvl===2 && s.tag==='PAGE'){ it.page=s.val; break; } }
+    } else { it.text=qnAus(h.val); it.edit=true; }
+    (h.tag==='NOTE' ? out.notes : out.sources).push(it);
+  }
+  /* Quellen an Geburt und Tod gehoeren der Person mit. Die App
+     bearbeitet sie nicht, sagt aber, dass es sie gibt - sonst saehe eine
+     sorgfaeltig belegte Datei hier aus, als haette sie keine einzige. */
+  [['BIRT','birtSub'],['DEAT','deatSub']].forEach(function(e){
+    var n=0;
+    (p[e[1]]||[]).forEach(function(z){ var h2=qnKopf(z); if(h2 && h2.lvl===2 && (h2.tag==='SOUR'||h2.tag==='NOTE')) n++; });
+    if(n) out.events.push({ev:e[0], n:n});
+  });
+  return out;
+}
+function setzeEintrag(id, ref, text){
+  var p=D.indi[id]; if(!p) return false;
+  var i=(p.extra||[]).indexOf(ref); if(i<0) return false;
+  var h=qnKopf(ref[0]); if(!h || qnZeiger(h.val)) return false;
+  var t=qnEin(text);
+  if(!t.trim()){ p.extra.splice(i,1); changed(id); return true; }
+  /* Nur Hineintippen und Verlassen soll nichts umschreiben: weder ein
+     einzelnes @ verdoppeln noch eine Leerzeile am Anfang wegnehmen. */
+  if(t===h.val || t===qnEin(qnAus(h.val))) return true;
+  ref[0]=h.lvl+' '+h.tag+' '+t;
+  changed(id);
+  return true;
+}
+function neuerEintrag(id, tag, text){
+  var p=D.indi[id]; if(!p || (tag!=='NOTE' && tag!=='SOUR')) return null;
+  var t=qnEin(text);
+  if(!t.trim()) return null;
+  if(!p.extra) p.extra=[];
+  var bl=['1 '+tag+' '+t];
+  p.extra.push(bl);
+  changed(id);
+  return bl;
+}
 
 /* ===================================================================
    queries
@@ -3720,6 +4040,7 @@ function addPerson(fields){
   D.indi[id]=p; D.order.indi.push(id);
   hasData=true;
   var e=entryFor(id); INDEX.splice(slotFor(e),0,e); reposition();
+  markUnsaved(id);
   emit('edit'); scheduleSave();
   return id;
 }
@@ -3868,12 +4189,12 @@ window.FP = {
   parse:parseGedcom,
   dekodiere:dekodiere,
   serialize:function(){ return serializeGedcom(D); },
-  loadText:function(text, name){
+  loadText:function(text, name, origin){
     var parsed=parseGedcom(text);
     if(!Object.keys(parsed.indi).length) throw new Error(L('No people found – is this a valid GEDCOM file?'));
     /* whatever was pending belongs to the file we are leaving */
     if(saveTimer) doSave();
-    var id=addFile(name, text);
+    var id=addFile(name, text, origin);
     /* fill the count in before the menu is painted, or the new file shows up
        as "empty" until the first save half a second later */
     var e=entryOf(id);
@@ -3883,7 +4204,7 @@ window.FP = {
   },
   startEmpty:function(name){
     if(saveTimer) doSave();
-    addFile(name || uniqueName(L('New family')), '');
+    addFile(name || uniqueName(L('New family')), '', 'new');
     setData({indi:{},fam:{},order:{indi:[],fam:[]}},'load'); hasData=true;
   },
 
@@ -3891,7 +4212,8 @@ window.FP = {
   files:function(){
     return LIB.files.slice().sort(function(a,b){ return (b.opened||0)-(a.opened||0); })
       .map(function(e){ return {id:e.id, name:e.name, count:e.count||0, bytes:e.bytes||0,
-        opened:e.opened||0, start:e.start||null, current:e.id===LIB.current}; });
+        opened:e.opened||0, start:e.start||null, current:e.id===LIB.current,
+        unsaved:e.unsaved||0, backup:e.backup||null, origin:e.origin||'alt', risky:riskant(e)}; });
   },
   currentFile:function(){ return LIB.current; },
   /* Den Text einer anderen Datei der Bibliothek lesen, ohne sie zu
@@ -3953,9 +4275,28 @@ window.FP = {
      unberuehrt - es entsteht keine neue Datei. */
   applyGedcom:function(text){
     var parsed=parseGedcom(text||'');
-    D=parsed; hasData=true; rebuildIndex(); emit('edit'); scheduleSave();
+    D=parsed; hasData=true; rebuildIndex(); markUnsaved(null); emit('edit'); scheduleSave();
   },
   touchAll:function(){ changed(); },
+  /* ---------- Sicherung ---------- */
+  sicherung:function(){
+    var e=curEntry(); if(!e) return null;
+    return {name:e.name, unsaved:e.unsaved||0, since:e.since||null, backup:e.backup||null,
+            origin:e.origin||'alt', remind:e.remind||null, remindAfter:e.remindAfter||null,
+            risky:riskant(e)};
+  },
+  gesichert:function(){ markBackedUp(); },
+  /* „Spaeter": erst nach zehn weiteren Aenderungen oder drei Tagen wieder */
+  spaeterErinnern:function(){
+    var e=curEntry(); if(!e) return;
+    e.remind=(e.unsaved||0)+10; e.remindAfter=Date.now()+3*864e5;
+    libSave(); sicherMelden();
+  },
+  onSicherung:function(cb){ sicherCbs.push(cb); },
+  /* ---------- Quellen und Notizen ---------- */
+  quellenNotizen:quellenNotizen,
+  setzeEintrag:setzeEintrag,
+  neuerEintrag:neuerEintrag,
   batch:batch,
   addPerson:addPerson, updatePerson:updatePerson, deletePerson:deletePerson,
   setParent:setParent, removeParent:removeParent,
@@ -4167,7 +4508,7 @@ var askCb=null;
 function ask(title, text, cb, okLabel){
   $('askTitle').innerHTML=esc(title); $('askText').innerHTML=text;
   $('askYes').textContent=okLabel||'OK';
-  $('askNo').textContent=cb? 'Cancel' : 'Close';
+  $('askNo').textContent=cb? L('Cancel') : L('Close');
   askCb=cb;
   openModal('mdAsk', function(){ askCb=null; });
 }
@@ -4239,9 +4580,9 @@ function setStatus(msg, cls){
   el.textContent=msg;
   el.style.color = cls==='err' ? 'var(--warn)' : (cls==='ok' ? 'var(--ok)' : 'var(--muted)');
 }
-function loadText(text, name){
+function loadText(text, name, origin){
   try{
-    var n=FP.loadText(text, name);
+    var n=FP.loadText(text, name, origin);
     setStatus(n+L(' people loaded.'),'ok');
     toast(n+L(' people loaded'));
     var gone=FP.lastDropped();
@@ -4292,16 +4633,18 @@ function download(blob, name){
   try{
     var a=document.createElement('a');
     var url=URL.createObjectURL(blob);
-    if(typeof a.download==='undefined'){ window.open(url,'_blank'); return; }
+    if(typeof a.download==='undefined'){ window.open(url,'_blank'); return true; }
     a.href=url; a.download=name; a.rel='noopener';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(function(){ try{ URL.revokeObjectURL(url); }catch(e){} }, 4000);
     toast(L('Saved as ')+name);
+    return true;
   }catch(e){
     toast(L('Saving is not possible here – use “Copy to clipboard”.'));
+    return false;
   }
 }
-function copyText(text, okMsg){
+function copyText(text, okMsg, onOk){
   function fallback(){
     var ta=document.createElement('textarea');
     ta.value=text; ta.setAttribute('readonly','');
@@ -4311,9 +4654,10 @@ function copyText(text, okMsg){
     var ok=false; try{ ok=document.execCommand('copy'); }catch(e){}
     document.body.removeChild(ta);
     toast(ok ? okMsg : L('Copying did not work – use “Show the text”.'));
+    if(ok && onOk) onOk();
   }
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(function(){ toast(okMsg); }, fallback);
+    navigator.clipboard.writeText(text).then(function(){ toast(okMsg); if(onOk) onOk(); }, fallback);
   } else fallback();
 }
 function stamp(withTime){
@@ -4361,16 +4705,19 @@ function hauptName(){
   return (roh[best]||'').replace(/[^\p{L}\p{N} \-]/gu,'').trim()
           .replace(/\s+/g,'-').slice(0,40);
 }
+function gedName(){ var hn=hauptName(); return (hn?hn+'_':'family_')+stamp(true)+'.ged'; }
 function exportGed(){
   if(!FP.count()){ ask(L('Nothing to export'),L('There are no people in the file yet.'),null,'OK'); return; }
-  var hn=hauptName();
-  var ged=FP.serialize(), name=(hn?hn+'_':'family_')+stamp(true)+'.ged';
+  var ged=FP.serialize(), name=gedName();
   $('expInfo').textContent=FP.count()+' people, '+Math.max(1,Math.round(ged.length/1024))+' KB · '+name;
   $('expText').value=ged;
   $('expText').classList.add('hidden');
   openModal('mdExport');
-  $('expSave').onclick=function(){ download(new Blob([ged],{type:'text/plain;charset=utf-8'}), name); };
-  $('expCopy').onclick=function(){ copyText(ged, L('GEDCOM copied to the clipboard')); };
+  /* Gespeichert oder kopiert ist gesichert. Nur angezeigt ist es nicht. */
+  $('expSave').onclick=function(){
+    if(download(new Blob([ged],{type:'text/plain;charset=utf-8'}), name)){ FP.gesichert(); hinweisMerken(); } };
+  $('expCopy').onclick=function(){
+    copyText(ged, L('GEDCOM copied to the clipboard'), function(){ FP.gesichert(); hinweisMerken(); }); };
   $('expShow').onclick=function(){
     $('expText').classList.remove('hidden');
     setTimeout(function(){ $('expText').focus(); $('expText').select(); },40);
@@ -4397,6 +4744,90 @@ document.addEventListener('click', function(){ dm.classList.remove('show'); });
 dm.addEventListener('click', function(e){ e.stopPropagation(); dm.classList.remove('show'); });
 $('miLoad').onclick=function(){ $('gedFile').click(); };
 $('miExport').onclick=exportGed;
+
+/* ---------------- Sicherung ----------------
+   Drei Stellen sagen dasselbe, jede fuer eine andere Lage: die Zahl am
+   Datenknopf (sieht man immer), die Zeile unter „Jetzt sichern" im
+   Menue (sagt, seit wann), und die Leiste unter der Kopfzeile (meldet
+   sich von selbst, aber selten: nach zehn ungesicherten Aenderungen oder
+   einer Woche). Beim ersten Bearbeiten erklaert die Leiste einmal,
+   warum es das alles gibt - ohne Dialog, damit sie niemandem mitten im
+   Tippen den Fokus wegnimmt. */
+var LS_HINT='anceslio.hint.backup', barArt=null;
+function wann(ms){
+  var d=new Date(ms), de=I18N.lang()==='de', loc=de?'de-DE':'en-GB';
+  var o={day:'numeric', month:'short'};
+  if(d.getFullYear()!==new Date().getFullYear()) o.year='numeric';
+  var tag, zeit;
+  try{ tag=d.toLocaleDateString(loc,o); zeit=d.toLocaleTimeString(loc,{hour:'2-digit', minute:'2-digit'}); }
+  catch(e){ tag=d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear(); zeit=d.getHours()+':'+('0'+d.getMinutes()).slice(-2); }
+  return tag+', '+zeit;
+}
+function aenderungen(n){ return n===1 ? L('1 change') : I18N.num(n)+L(' changes'); }
+function sicherText(s){
+  if(!s) return '';
+  var n=s.unsaved;
+  if(s.backup) return n ? aenderungen(n)+L(' since the backup on ')+wann(s.backup)
+                        : L('Backed up on ')+wann(s.backup)+L(' – unchanged since');
+  if(s.origin==='file' || s.origin==='sample')
+    return n ? aenderungen(n)+L(' since the file was opened – not backed up yet') : L('Unchanged since the file was opened');
+  if(s.origin==='merge' && !n) return L('Merged in the app – never backed up');
+  return n ? aenderungen(n)+L(' – never backed up') : L('Never backed up with this app');
+}
+function hinweisGesehen(){ try{ return localStorage.getItem(LS_HINT)==='1'; }catch(e){ return true; } }
+function hinweisMerken(){ try{ localStorage.setItem(LS_HINT,'1'); }catch(e){} }
+function paintBackup(){
+  var s=(FP.hasData() && FP.count()) ? FP.sicherung() : null;
+  var info=$('miBackupInfo');
+  info.textContent=s ? sicherText(s) : '';
+  info.classList.toggle('warn', !!(s && s.risky));
+  $('miBackup').disabled=!s;
+  var b=$('dataBadge');
+  b.hidden=!(s && s.risky);
+  b.textContent=(s && s.unsaved) ? (s.unsaved>99 ? '99+' : String(s.unsaved)) : '!';
+  barArt=null;
+  if(s && s.risky){
+    if(!hinweisGesehen()) barArt='first';
+    else {
+      var jetzt=Date.now(), seit=s.backup||s.since||jetzt, faellig;
+      if(s.remind!=null || s.remindAfter!=null)          /* nach „Später" */
+        faellig = s.unsaved>=(s.remind||1e9) || jetzt>=(s.remindAfter||1e15);
+      else
+        faellig = s.unsaved>=10 || jetzt-seit>=7*864e5 || (s.origin==='merge' && !s.backup);
+      if(faellig) barArt='remind';
+    }
+  }
+  $('backupBar').hidden=!barArt;
+  if(barArt==='first'){
+    $('backupMsg').innerHTML=L('<b>Good to know:</b> Anceslio keeps every change – but only inside this app. If the phone is lost or the app is removed, it is gone. A real backup is a .ged file outside the app.');
+    $('backupLater').textContent=L('Got it');
+  } else if(barArt==='remind'){
+    $('backupMsg').innerHTML='<b>'+esc(s.unsaved ? aenderungen(s.unsaved)+L(' only inside the app')
+                                                  : L('This file exists only inside the app'))+'</b> – '+esc(L('not backed up yet.'));
+    $('backupLater').textContent=L('Later');
+  }
+  $('backupNow').textContent=L('💾 Back up now');
+  if(barArt) platziereLeiste();
+}
+function platziereLeiste(){
+  var r=$('appbar').getBoundingClientRect();
+  $('backupBar').style.top=Math.round(Math.max(0,r.bottom)+6)+'px';
+}
+window.addEventListener('resize', function(){ if(barArt) platziereLeiste(); });
+function sichernJetzt(){
+  closeDataMenu();
+  if(!FP.count()){ ask(L('Nothing to back up'), L('There are no people in the file yet.'), null, 'OK'); return; }
+  if(download(new Blob([FP.serialize()],{type:'text/plain;charset=utf-8'}), gedName())){
+    FP.gesichert(); hinweisMerken();
+  }
+}
+$('miBackup').onclick=sichernJetzt;
+$('backupNow').onclick=sichernJetzt;
+$('backupLater').onclick=function(){
+  if(barArt==='first') hinweisMerken(); else FP.spaeterErinnern();
+  paintBackup();
+};
+FP.onSicherung(function(){ paintBackup(); });
 
 /* ---------------- settings: language and appearance ---------------- */
 function paintSettings(){
@@ -4435,7 +4866,8 @@ function sizeText(b){
 }
 function fileLabel(f){
   return esc(f.name)+' <span class="mifiles-n">'+
-    (f.count ? f.count+L(' people') : L('empty'))+'</span>';
+    (f.count ? f.count+L(' people') : L('empty'))+
+    (f.risky ? ' \u00b7 <span class="warnt">'+L('not backed up')+'</span>' : '')+'</span>';
 }
 function paintFileList(){
   var list=FP.files(), box=$('fileList'), wrap=$('fileWrap');
@@ -4468,7 +4900,8 @@ function paintFileRows(){
        '" aria-label="'+esc(L('Remove this file'))+'">\ud83d\uddd1</button>'+
        '<div class="filemeta muted">'+(list[i].count? list[i].count+L(' people') : L('empty'))+
        (list[i].bytes? ' \u00b7 '+sizeText(list[i].bytes) : '')+
-       (list[i].current? ' \u00b7 '+L('open now') : '')+'</div></div>';
+       (list[i].current? ' \u00b7 '+L('open now') : '')+
+       (list[i].risky? ' \u00b7 <span class="warnt">'+L('not backed up')+'</span>' : '')+'</div></div>';
   }
   box.innerHTML = h || '<p class="muted">'+L('No files stored yet.')+'</p>';
   var ren=box.querySelectorAll('[data-ren]'), i2;
@@ -4485,6 +4918,7 @@ function paintFileRows(){
       var f=null, all=FP.files();
       for(var k=0;k<all.length;k++) if(all[k].id===id) f=all[k];
       ask(L('Remove this file?'), esc(f?f.name:'')+'<br><br>'+
+          (f && f.risky ? '<b class="warnt">'+L('This file has changes that are not backed up.')+'</b><br><br>' : '')+
           L('It is removed from this browser only. An exported GEDCOM file on your device is not touched.'),
           function(){ FP.removeFile(id); paintFileList(); paintFileRows(); toast(L('File removed')); },
           L('Yes, remove'));
@@ -4499,8 +4933,10 @@ $('miFiles').onclick=function(){ closeDataMenu(); paintFileRows(); openModal('md
 $('filesClose').onclick=function(){ closeModal('mdFiles'); };
 
 $('miClear').onclick=function(){
+  var s=FP.sicherung();
   ask(L('Clear all data?'),
       '<b>'+esc(FP.fileName()||'')+'</b><br><br>'+
+      (s && s.risky ? '<b class="warnt">'+esc(sicherText(s))+'.</b><br><br>' : '')+
       L('Every person and every change stored in this browser will be removed. ')+
       L('This cannot be undone – export a GEDCOM file first if you want to keep the data.'),
       function(){ FP.reset(); uiForget(); toast(L('Data cleared')); }, L('Yes, clear'));
@@ -4581,7 +5017,7 @@ function sampleText(){
     t=t.split('1 OCCU '+k).join('1 OCCU '+SAMPLE_DE[k]).split('1 FACT '+k).join('1 FACT '+SAMPLE_DE[k]);
   return t;
 }
-function loadSample(){ loadText(sampleText(), L('Sample family')); }
+function loadSample(){ loadText(sampleText(), L('Sample family'), 'sample'); }
 $('miSample').onclick=loadSample;
 $('btnSample').onclick=loadSample;
 
@@ -4685,7 +5121,7 @@ window.addEventListener('resize', function(){
 });
 /* This listener is registered before the three tabs register theirs, so the
    per-file memory is already switched when they ask for it. */
-FP.on(function(){ uiUse(FP.currentFile()); refreshShell(); paintFileList(); });
+FP.on(function(){ uiUse(FP.currentFile()); paintBackup(); refreshShell(); paintFileList(); });
 
 /* Everything is stored automatically; this just makes that visible, so nobody
    closes the app wondering whether their last change survived. */
@@ -4738,10 +5174,14 @@ function uiSet(key, value){
 function uiGet(key){ var v=uiState[key]; return (v && typeof v==='object') ? v : null; }
 function uiForget(){ uiState={}; if(uiTimer){ clearTimeout(uiTimer); uiTimer=null; }
   try{ localStorage.removeItem(LS_UI); }catch(e){} }
-/* a half second of typing must not be lost when the app is closed */
-window.addEventListener('pagehide', function(){ if(uiTimer) uiFlush(); });
+/* a half second of typing must not be lost when the app is closed.
+   Bis 4.0 galt das nur fuer die Ansicht - die Daten selbst warteten
+   ihre 600 ms ab, auch wenn die App in dieser Zeit in den Hintergrund
+   ging und Android sie dort beendete. Die letzte Eingabe war dann weg. */
+function allesSchreiben(){ if(uiTimer) uiFlush(); try{ FP.flush(); }catch(e){} }
+window.addEventListener('pagehide', allesSchreiben);
 document.addEventListener('visibilitychange', function(){
-  if(document.visibilityState==='hidden' && uiTimer) uiFlush(); });
+  if(document.visibilityState==='hidden') allesSchreiben(); });
 
 /* ---------------- shared interface for the tabs ---------------- */
 var treeFocusId=null, chartRootCb=null, treeGoCb=null, relGoCb=null;
@@ -5805,6 +6245,20 @@ function openPanel(id){
      '<div class="two">'+fld(L('Occupation'),'pOcc',p.occ)+fld(L('Lineage / house'),'pStamm',p.stamm)+'</div>'+
      '<div class="hint">'+L('Dates as 12 Apr 1901, Apr 1901, 1901 or 1901-04-12. Empty is fine.')+'</div></details>';
 
+  /* Notizen und Quellen - direkt nach den Angaben, weil sie zu diesen
+     gehoeren und nicht zu den Verwandten. */
+  var qn=FP.quellenNotizen(id), qnZahl=qn.notes.length+qn.sources.length;
+  h+=sect('sources', L('Notes &amp; sources'), qnZahl?String(qnZahl):'')+
+     qnListe(qn.notes,'NOTE')+qnListe(qn.sources,'SOUR');
+  if(qn.events.length){
+    h+='<div class="hint">'+L('Also in the file: sources or notes ')+
+       qn.events.map(function(e){ return (e.ev==='BIRT'?L('on the birth'):L('on the death'))+' ('+e.n+')'; }).join(', ')+
+       L(' – kept, but not edited here.')+'</div>';
+  }
+  if(qn.notes.concat(qn.sources).some(function(it){ return !it.edit; }))
+    h+='<div class="hint">'+L('A shared record is edited in the program it comes from – other people can point to the same record.')+'</div>';
+  h+='<div class="hint">'+L('Written into the GEDCOM file as NOTE and SOUR, so other programs read them too.')+'</div></details>';
+
   /* parents */
   h+=sect('parents', L('Parents'), parents.length?String(parents.length):'');
   if(!parents.length) h+='<div class="muted">'+L('No parents recorded.')+'</div>';
@@ -5850,8 +6304,36 @@ function openPanel(id){
      '<div class="hint">'+L('New people can be created straight from these buttons.')+'</div></details>';
 
   box.innerHTML=h;
+  box.setAttribute('data-pid', id);
   wireSections();
   wirePanel(id, fams);
+}
+/* Die Hoehe kommt aus dem Text, nicht aus der Messung: Das Fenster ist
+   beim Aufbauen oft noch zu und misst dann null. */
+function qnZeilen(t){
+  var z=String(t||'').split('\n'), n=0;
+  for(var i=0;i<z.length;i++) n+=1+Math.floor(z[i].length/38);
+  return Math.min(8, Math.max(2, n));
+}
+function qnListe(items, tag){
+  var h='<div class="qnhead">'+(tag==='NOTE'?L('Notes'):L('Sources'))+'</div>';
+  for(var k=0;k<items.length;k++){
+    var it=items[k];
+    if(it.edit){
+      h+='<div class="fld"><textarea rows="'+qnZeilen(it.text)+'" data-qn="'+tag+'" data-k="'+k+'" aria-label="'+
+         esc(tag==='NOTE'?L('Note'):L('Source'))+'">\n'+esc(it.text)+'</textarea>'+
+         (it.mehr?'<div class="hint">'+L('Further details from the file are kept.')+'</div>':'')+'</div>';
+    } else {
+      h+='<div class="qnfremd">'+(it.fehlt ? '<i>'+L('Record not found in the file')+'</i>'
+                                             : (esc(it.text)||'<i>…</i>'))+
+         (it.page?'<span class="muted"> · '+esc(it.page)+'</span>':'')+
+         '<div class="muted">'+L('Shared record')+' '+esc(it.ptr)+' – '+L('read only here')+'</div></div>';
+    }
+  }
+  h+='<div data-neu="'+tag+'"></div>'+
+     '<div class="addrow" style="margin-top:2px"><button class="btn small" data-addqn="'+tag+'">'+
+     (tag==='NOTE'?L('➕ Note'):L('➕ Source'))+'</button></div>';
+  return h;
 }
 function fld(lbl,idf,val,ph){
   return '<div class="fld"><label>'+lbl+'</label><input type="text" id="'+idf+'" value="'+
@@ -5861,11 +6343,17 @@ function opt(v,t,cur){ return '<option value="'+v+'"'+(cur===v?' selected':'')+'
 
 function wirePanel(id, fams){
   var box=$('trSideBody');
+  /* Geschrieben wird nur, was sich am Feld wirklich geaendert hat. Bis 4.0
+     schrieb schon das blosse Hineintippen und Verlassen den Wert zurueck -
+     harmlos, solange es nichts kostete; seit 4.1 zaehlt jede Aenderung fuer
+     die Sicherung, und ein „3 Mär 1823" aus einer fremden Datei wurde dabei
+     still zu „3 MAR 1823". */
   function bindText(elid, apply){
     var e=$(elid); if(!e) return;
-    var t=null;
-    e.addEventListener('input', function(){ if(t) clearTimeout(t); t=setTimeout(function(){ apply(e.value); },350); });
-    e.addEventListener('blur', function(){ if(t){ clearTimeout(t); t=null; } apply(e.value); });
+    var t=null, zuletzt=e.value;
+    function los(){ if(e.value===zuletzt) return; zuletzt=e.value; apply(e.value); }
+    e.addEventListener('input', function(){ if(t) clearTimeout(t); t=setTimeout(function(){ t=null; los(); },350); });
+    e.addEventListener('blur', function(){ if(t){ clearTimeout(t); t=null; } los(); });
   }
   bindText('pGiven', function(v){ edit(id,{given:v.trim()}); });
   bindText('pSurname', function(v){ edit(id,{surname:v.trim()}); });
@@ -5877,6 +6365,64 @@ function wirePanel(id, fams){
   bindText('pStamm', function(v){ edit(id,{stamm:v.trim()}); });
   if($('pSex')) $('pSex').onchange=function(){ edit(id,{sex:this.value}); };
   if($('pDead')) $('pDead').onchange=function(){ edit(id,{dead:this.checked}); };
+
+  /* Notizen und Quellen. Ein geleertes Feld loescht seinen Eintrag erst
+     beim Verlassen: Wer den Text markiert und neu tippt, soll unterwegs
+     nichts verlieren - und es soll nie ein anderer Eintrag an seine
+     Stelle ruecken, waehrend noch getippt wird. */
+  var qn=FP.quellenNotizen(id);
+  function zaehle(){
+    var q=FP.quellenNotizen(id), n=q.notes.length+q.sources.length;
+    var sum=box.querySelector('details[data-sect="sources"]>summary'); if(!sum) return;
+    var c=sum.querySelector('.cnt');
+    if(!n){ if(c) c.parentNode.removeChild(c); return; }
+    if(!c){ c=document.createElement('span'); c.className='cnt'; sum.appendChild(c); }
+    c.textContent=String(n);
+  }
+  function wachse(ta){ if(!ta.offsetParent) return; ta.style.height='auto'; ta.style.height=Math.min(ta.scrollHeight+2, 320)+'px'; }
+  function bindQn(ta, tag, ref){
+    var t=null;
+    function apply(ende){
+      var v=ta.value;
+      if(!v.trim()){
+        if(ende && ref){
+          suppressPanel=true; FP.setzeEintrag(id, ref, ''); suppressPanel=false; ref=null;
+          /* Nur dieses Feld verschwindet. Das ganze Fenster neu zu zeichnen
+             nahm dem Feld, in das man gerade gewechselt war, den Fokus und
+             zeigte dort alten Text. */
+          /* Erst nach dem Antippen entfernen: Verschwindet das Feld schon beim
+             Verlassen, rutscht alles darunter nach oben, und der Tipp auf
+             ➕ landet ins Leere. */
+          var w=ta.closest('.fld');
+          setTimeout(function(){ if(w && w.parentNode) w.parentNode.removeChild(w); zaehle(); }, 300);
+        }
+        return;
+      }
+      suppressPanel=true;
+      if(ref) FP.setzeEintrag(id, ref, v); else { ref=FP.neuerEintrag(id, tag, v); zaehle(); }
+      suppressPanel=false;
+    }
+    ta.addEventListener('input', function(){ wachse(ta); if(t) clearTimeout(t); t=setTimeout(function(){ t=null; apply(false); },350); });
+    ta.addEventListener('blur', function(){ if(t){ clearTimeout(t); t=null; } apply(true); });
+  }
+  box.querySelectorAll('textarea[data-qn]').forEach(function(ta){
+    var tag=ta.getAttribute('data-qn'), it=(tag==='NOTE'?qn.notes:qn.sources)[+ta.getAttribute('data-k')];
+    if(it) bindQn(ta, tag, it.ref);
+  });
+  box.querySelectorAll('[data-addqn]').forEach(function(b){
+    b.onclick=function(){
+      var tag=b.getAttribute('data-addqn'), slot=box.querySelector('[data-neu="'+tag+'"]');
+      if(!slot) return;
+      var w=document.createElement('div'), ta=document.createElement('textarea');
+      w.className='fld'; ta.rows=2;
+      ta.placeholder = tag==='NOTE' ? L('Anything worth knowing about this person')
+                                    : L('e.g. Parish register St Mary, baptisms 1823, p. 14');
+      ta.setAttribute('aria-label', tag==='NOTE'?L('Note'):L('Source'));
+      w.appendChild(ta); slot.appendChild(w);
+      bindQn(ta, tag, null);
+      ta.focus();
+    };
+  });
 
   for(var i=0;i<fams.length;i++){(function(fam,i){
     bindText('marrD'+i, function(v){ suppressPanel=true; FP.setMarriage(fam.id, FP.textToGed(v), fam.marrPlace); suppressPanel=false; });
@@ -7189,7 +7735,7 @@ function restoreChart(){
 
 /* ---------------- project file (chart settings) ---------------- */
 $('btnSave').onclick=function(){
-  if(!FP.hasData()){ SHELL.ask('Note',T('No data has been loaded yet.'),null,'OK'); return; }
+  if(!FP.hasData()){ SHELL.ask(T('Notice'),T('No data has been loaded yet.'),null,'OK'); return; }
   var proj={ ged:FP.serialize(), root:ROOT, settings:SET,
     firstName:$('optFirstName').checked, ageSort:$('optAgeSort').checked,
     pdfFormat:$('pdfFormat').value, boxWidth:BOX_W, autoWidth:AUTO_W, fontSize:FONT_SZ, title:SHEET_TITLE };
@@ -7218,7 +7764,7 @@ $('projFile').addEventListener('change', function(e){
       toggleRootClear();
       SHELL.showTab('chart');
       safeRender(); showRoot();
-    }catch(err){ SHELL.ask('Error',T('That project file could not be read.'),null,'OK'); }
+    }catch(err){ SHELL.ask(T('Error'),T('That project file could not be read.'),null,'OK'); }
   };
   rd.readAsText(f,'UTF-8');
   e.target.value='';
@@ -8358,6 +8904,28 @@ function ringFrei(start){
   return true;
 }
 
+/* Bausteine fuers Zusammenlegen: Bloecke vergleichen statt Zeilen. */
+var EINMALIG={CHAN:1, RIN:1, RFN:1, AFN:1, RESN:1, _UID:1, UID:1};
+function blockTag(bl){ return String((bl&&bl[0])||'').replace(/^\s*\d+\s+/,'').split(/\s/)[0].toUpperCase(); }
+function blockSchluessel(bl){ return (bl||[]).map(function(x){ return String(x).trim(); }).join('\n'); }
+/* Unterzeilen eines Ereignisses (2 SOUR, 3 PAGE, 2 NOTE ...) in Bloecke
+   teilen: eine Zeile der Ebene 2 mit allem, was tiefer darunter steht. */
+function unterBloecke(zeilen){
+  var out=[], cur=null;
+  (zeilen||[]).forEach(function(z){
+    var m=/^\s*(\d+)/.exec(z), lv=m ? +m[1] : 99;
+    if(lv<=2 || !cur){ cur=[z]; out.push(cur); } else cur.push(z);
+  });
+  return out;
+}
+function mischeUnter(ziel, quelle){
+  var da={};
+  unterBloecke(ziel).forEach(function(b){ da[blockSchluessel(b)]=1; });
+  unterBloecke(quelle).forEach(function(b){
+    var s=blockSchluessel(b); if(da[s]) return; da[s]=1;
+    for(var j=0;j<b.length;j++) ziel.push(b[j]);
+  });
+}
 function zusammenlegen(plan){
   var P=FP.indi(), F=FP.fam();
   var haupt=plan.haupt, weg=plan.ids.filter(function(i){ return i!==haupt; });
@@ -8372,20 +8940,30 @@ function zusammenlegen(plan){
   });
   if(zielP.deathDate) zielP.dead=true;
 
-  /* 2. Unbekannte Kennzeichen uebernehmen, die es im Ziel nicht gibt.
-     Das Versprechen der App ist, dass nichts verlorengeht, was sie
-     selbst nicht auswertet - beim Zusammenlegen erst recht. */
-  var vorhanden={};
-  (zielP.extra||[]).forEach(function(bl){ vorhanden[(bl[0]||'').replace(/^\s*\d+\s+/,'').split(/\s/)[0]]=1; });
+  /* 2. Alles uebernehmen, was die App nicht selbst auswertet. Das
+     Versprechen ist, dass davon nichts verlorengeht - beim Zusammenlegen
+     erst recht.
+
+     Bis 4.0 kam von jedem Kennzeichen nur der erste Block mit: Hatten
+     beide Personen eine Notiz oder eine Quelle, verschwand die der
+     aufgegebenen Person, und von zwei Quellen ueberlebte eine. Bei
+     Geburt und Tod wurde zeilenweise verglichen - eine „3 PAGE 12", die
+     es schon gab, fiel weg, und eine andere rutschte unter die falsche
+     Quelle. Jetzt wird blockweise verglichen: Ein Block bleibt nur
+     draussen, wenn er im Ziel wortgleich schon steht, oder wenn er ein
+     Kennzeichen hat, das eine Person nur einmal haben darf. */
+  zielP.extra=zielP.extra||[];
+  var vorhanden={}, tags={};
+  (zielP.extra).forEach(function(bl){ vorhanden[blockSchluessel(bl)]=1; tags[blockTag(bl)]=1; });
   weg.forEach(function(id){
     var q=P[id]; if(!q) return;
     (q.extra||[]).forEach(function(bl){
-      var tag=(bl[0]||'').replace(/^\s*\d+\s+/,'').split(/\s/)[0];
-      if(!vorhanden[tag]){ zielP.extra.push(bl); vorhanden[tag]=1; }
+      var s=blockSchluessel(bl), t=blockTag(bl);
+      if(vorhanden[s]) return;
+      if(EINMALIG[t] && tags[t]) return;
+      zielP.extra.push(bl); vorhanden[s]=1; tags[t]=1;
     });
-    ['birtSub','deatSub'].forEach(function(k){
-      (q[k]||[]).forEach(function(z){ if(zielP[k].indexOf(z)<0) zielP[k].push(z); });
-    });
+    ['birtSub','deatSub'].forEach(function(k){ zielP[k]=zielP[k]||[]; mischeUnter(zielP[k], q[k]); });
   });
 
   /* 3. Die aufgegebenen Kennungen festhalten, damit der Weg
@@ -8427,7 +9005,12 @@ function zusammenlegen(plan){
     f.children.forEach(function(c){ if(ziel.children.indexOf(c)<0) ziel.children.push(c); });
     if(!ziel.marrDate && f.marrDate) ziel.marrDate=f.marrDate;
     if(!ziel.marrPlace && f.marrPlace) ziel.marrPlace=f.marrPlace;
-    (f.extra||[]).forEach(function(bl){ ziel.extra.push(bl); });
+    /* Quellen zur Heirat gingen bisher mit der zweiten Familie unter,
+       und gleiche Bloecke standen danach doppelt da. */
+    ziel.marrSub=ziel.marrSub||[]; mischeUnter(ziel.marrSub, f.marrSub);
+    ziel.extra=ziel.extra||[];
+    var fda={}; ziel.extra.forEach(function(bl){ fda[blockSchluessel(bl)]=1; });
+    (f.extra||[]).forEach(function(bl){ var s=blockSchluessel(bl); if(!fda[s]){ ziel.extra.push(bl); fda[s]=1; } });
     /* Personen umhaengen */
     for(var pid in P){
       var pp=P[pid];
@@ -8916,8 +9499,8 @@ function famIndex(){
       staemme:leute.map(function(x){ return I[x].stamm||''; }),
       /* Der Jahrgangsfilter greift auch hier: Eine Familie passt, wenn
          irgendein Mitglied im Bereich geboren wurde. Das ist dieselbe
-         Regel wie beim Stamm und beantwortet die Frage, die Joachim
-         gestellt hat - es geht sehr wohl, es fehlte nur. */
+         Regel wie beim Stamm und beantwortet die Frage, die
+         gestellt wurde - es geht sehr wohl, es fehlte nur. */
       jahre:leute.map(function(x){ return FP.yearOf(I[x].birthDate); })
                  .filter(function(j){ return j!=null; }),
       /* Was eine Familie findbar macht: die Namen aller, die zu ihr
@@ -9161,7 +9744,7 @@ return { boot:aufsetzen, oeffnen:oeffnen, _filterZahl:filterZahl, _deckel:functi
 
    DREI ENTSCHEIDUNGEN, die die Form bestimmen:
 
-   1. NACH REGEL GRUPPIERT, NICHT NACH PERSON. In Joachims Datei
+   1. NACH REGEL GRUPPIERT, NICHT NACH PERSON. In der Testdatei
       stehen 4.299 Geburtsdaten auf dem 1. Januar. Als 4.299 Karten
       wäre das Fenster unbenutzbar; als eine Zeile mit einer Zahl und
       einem Knopf ist es in zehn Sekunden erledigt.
@@ -9242,7 +9825,7 @@ function dt(s){ return FP.gedToText(s)||s; }
 /* ===================================================================
    Vorbereitung: Zeiträume statt Zeitpunkte
    -------------------------------------------------------------------
-   Gemessen an Joachims Datei mit 8.649 Personen: Die erste Fassung
+   Gemessen an einer echten Datei mit 8.649 Personen: Die erste Fassung
    meldete 70 Kinder, die nach dem Tod ihrer Mutter geboren seien,
    20 Kinder älter als ihre Eltern und 5 Tote vor der eigenen Geburt.
    Beim Nachsehen war fast alles derselbe Fall:
@@ -9272,7 +9855,7 @@ function tagVon(j,m,t){ return Math.round(j*365.25 + (m-1)*30.44 + t); }
 /* Sind beide Angaben taggenau, zählt jeder Tag. Ist auch nur eine
    davon bloss ein Jahr, braucht es mehr als ein halbes Jahr
    Überschneidung, bevor die Prüfung einen Widerspruch meldet.
-   Gemessen an Joachims Datei: Ohne diesen Spielraum meldete die
+   Gemessen an einer echten Datei: Ohne diesen Spielraum meldete die
    Prüfung Fälle wie „Kind 1511, Mutter gestorben 1510" - rechnerisch
    ein Tag Widerspruch, in Wahrheit zwei Jahresangaben, die sich
    berühren. */
@@ -9320,7 +9903,7 @@ function genauesDatum(v, platz){
 
 /* Ringe in der Abstammung: EINE Tiefensuche über den ganzen Graphen
    statt einer je Person. Die erste Fassung ging von jeder Person
-   einzeln nach oben; an Joachims Datei kostete allein diese Regel
+   einzeln nach oben; an einer echten Datei kostete allein diese Regel
    2.729 von 4.684 ms, also mehr als alle anderen zweiundzwanzig
    zusammen. Mit Weiss/Grau/Schwarz ist es ein Durchgang. */
 function ringeFinden(P,F){
@@ -9597,7 +10180,7 @@ var REGELN=[
  f:function(P,F,out,ctx){
    /* Nur taggenaue Daten. Ein Platzhalter auf dem 1. Januar neben
       einem echten Datum ergab vorher einen Abstand, den es gar
-      nicht gibt - an Joachims Datei die Hälfte der Funde. */
+      nicht gibt - an einer echten Datei die Hälfte der Funde. */
    var platz=ctx.platz.satz, S=ctx.S;
    for(var fid in F){ var f=F[fid];
      var ki=(f.children||[]).filter(function(c){
@@ -10747,7 +11330,7 @@ function fertig(behalten){
   if(behalten){
     var name=((FP.fileName()||'A')+' + '+NAMEB).slice(0,60);
     var ging=false;
-    try{ FP.loadText(r.text, name); ging=true; }catch(err2){ ging=false; }
+    try{ FP.loadText(r.text, name, 'merge'); ging=true; }catch(err2){ ging=false; }
     if(ging){
       SHELL.closeModal('mdMerge');
       SHELL.toast(T('Merged file opened.','Vereinigte Datei geöffnet.'));
