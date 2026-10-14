@@ -178,6 +178,43 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 /* The tick keeps its place whether it is showing or not. */
 #dataTick{flex:0 0 auto; width:10px; text-align:center; color:var(--ok); visibility:hidden}
 #dataTick.on{visibility:visible}
+/* Symbole. Bis 4.1 standen vor den Eintraegen bunte Emoji - auf jedem
+   Geraet anders gezeichnet, und neben einer Nachfahrentafel im Stil
+   gedruckter Familienbuecher wirkten sie verspielt. Jetzt einfarbige
+   Strichzeichnungen im Stil der Reiterleiste. Sie stehen als Maske im
+   ::before eines Elements mit data-ico und nehmen die Schriftfarbe an;
+   der Text des Elements bleibt unberuehrt, die Uebersetzung kann ihn
+   also weiter austauschen. */
+[data-ico]::before{content:""; display:inline-block; flex:0 0 auto; width:1.2em; height:1.2em;
+  margin-right:.42em; vertical-align:-.24em; background-color:currentColor;
+  -webkit-mask:var(--ico) center/contain no-repeat; mask:var(--ico) center/contain no-repeat}
+[data-ico]:empty::before,.btn[data-ico]::before{margin-right:0}
+.optbtn .ic[data-ico]::before{width:1.15em; height:1.15em}
+[data-ico="folder"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 7.2A1.6 1.6 0 0 1 5.1 5.6h4l2 2.1h7.8a1.6 1.6 0 0 1 1.6 1.6v8.6a1.6 1.6 0 0 1-1.6 1.6H5.1a1.6 1.6 0 0 1-1.6-1.6z'/%3E%3C/svg%3E")}
+[data-ico="open"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 17.6V7.2a1.6 1.6 0 0 1 1.6-1.6h4l2 2.1h6.6a1.6 1.6 0 0 1 1.6 1.6v1.2'/%3E%3Cpath d='M3.6 18.2l2.3-6.3a1.6 1.6 0 0 1 1.5-1.1h12.4a.9.9 0 0 1 .85 1.2l-2 5.6a1.6 1.6 0 0 1-1.5 1.1H4.2'/%3E%3C/svg%3E")}
+[data-ico="save"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.8v10.4'/%3E%3Cpath d='M7.8 10.2l4.2 4.2 4.2-4.2'/%3E%3Cpath d='M4.2 15.2v3.2a1.6 1.6 0 0 0 1.6 1.6h12.4a1.6 1.6 0 0 0 1.6-1.6v-3.2'/%3E%3C/svg%3E")}
+[data-ico="copy"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5.6' y='4.6' width='12.8' height='15.8' rx='1.8'/%3E%3Cpath d='M9.2 4.6V3.9a.8.8 0 0 1 .8-.8h4a.8.8 0 0 1 .8.8v.7'/%3E%3Cpath d='M8.8 10h6.4M8.8 13.4h6.4M8.8 16.8h3.8'/%3E%3C/svg%3E")}
+[data-ico="plus"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5.2v13.6M5.2 12h13.6'/%3E%3C/svg%3E")}
+[data-ico="leaf"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.8 18.6C5.4 11 9.6 6 18.8 5.2c.3 8.6-4.6 13.6-12.6 13.4'/%3E%3Cpath d='M5.8 18.6l6.6-6.6'/%3E%3C/svg%3E")}
+[data-ico="pencil"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.4 19.6l1-4.2L15.6 5.2a2 2 0 0 1 2.9 0l.3.3a2 2 0 0 1 0 2.9L8.6 18.6z'/%3E%3Cpath d='M13.8 7l3.2 3.2'/%3E%3C/svg%3E")}
+[data-ico="list"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.2 6.6h10.4M9.2 12h10.4M9.2 17.4h10.4'/%3E%3Cpath d='M4.6 6.6h.1M4.6 12h.1M4.6 17.4h.1'/%3E%3C/svg%3E")}
+[data-ico="dupes"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='8.4' y='8.4' width='11.4' height='11.4' rx='1.8'/%3E%3Cpath d='M15.6 8.4V5.9a1.7 1.7 0 0 0-1.7-1.7H5.9a1.7 1.7 0 0 0-1.7 1.7v8a1.7 1.7 0 0 0 1.7 1.7h2.5'/%3E%3C/svg%3E")}
+[data-ico="check"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='10.6' cy='10.6' r='6.4'/%3E%3Cpath d='M15.4 15.4l4.6 4.6'/%3E%3Cpath d='M7.9 10.7l1.9 1.9 3.3-3.4'/%3E%3C/svg%3E")}
+[data-ico="compare"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.4 8.2h14.4'/%3E%3Cpath d='M15.2 4.6l3.6 3.6-3.6 3.6'/%3E%3Cpath d='M19.6 15.8H5.2'/%3E%3Cpath d='M8.8 12.2l-3.6 3.6 3.6 3.6'/%3E%3C/svg%3E")}
+[data-ico="sliders"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.2 7.2h9M17.8 7.2h2M4.2 16.8h2M10.8 16.8h9'/%3E%3Ccircle cx='15.6' cy='7.2' r='2.2'/%3E%3Ccircle cx='8.6' cy='16.8' r='2.2'/%3E%3C/svg%3E")}
+[data-ico="trash"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.6 7h14.8'/%3E%3Cpath d='M9.4 7V5.3a1.1 1.1 0 0 1 1.1-1.1h3a1.1 1.1 0 0 1 1.1 1.1V7'/%3E%3Cpath d='M6.6 7l.8 11.3A1.9 1.9 0 0 0 9.3 20h5.4a1.9 1.9 0 0 0 1.9-1.7L17.4 7'/%3E%3Cpath d='M10.2 11v5.2M13.8 11v5.2'/%3E%3C/svg%3E")}
+[data-ico="help"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.6'/%3E%3Cpath d='M9.5 9.6a2.6 2.6 0 0 1 5.1.7c0 1.8-2.6 2.2-2.6 4'/%3E%3Cpath d='M12 17.2h.01'/%3E%3C/svg%3E")}
+[data-ico="close"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.4 6.4l11.2 11.2M17.6 6.4L6.4 17.6'/%3E%3C/svg%3E")}
+[data-ico="menu"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.4 7h15.2M4.4 12h15.2M4.4 17h15.2'/%3E%3C/svg%3E")}
+[data-ico="full"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.2 9V5.8a1.6 1.6 0 0 1 1.6-1.6H9M15 4.2h3.2a1.6 1.6 0 0 1 1.6 1.6V9M19.8 15v3.2a1.6 1.6 0 0 1-1.6 1.6H15M9 19.8H5.8a1.6 1.6 0 0 1-1.6-1.6V15'/%3E%3C/svg%3E")}
+[data-ico="back"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.2 13.6L4.8 9.2l4.4-4.4'/%3E%3Cpath d='M4.8 9.2h9.4a5.2 5.2 0 0 1 0 10.4h-3'/%3E%3C/svg%3E")}
+[data-ico="target"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='5.8'/%3E%3Cpath d='M12 3v3.4M12 17.6V21M3 12h3.4M17.6 12H21'/%3E%3C/svg%3E")}
+[data-ico="flag"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 20.6V3.8'/%3E%3Cpath d='M6 4.4h11.6l-2.4 4.2 2.4 4.2H6'/%3E%3C/svg%3E")}
+[data-ico="chart"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4.6' y='3' width='14.8' height='18' rx='2.1'/%3E%3Cpath d='M8 8h8M10 12.2h6M12 16.4h4'/%3E%3C/svg%3E")}
+[data-ico="printer"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7.2 9V3.8h9.6V9'/%3E%3Crect x='3.8' y='9' width='16.4' height='7.6' rx='1.6'/%3E%3Cpath d='M7.2 14h9.6v6.2H7.2z'/%3E%3C/svg%3E")}
+[data-ico="layout"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.8' y='4.8' width='16.4' height='14.4' rx='1.6'/%3E%3Cpath d='M3.8 9.4h16.4M9.4 9.4v9.8'/%3E%3C/svg%3E")}
+[data-ico="archive"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.6' y='4.4' width='16.8' height='4.6' rx='1'/%3E%3Cpath d='M5.2 9v9.2a1.6 1.6 0 0 0 1.6 1.6h10.4a1.6 1.6 0 0 0 1.6-1.6V9'/%3E%3Cpath d='M10 13h4'/%3E%3C/svg%3E")}
+[data-ico="file"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13.8 3.6H7.2a1.6 1.6 0 0 0-1.6 1.6v13.6a1.6 1.6 0 0 0 1.6 1.6h9.6a1.6 1.6 0 0 0 1.6-1.6V8.2z'/%3E%3Cpath d='M13.8 3.6v4.6h4.6'/%3E%3Cpath d='M8.8 12.6h6.4M8.8 16h6.4'/%3E%3C/svg%3E")}
 #dataMenuWrap{position:relative}
 #dataMenu{
   position:fixed; left:0; top:0; background:var(--field); border:1px solid var(--line);
@@ -739,7 +776,8 @@ label.fld{display:block; font-size:12.5px; font-weight:600; color:var(--accent);
   #panelChart .zbtn{min-width:44px}
   #brand{font-size:15.5px}
   #btnHelp{padding:8px 10px; font-size:0}
-  #btnHelp::after{content:"\2753"; font-size:15.5px}
+  /* auf schmalen Bildschirmen nur das Symbol - frueher ein rotes Emoji-Fragezeichen */
+  #btnHelp [data-ico]::before{width:18px; height:18px; margin-right:0; vertical-align:middle}
   #tabbar .tab{font-size:14px; padding:9px 2px}
   .help{font-size:15.5px}
   .help h4{font-size:17.5px}
@@ -980,39 +1018,39 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   <div id="apptop">
     <span id="brand">Anceslio</span>
     <div id="dataMenuWrap">
-      <button class="btn" id="btnData"><span data-i18n="📁 Data">&#128193; Data</span> <span style="font-size:10px">&#9660;</span><span id="dataBadge" hidden></span></button>
+      <button class="btn" id="btnData"><span data-ico="folder" data-i18n="Data">Data</span> <span style="font-size:10px">&#9660;</span><span id="dataBadge" hidden></span></button>
       <div id="dataMenu">
         <!-- Drei Gruppen mit Ueberschrift statt elf Eintraegen am Stueck.
              Sichern steht oben, weil es das Einzige ist, das man regelmaessig
              tun sollte und das sonst niemand anstoesst. -->
         <div class="mihead" data-i18n="Back up">Back up</div>
-        <button id="miBackup"><span data-i18n="💾 Back up now (.ged)">&#128190; Back up now (.ged)</span><small id="miBackupInfo" class="mistat"></small></button>
-        <button id="miExport" data-i18n="📤 Export GEDCOM – more ways…">&#128228; Export GEDCOM &ndash; more ways&hellip;</button>
+        <button id="miBackup"><span data-ico="save" data-i18n="Back up now (.ged)">Back up now (.ged)</span><small id="miBackupInfo" class="mistat"></small></button>
+        <button id="miExport" data-ico="copy" data-i18n="Copy as text…" hidden>Copy as text&hellip;</button>
         <hr>
         <div class="mihead" data-i18n="File">File</div>
-        <button id="miLoad" data-i18n="📂 Open GEDCOM file">&#128194; Open GEDCOM file</button>
+        <button id="miLoad" data-ico="open" data-i18n="Open GEDCOM file">Open GEDCOM file</button>
         <!-- The same offer as on the first screen. Without it, the way to start
              a family without a file disappeared as soon as one file was open,
              because the first screen is only shown while there is no data. -->
-        <button id="miEmpty" data-i18n="➕ Start another family">&#10133; Start another family</button>
-        <button id="miSample" data-i18n="🌳 Load sample family">&#127795; Load sample family</button>
+        <button id="miEmpty" data-ico="plus" data-i18n="Start another family">Start another family</button>
+        <button id="miSample" data-ico="leaf" data-i18n="Load sample family">Load sample family</button>
         <div id="fileWrap" hidden>
           <div class="mihead sub" data-i18n="Recently opened">Recently opened</div>
           <div id="fileList"></div>
-          <button id="miFiles" data-i18n="✎ Rename or remove files…">&#9998; Rename or remove files&hellip;</button>
+          <button id="miFiles" data-ico="pencil" data-i18n="Rename or remove files…">Rename or remove files&hellip;</button>
         </div>
         <hr>
         <div class="mihead" data-i18n="Tools">Tools</div>
-        <button id="miList" data-i18n="☰ People and families">&#9776; People and families</button>
-        <button id="miDupe" data-i18n="⧉ Check for duplicates">&#10697; Check for duplicates</button>
-        <button id="miPruef" data-i18n="⚠ Check the data">&#9888; Check the data</button>
-        <button id="miMerge" data-i18n="⇄ Compare files">&#8644; Compare files</button>
+        <button id="miList" data-ico="list" data-i18n="People and families">People and families</button>
+        <button id="miDupe" data-ico="dupes" data-i18n="Check for duplicates">Check for duplicates</button>
+        <button id="miPruef" data-ico="check" data-i18n="Check the data">Check the data</button>
+        <button id="miMerge" data-ico="compare" data-i18n="Compare files">Compare files</button>
         <hr>
-        <button id="miSettings" data-i18n="⚙ Settings">&#9881; Settings</button>
-        <button id="miClear" class="danger" data-i18n="🗑 Clear data on this device">&#128465; Clear data on this device</button>
+        <button id="miSettings" data-ico="sliders" data-i18n="Settings">Settings</button>
+        <button id="miClear" class="danger" data-ico="trash" data-i18n="Clear data on this device">Clear data on this device</button>
       </div>
     </div>
-    <button class="btn" id="btnHelp" data-i18n-title="Open the user guide" title="Open the user guide" aria-label="Open the user guide"><span data-i18n="❔ Guide">&#10068; Guide</span></button>
+    <button class="btn" id="btnHelp" data-i18n-title="Open the user guide" title="Open the user guide" aria-label="Open the user guide"><span data-ico="help" data-i18n="Guide">Guide</span></button>
     <!-- The tick has a slot of its own that is always there, only sometimes
          empty. That way saving cannot change the width of this line, and the
          header cannot grow a second row while somebody is typing. -->
@@ -1021,7 +1059,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   </div>
   <div id="backupBar" class="noprint" role="status" hidden>
     <span id="backupMsg"></span>
-    <button class="btn small primary" id="backupNow"></button>
+    <button class="btn small primary" id="backupNow" data-ico="save"></button>
     <button class="btn small" id="backupLater"></button>
   </div>
   <nav id="tabbar">
@@ -1043,14 +1081,14 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <input type="text" id="trSearch" data-i18n-ph="Name, year or place"
                placeholder="Name, year or place" autocomplete="off">
         <button type="button" class="clearbtn" id="trClear" data-i18n-title="Clear the search field"
-                title="Clear the search field" aria-label="Clear">&#10005;</button>
+                title="Clear the search field" aria-label="Clear" data-ico="close"></button>
       </div>
       <button class="btn" id="trBtnFilter" data-i18n-title="Narrow the search down"
               title="Narrow the search down" aria-label="Filter"><svg viewBox="0 0 16 16" width="15" height="15"
               aria-hidden="true" focusable="false"><path d="M1.6 2.6h12.8L9.4 8.5v4.3l-2.8 1.6V8.5z"
               fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span data-i18n="Filter">Filter</span><span id="trFilterDot"></span></button>
       <button class="btn" id="trBtnOpts" data-i18n-title="Show or hide the tree settings"
-              title="Show or hide the tree settings" aria-label="Tree settings">&#9776;</button>
+              title="Show or hide the tree settings" aria-label="Tree settings" data-ico="sliders"></button>
       <div id="trFilter">
         <label class="muted" id="trFilStammWrap"><span data-i18n="Lineage / house">Lineage / house</span>
           <select id="trFilStamm"></select></label>
@@ -1064,7 +1102,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <span class="muted" id="trFilCount"></span>
       </div>
       <div id="trOpts">
-        <button class="btn" id="trBtnNew" data-i18n="➕ New person">&#10133; New person</button>
+        <button class="btn" id="trBtnNew" data-ico="plus" data-i18n="New person">New person</button>
         <div class="zoom" style="display:flex;align-items:center;gap:4px">
           <button class="btn small" id="trZoomOut" data-i18n-title="Zoom out" title="Zoom out" aria-label="Zoom out">&ndash;</button>
           <span class="muted" id="trZoomLbl" style="min-width:44px;text-align:center">100&nbsp;%</span>
@@ -1078,8 +1116,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <label class="muted"><input type="checkbox" id="trOptUncle"> <span data-i18n="Uncles and aunts">Uncles and aunts</span></label>
       </div>
       <button class="btn" id="trBtnFull" data-i18n-title="Full screen"
-              title="Full screen" aria-label="Full screen">&#9974;</button>
-      <button class="btn" id="trBtnPanel" data-i18n="✎ Edit">&#9998; Edit</button>
+              title="Full screen" aria-label="Full screen" data-ico="full"></button>
+      <button class="btn" id="trBtnPanel" data-ico="pencil" data-i18n="Edit">Edit</button>
       <div id="trDrop"></div>
     </div>
     <div id="trMain">
@@ -1088,7 +1126,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <div id="trHint"></div>
       </div>
       <div id="trSide" class="noprint">
-        <div id="trDrawerBar"><b data-i18n="Edit">Edit</b><button class="btn small" id="trDrawerClose" data-i18n="✕ Close">&#10005; Close</button></div>
+        <div id="trDrawerBar"><b data-i18n="Edit">Edit</b><button class="btn small" id="trDrawerClose" data-ico="close" data-i18n="Close">Close</button></div>
         <div id="trSideBody"></div>
       </div>
     </div>
@@ -1096,9 +1134,9 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
 
   <!-- ===================== tab 2: descendant chart ==================== -->
   <section class="panel" id="panelChart">
-    <button id="btnMenu" class="noprint" data-i18n-title="Menu" aria-label="Menu" title="Menu">&#9776;</button>
+    <button id="btnMenu" class="noprint" data-i18n-title="Menu" aria-label="Menu" title="Menu" data-ico="menu"></button>
     <button id="btnFull" class="noprint" data-i18n-title="Full screen"
-            title="Full screen" aria-label="Full screen">&#9974;</button>
+            title="Full screen" aria-label="Full screen" data-ico="full"></button>
     <div id="menuBackdrop" class="noprint"></div>
     <div id="toolbar" class="noprint">
 
@@ -1108,10 +1146,10 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
           <input id="rootSearch" data-i18n-ph="Name, year or place"
                  placeholder="Name, year or place" autocomplete="off" disabled>
           <button type="button" class="clearbtn" id="rootClear" data-i18n-title="Clear the search field"
-                  title="Clear the search field" aria-label="Clear">&#10005;</button>
+                  title="Clear the search field" aria-label="Clear" data-ico="close"></button>
           <div id="rootDrop"></div>
         </div>
-        <button class="btn" id="zoomRoot" data-i18n="⌖ Go to root" data-i18n-title="Select the root person and zoom to it" title="Select the root person and zoom to it">&#8982; Go to root</button>
+        <button class="btn" id="zoomRoot" data-ico="target" data-i18n="Go to root" data-i18n-title="Select the root person and zoom to it" title="Select the root person and zoom to it">Go to root</button>
       </div>
 
       <div class="tgrp">
@@ -1122,7 +1160,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
           <button class="btn zbtn" id="zoomIn" data-i18n-title="Zoom in" title="Zoom in" aria-label="Zoom in">+</button>
           <button class="btn" id="zoomFit" data-i18n="Fit" data-i18n-title="Fit the whole chart on screen" title="Fit the whole chart on screen">Fit</button>
         </div>
-        <button class="btn" id="chFullMenu" data-i18n="⛶ Full screen" data-i18n-title="Full screen" title="Full screen">&#9974; Full screen</button>
+        <button class="btn" id="chFullMenu" data-ico="full" data-i18n="Full screen" data-i18n-title="Full screen" title="Full screen">Full screen</button>
         <label class="muted"><input type="checkbox" id="optFirstName" checked> <span data-i18n="First given name only">First given name only</span></label>
         <label class="muted"><input type="checkbox" id="optAgeSort" checked> <span data-i18n="Children by age">Children by age</span></label>
         <label class="muted"><span data-i18n="Boxes:">Boxes:</span>
@@ -1146,12 +1184,12 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
       <div class="tgrp" id="tgrpEdit">
         <div class="tgrph" data-i18n="The selected person">The selected person</div>
         <div class="tnote" data-i18n="Presentation only – your data is not changed here.">Presentation only &ndash; your data is not changed here.</div>
-        <button class="btn" id="btnEdit" data-i18n="✎ Edit" data-i18n-title="Open the edit panel" title="Open the edit panel">&#9998; Edit</button>
+        <button class="btn" id="btnEdit" data-ico="pencil" data-i18n="Edit" data-i18n-title="Open the edit panel" title="Open the edit panel">Edit</button>
       </div>
 
       <div class="tgrp">
         <div class="tgrph" data-i18n="Output">Output</div>
-        <button class="btn primary" id="btnPdf" data-i18n="🖨 Export as PDF">&#128424; Export as PDF</button>
+        <button class="btn primary" id="btnPdf" data-ico="printer" data-i18n="Export as PDF">Export as PDF</button>
         <select id="pdfFormat" data-i18n-title="PDF page size" title="PDF page size" aria-label="PDF page size">
           <option value="auto" data-i18n="Auto (best fit)">Auto (best fit)</option>
           <option value="a4l" data-i18n="A4 landscape">A4 landscape</option>
@@ -1163,8 +1201,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         </select>
         <button class="btn" id="btnSvg" data-i18n="Save SVG">Save SVG</button>
         <button class="btn" id="btnPng" data-i18n="Save PNG">Save PNG</button>
-        <button class="btn" id="btnPreset" data-i18n="📐 Print preset (A3)" data-i18n-title="Compact, highly legible settings for A3 landscape" title="Compact, highly legible settings for A3 landscape">&#128208; Print preset (A3)</button>
-        <button class="btn" id="btnSave" data-i18n="🗂 Save chart (.json)">&#128450; Save chart (.json)</button>
+        <button class="btn" id="btnPreset" data-ico="layout" data-i18n="Print preset (A3)" data-i18n-title="Compact, highly legible settings for A3 landscape" title="Compact, highly legible settings for A3 landscape">Print preset (A3)</button>
+        <button class="btn" id="btnSave" data-ico="archive" data-i18n="Save chart (.json)">Save chart (.json)</button>
         <button class="btn" id="btnProjLoad" data-i18n="Open chart (.json)">Open chart (.json)</button>
       </div>
 
@@ -1174,8 +1212,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
       <div id="stageWrap">
         <svg id="stage" xmlns="http://www.w3.org/2000/svg"></svg>
         <div id="emptyHint">
-          <span data-lang="en">Now choose a <b>root person</b>:<br>on a phone through the <b>&#9776; menu</b> (top left), on a computer through the search box above.</span>
-          <span data-lang="de">Jetzt eine <b>Wurzelperson</b> w&auml;hlen:<br>auf dem Handy &uuml;ber das <b>&#9776;&nbsp;Men&uuml;</b> oben links, am Rechner &uuml;ber das Suchfeld oben.</span>
+          <span data-lang="en">Now choose a <b>root person</b>:<br>on a phone through the <b><span data-ico="menu" aria-hidden="true"></span> menu</b> (top left), on a computer through the search box above.</span>
+          <span data-lang="de">Jetzt eine <b>Wurzelperson</b> w&auml;hlen:<br>auf dem Handy &uuml;ber das <b><span data-ico="menu" aria-hidden="true"></span> Men&uuml;</b> oben links, am Rechner &uuml;ber das Suchfeld oben.</span>
         </div>
       </div>
 
@@ -1187,7 +1225,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         </div>
       </div>
       <div id="side" class="noprint">
-        <div id="drawerBar"><b data-i18n="Edit">Edit</b><button class="btn small" id="drawerClose" data-i18n="✕ Close">&#10005; Close</button></div>
+        <div id="drawerBar"><b data-i18n="Edit">Edit</b><button class="btn small" id="drawerClose" data-ico="close" data-i18n="Close">Close</button></div>
         <div id="sideTitle" class="card">
           <b data-i18n="Chart title (top right)">Chart title (top right)</b>
           <div class="field" style="margin:6px 0 0">
@@ -1222,12 +1260,12 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
           <div>
             <label class="fld" for="inA" data-i18n="Person A">Person A</label>
             <div class="combo"><input type="text" id="inA" data-i18n-ph="Name, year or place" placeholder="Name, year or place" autocomplete="off"><button type="button" class="clearbtn" id="clearA" data-i18n-title="Clear the field"
-                    title="Clear the field" aria-label="Clear">&#10005;</button><div class="list" id="listA"></div></div>
+                    title="Clear the field" aria-label="Clear" data-ico="close"></button><div class="list" id="listA"></div></div>
           </div>
           <div>
             <label class="fld" for="inB" data-i18n="Person B">Person B</label>
             <div class="combo"><input type="text" id="inB" data-i18n-ph="Name, year or place" placeholder="Name, year or place" autocomplete="off"><button type="button" class="clearbtn" id="clearB" data-i18n-title="Clear the field"
-                    title="Clear the field" aria-label="Clear">&#10005;</button><div class="list" id="listB"></div></div>
+                    title="Clear the field" aria-label="Clear" data-ico="close"></button><div class="list" id="listB"></div></div>
           </div>
         </div>
         <div class="swaprow">
@@ -1351,21 +1389,21 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
              needed a file to be of any use. It does not. -->
         <div class="ways">
           <button class="way" id="btnEmpty">
-            <span data-lang="en"><b>&#10133; Start a family yourself</b>no file needed
+            <span data-lang="en"><b><span data-ico="plus" aria-hidden="true"></span> Start a family yourself</b>no file needed
               <small>the first person, then parents, partners and children</small></span>
-            <span data-lang="de"><b>&#10133; Familie selbst anlegen</b>ohne Datei
+            <span data-lang="de"><b><span data-ico="plus" aria-hidden="true"></span> Familie selbst anlegen</b>ohne Datei
               <small>die erste Person, dann Eltern, Partner und Kinder</small></span>
           </button>
           <div class="way drop" id="drop">
-            <span data-lang="en"><b>&#128193; Open a GEDCOM file</b>tap &middot; or drop a file here
+            <span data-lang="en"><b><span data-ico="open" aria-hidden="true"></span> Open a GEDCOM file</b>tap &middot; or drop a file here
               <small>.ged file &middot; everything stays on your device</small></span>
-            <span data-lang="de"><b>&#128193; GEDCOM-Datei &ouml;ffnen</b>antippen &middot; oder hierher ziehen
+            <span data-lang="de"><b><span data-ico="open" aria-hidden="true"></span> GEDCOM-Datei &ouml;ffnen</b>antippen &middot; oder hierher ziehen
               <small>.ged-Datei &middot; alles bleibt auf dem Ger&auml;t</small></span>
           </div>
         </div>
         <div class="muted" id="loadStatus" style="margin-top:12px"></div>
         <div class="wayside">
-          <button class="btn" id="btnSample" data-i18n="🌳 Try the sample family">&#127795; Try the sample family</button>
+          <button class="btn" id="btnSample" data-ico="leaf" data-i18n="Try the sample family">Try the sample family</button>
         </div>
         <!-- "Read the guide" used to sit here as a third button. It has gone:
              the red ? at the top of this very screen opens the same guide, and
@@ -1423,16 +1461,14 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
 
 <div class="modal" id="mdExport">
   <div class="modalbox">
-    <h3 data-i18n="Export GEDCOM">Export GEDCOM</h3>
+    <h3 data-i18n="Save as text">Save as text</h3>
     <div class="modalbody">
       <p class="muted" id="expInfo"></p>
-      <button class="optbtn" id="expSave"><span class="ic">&#128190;</span><span>
-        <b data-i18n="Save as a file">Save as a file</b>
-        <small><span data-lang="en">Downloads a .ged file. On a phone it usually lands in your Downloads folder.</span><span data-lang="de">L&auml;dt eine .ged-Datei herunter. Auf dem Handy landet sie meist im Ordner Downloads.</span></small></span></button>
-      <button class="optbtn" id="expCopy"><span class="ic">&#128203;</span><span>
+      <p class="muted" id="expNote" hidden><span data-lang="en">On Android 9 and older, the app can only save a file into its own folder, and that folder is removed together with the app. A real backup is the text: copy it and keep it in an e-mail to yourself or on a cloud drive.</span><span data-lang="de">Unter Android 9 und &auml;lter kann die App eine Datei nur in ihren eigenen Ordner legen, und der verschwindet mit der App. Eine echte Sicherung ist deshalb der Text: kopieren und in einer E-Mail an sich selbst oder in einem Cloud-Speicher ablegen.</span></p>
+      <button class="optbtn" id="expCopy"><span class="ic" data-ico="copy"></span><span>
         <b data-i18n="Copy to clipboard">Copy to clipboard</b>
         <small><span data-lang="en">Paste it into a note, an e-mail or a cloud drive. Works everywhere, even where downloads are blocked.</span><span data-lang="de">In eine Notiz, eine E-Mail oder einen Cloud-Speicher einf&uuml;gen. Funktioniert &uuml;berall, auch wo Downloads gesperrt sind.</span></small></span></button>
-      <button class="optbtn" id="expShow"><span class="ic">&#128196;</span><span>
+      <button class="optbtn" id="expShow"><span class="ic" data-ico="file"></span><span>
         <b data-i18n="Show the text">Show the text</b>
         <small><span data-lang="en">Select it by hand and copy it yourself.</span><span data-lang="de">Von Hand markieren und selbst kopieren.</span></small></span></button>
       <textarea id="expText" class="hidden" readonly></textarea>
@@ -1451,13 +1487,13 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         <input type="text" id="pickSearch" autocomplete="off"
                data-i18n-ph="Name, year or place" placeholder="Name, year or place">
         <button type="button" class="clearbtn" id="pickClear" data-i18n-title="Clear the search field"
-                title="Clear the search field" aria-label="Clear">&#10005;</button>
+                title="Clear the search field" aria-label="Clear" data-ico="close"></button>
       </div>
       <div id="pickList"></div>
     </div>
     <div class="modalfoot">
       <button class="btn" id="pickCancel" data-i18n="Cancel">Cancel</button>
-      <button class="btn primary" id="pickNew">&#10133; Create a new person</button>
+      <button class="btn primary" id="pickNew" data-ico="plus">Create a new person</button>
     </div>
   </div>
 </div>
@@ -1506,7 +1542,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
           <input type="text" id="listQ" autocomplete="off"
                  data-i18n-ph="Name, year or place" placeholder="Name, year or place">
           <button type="button" class="clearbtn" id="listClear" data-i18n-title="Clear the search field"
-                  title="Clear the search field" aria-label="Clear">&#10005;</button>
+                  title="Clear the search field" aria-label="Clear" data-ico="close"></button>
         </div>
         <!-- Die Filter liegen hinter einem Knopf, wie die Jahre im
              Stammbaum hinter "Optionen". Auf einem 360-px-Telefon nahmen
@@ -1697,7 +1733,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
 </div>
 
 <button id="fullExit" class="noprint" hidden data-i18n-title="Leave full screen"
-        title="Leave full screen" aria-label="Leave full screen">&#10005;</button>
+        title="Leave full screen" aria-label="Leave full screen" data-ico="close"></button>
 <div id="toast"></div>
 <script>
 /* ===================================================================
@@ -2123,6 +2159,24 @@ var DE = {
 /* 4.1: Nachfahrentafel */
 '🗂 Save chart (.json)':'🗂 Tafel speichern (.json)', 'Open chart (.json)':'Tafel öffnen (.json)',
 'Notice':'Hinweis', 'Error':'Fehler',
+/* 4.2: Als Text sichern */
+'Copy as text…':'Als Text kopieren …', 'Save as text':'Als Text sichern',
+/* 4.2: Beschriftungen ohne Emoji - das Symbol kommt jetzt aus data-ico */
+'Data':'Daten', 'Back':'Zurück', 'Guide':'Anleitung',
+'Start person':'Startperson', 'Make start person':'Als Startperson merken',
+'New person':'Neue Person', 'Go to root':'Zur Wurzel', 'Export as PDF':'Als PDF exportieren',
+'Print preset (A3)':'Druckvorlage (A3)', 'Save chart (.json)':'Tafel speichern (.json)',
+'Open GEDCOM file':'GEDCOM-Datei öffnen', 'Start another family':'Weitere Familie anlegen',
+'Load sample family':'Beispielfamilie laden', 'Rename or remove files…':'Dateien umbenennen oder entfernen …',
+'People and families':'Personen und Familien', 'Check for duplicates':'Dubletten prüfen',
+'Check the data':'Daten prüfen', 'Compare files':'Dateien abgleichen',
+'Clear data on this device':'Daten auf diesem Gerät löschen',
+'Back up now':'Jetzt sichern', 'Back up now (.ged)':'Jetzt sichern (.ged)',
+'Add the first person':'Erste Person anlegen', 'Create a new person':'Neue Person anlegen',
+'Create new person “':'Neue Person anlegen: „', 'Partner / marriage':'Partner / Ehe',
+'Centre on this person':'Diese Person in die Mitte', 'Show in Descendants':'In der Nachfahrentafel zeigen',
+'This is a <b>new, empty entry</b>. Type a name below – or use <b><span data-ico="back"></span> Back</b> to return to where you were, or <b><span data-ico="trash"></span></b> to remove it again.':
+  'Das ist ein <b>neuer, leerer Eintrag</b>. Unten einen Namen eintippen – oder mit <b><span data-ico="back"></span> Zurück</b> dorthin zurückkehren, wo Sie waren, oder ihn mit <b><span data-ico="trash"></span></b> wieder entfernen.',
 
 };
 
@@ -2282,10 +2336,10 @@ window.I18N={
         <p>The start screen offers two ways in, and both are complete. You can bring a GEDCOM file, or you can
         start with nothing at all.</p>
         <ol>
-          <li><b>Starting from nothing:</b> choose <b>&#10133; Start a family yourself</b>, then
-          <b>&#10133; Add the first person</b>. Enter a name and work outwards &ndash; parents, partners,
+          <li><b>Starting from nothing:</b> choose <b><span data-ico="plus" aria-hidden="true"></span> Start a family yourself</b>, then
+          <b><span data-ico="plus" aria-hidden="true"></span> Add the first person</b>. Enter a name and work outwards &ndash; parents, partners,
           children. Every relative you name is created on the spot.</li>
-          <li><b>Bringing a file:</b> choose <b>&#128193; Open a GEDCOM file</b> and pick your <b>.ged</b> file,
+          <li><b>Bringing a file:</b> choose <b><span data-ico="open" aria-hidden="true"></span> Open a GEDCOM file</b> and pick your <b>.ged</b> file,
           or drop it onto the box. The number of people appears in the top right corner.</li>
           <li><b>Later on:</b> the same two offers sit in the data menu as <b>Open GEDCOM file</b> and
           <b>Load sample family</b> &ndash; the sample is an invented family of twenty people to try everything
@@ -2293,7 +2347,7 @@ window.I18N={
           <li>Either way the <b>Tree</b> opens. Type a name in the search box (adding a year helps, for example
           &bdquo;William 1902&ldquo;) and pick the person from the list.</li>
           <li>Tap any box to open that person&rsquo;s details, edit them, add relatives.</li>
-          <li>When you are done, use <b>Data &rarr; Export GEDCOM</b> to save your work.</li>
+          <li>When you are done, use <b>Data &rarr; Back up now</b> to keep a copy of your work as a .ged file.</li>
         </ol>
         <div class="tip"><b>Only want a look first?</b> <b>Try the sample family</b> loads a small fictional
         family, so you can see everything working before your own data comes into play.</div>
@@ -2320,18 +2374,18 @@ window.I18N={
         the record ID (&bdquo;#I17&ldquo;). Several words are combined, so &bdquo;Ruth 1933&ldquo; and
         &bdquo;Hayes Ashford&ldquo; both work. Whatever matched is <b>marked in the result</b>, so you can see
         at a glance whether it was the name, the year or the place. The line above the list says how it works;
-        if nothing matches, it says what the search looked at. The <b>&#10005;</b> at the right-hand end empties
+        if nothing matches, it says what the search looked at. The <b><span data-ico="close" aria-hidden="true"></span></b> at the right-hand end empties
         the box in one tap. The <b>Filter</b> button beside it narrows the list down:
         by <b>lineage or house</b> and by <b>year of birth</b> (&bdquo;from 1900&ldquo;, &bdquo;to 1950&ldquo;, or
         both). The number on the button says how many filters are set; <b>Reset</b> switches them off again.
         Tapping a box <b>opens that person&rsquo;s details</b>. The small crosshair
-        <b>&#8982;</b> in the corner of a box <b>moves that person to the centre</b> &ndash; that is how you walk
+        <b><span data-ico="target" aria-hidden="true"></span></b> in the corner of a box <b>moves that person to the centre</b> &ndash; that is how you walk
         through the family one generation at a time. Drag with the mouse or one finger to pan, use <b>&ndash;</b> and
         <b>+</b> or two fingers to zoom, and <b>Fit</b> to bring everything back into view. Fit really does show everything, so with four generations on a phone it can zoom out far enough that the names turn small &ndash; zoom back in and pan, or switch a generation off.</p>
         <p>With <b>&#65291;&nbsp;Grandchildren</b> switched on, every child who has children of their own is drawn
         <b>together with the partner those children come from</b>, and each set of grandchildren hangs under its own
         couple. Children without descendants stay single boxes, so the row does not grow for nothing.</p>
-        <p>The edit panel has a <b>&#128203; Show in Descendants</b> button: it takes the person you are looking at
+        <p>The edit panel has a <b><span data-ico="chart" aria-hidden="true"></span> Show in Descendants</b> button: it takes the person you are looking at
         straight into the Descendants tab as the root of a descendant chart.</p>
         <p>The edit panel is divided into <b>Details</b>, <b>Parents</b> and <b>Partners &amp; children</b>. Tapping a
         heading folds that part away, and the app remembers it: if you mostly correct dates, fold the relatives once
@@ -2364,7 +2418,7 @@ window.I18N={
         notes like &bdquo;about 1780&ldquo; survive. Leave a field empty when the date is unknown; if you only know
         that somebody has died, tick <b>deceased</b>.</p>
         <p><b>Notes &amp; sources</b> sit right below the details. A person can have several of each: tap
-        <b>&#10133; Note</b> or <b>&#10133; Source</b> and type. A source is simply where a piece of information comes
+        <b><span data-ico="plus" aria-hidden="true"></span> Note</b> or <b><span data-ico="plus" aria-hidden="true"></span> Source</b> and type. A source is simply where a piece of information comes
         from &ndash; &bdquo;Parish register St Mary, baptisms 1823, p. 14&ldquo; is enough. Both are written into the
         GEDCOM file as <span class="code">NOTE</span> and <span class="code">SOUR</span>, so every other genealogy
         program reads them. To remove an entry, empty the field and leave it.</p>
@@ -2376,17 +2430,17 @@ window.I18N={
         nothing is recorded.</p>
 
         <h5>Adding people and relationships</h5>
-        <p><b>&#10133; New person</b> in the toolbar creates an empty entry and puts it at the centre, with the
-        cursor already in the name field. In the edit panel the buttons <b>&#10133; Father</b>, <b>&#10133; Mother</b>,
-        <b>&#10133; Partner</b> and <b>&#10133; Child</b> each open a picker.</p>
+        <p><b><span data-ico="plus" aria-hidden="true"></span> New person</b> in the toolbar creates an empty entry and puts it at the centre, with the
+        cursor already in the name field. In the edit panel the buttons <b><span data-ico="plus" aria-hidden="true"></span> Father</b>, <b><span data-ico="plus" aria-hidden="true"></span> Mother</b>,
+        <b><span data-ico="plus" aria-hidden="true"></span> Partner</b> and <b><span data-ico="plus" aria-hidden="true"></span> Child</b> each open a picker.</p>
         <p>In that picker, <b>type the name first</b>. If the person is already in the file they appear in the list
-        and you tap them. If not, the button at the bottom now reads <b>&#10133; Create new person &bdquo;&hellip;&ldquo;</b>
+        and you tap them. If not, the button at the bottom now reads <b><span data-ico="plus" aria-hidden="true"></span> Create new person &bdquo;&hellip;&ldquo;</b>
         with the name you typed, and tapping it creates them with that name straight away. Leave the field empty and
         you get a blank entry instead &ndash; the app then opens it and waits for you to type the name, so nothing
         nameless is left behind by accident. Each marriage can carry its own <b>date and place</b>, and several
         marriages are listed one below the other.</p>
-        <p>The <b>&#10005;</b> next to an entry only removes that connection; the person stays in the file. To remove
-        somebody completely use <b>&#128465; Delete person</b> at the top, which asks first, because their links to
+        <p>The <b><span data-ico="close" aria-hidden="true"></span></b> next to an entry only removes that connection; the person stays in the file. To remove
+        somebody completely use <b><span data-ico="trash" aria-hidden="true"></span> Delete person</b> at the top, which asks first, because their links to
         parents, partners and children go with them. Afterwards the app takes you back to the person you came from
         and closes the edit panel, so you are never left stuck in a form.</p>
         <div class="note"><b>Good to know:</b> every change takes effect in the other two tabs at once. Correct a date
@@ -2398,8 +2452,8 @@ window.I18N={
         below, in plain black-and-white boxes like a printed family book. This tab never changes your data, only the
         way it is <b>presented</b> &ndash; real corrections belong in the Tree tab.</p>
         <ol>
-          <li><b>Search the root person</b> in the box at the top (on a phone through the <b>&#9776;</b> menu at the
-          top left). The chart is drawn immediately, showing the root person at reading size &ndash; use <b>Fit</b> for the whole sheet. The <b>&#10005;</b> at the end of that box clears it, so the next root person can be typed straight away.</li>
+          <li><b>Search the root person</b> in the box at the top (on a phone through the <b><span data-ico="menu" aria-hidden="true"></span></b> menu at the
+          top left). The chart is drawn immediately, showing the root person at reading size &ndash; use <b>Fit</b> for the whole sheet. The <b><span data-ico="close" aria-hidden="true"></span></b> at the end of that box clears it, so the next root person can be typed straight away.</li>
           <li><b>Tap a box</b> for the fine work: hide single branches, replace a branch with a <b>reference box</b>
           (&bdquo;see chart B&ldquo;), set the order of several marriages, and overwrite any line of text by hand
           &ndash; for example the given-name line as &bdquo;John 3rd&ldquo; or a note line such as
@@ -2412,16 +2466,16 @@ window.I18N={
           the value <b>all generations</b>, gives you the complete chart at any time. The choice is remembered per root person
           and travels with the project file.</li>
           <li>Adjust the <b>presentation</b>: box width, text size, &bdquo;first given name only&ldquo; and
-          &bdquo;children by age&ldquo;. The <b>&#128208; Print preset (A3)</b> button sets the compact, highly
+          &bdquo;children by age&ldquo;. The <b><span data-ico="layout" aria-hidden="true"></span> Print preset (A3)</b> button sets the compact, highly
           legible combination in one go.</li>
           <li><b>Export</b> as <b>PDF</b> (page size selectable, &bdquo;Auto&ldquo; picks the best fit), as
           <b>SVG</b> for further work in a graphics program, or as <b>PNG</b> for quick sharing.</li>
         </ol>
-        <p><b>&#128450; Save chart (.json)</b> writes a <b>.json</b> file that contains the family data <i>and</i> all
+        <p><b><span data-ico="archive" aria-hidden="true"></span> Save chart (.json)</b> writes a <b>.json</b> file that contains the family data <i>and</i> all
         chart settings &ndash; root person, hidden branches, reference boxes, title. <b>Open chart (.json)</b> brings that
         state back exactly as it was, so you can keep several charts side by side without them interfering. The file
         is meant for Anceslio itself; other programs cannot read it. The backup of your data is
-        <b>&#128190; Back up now</b> in the Data menu.</p>
+        <b><span data-ico="save" aria-hidden="true"></span> Back up now</b> in the Data menu.</p>
       </section>
       <section class="sec" id="h6" data-nav="Kinship">
         <h4>The Kinship tab</h4>
@@ -2534,14 +2588,18 @@ window.I18N={
         there the next time you open it. That store belongs to <b>this app on this device</b>: your phone knows
         nothing about what you edited on a laptop.</p>
         <p>Saving is therefore not the same as backing up. The real backup is a <b>.ged file outside the app</b>, and
-        <b>Data &rsaquo; &#128190; Back up now</b> writes one with a single tap &ndash; on a phone it lands in the
+        <b>Data &rsaquo; <span data-ico="save" aria-hidden="true"></span> Back up now</b> writes one with a single tap &ndash; on a phone it lands in the
         Downloads folder. The app cannot see whether the phone really stored it, so the first time, take a look
         in that folder. Underneath, the menu says how many changes are not backed up yet and when you last backed up.
         While there are such changes, a small number sits on the <b>Data</b> button. After ten of them, or after a
         week, a line below the header reminds you; <b>Later</b> puts it off for a while.</p>
-        <p><b>&#128228; Export GEDCOM &ndash; more ways</b> offers the same file to copy into an e-mail, a note or a cloud
-        drive, or as text to copy by hand. Saving or copying from there counts as a backup too. Back up after larger
-        edits, and always before switching devices or clearing your browser.</p>
+        <p>In the browser version there is also <b><span data-ico="copy" aria-hidden="true"></span> Copy as text</b>.
+        Some browsers refuse downloads without a word &ndash; the one built into Facebook or WhatsApp on an iPhone, for
+        instance. The copied text can go into an e-mail to yourself, a note or a cloud drive, and copying counts as a
+        backup too. The app from the Play Store does not need this and does not show it &ndash; except on Android 9 and
+        older, where Android only lets the app save into its own folder, which disappears together with the app. There
+        <b>Back up now</b> offers the text to copy instead.</p>
+        <p>Back up after larger edits, and always before switching devices or clearing your browser.</p>
         <p>The saved file is named after the family and the moment: the surname that occurs most often in the
         file, then the date and the time to the minute, for instance <b>Hayes_2026-10-10_2214.ged</b>. Two exports
         on the same day are therefore easy to tell apart. If no surname clearly stands out &ndash; a file holding
@@ -2564,10 +2622,10 @@ window.I18N={
         the oldest gives way, and the app says which one it was. A file with changes that are not backed up is the last
         to go, and the app tells you if it had to be one of those. Removing a file here touches only this browser &ndash;
         an exported .ged file on your device is not affected.</p>
-        <p>A file does not have to come from anywhere: <b>Data &rsaquo; &#10133; Start another family</b> opens a new,
+        <p>A file does not have to come from anywhere: <b>Data &rsaquo; <span data-ico="plus" aria-hidden="true"></span> Start another family</b> opens a new,
         empty one beside the others, and you build it up person by person. Nothing that is already there is touched.</p>
         <p>Each file remembers its own view: the person in the middle of the tree, the root of the chart, the two
-        people in the kinship finder. In the edit panel, <b>&#9873; Make start person</b> fixes the person this
+        people in the kinship finder. In the edit panel, <b><span data-ico="flag" aria-hidden="true"></span> Make start person</b> fixes the person this
         particular file should open on &ndash; useful when one file is about your own line and another about a
         different branch. Pressing the button again clears it.</p>
         <p><b>Clear data on this device</b> in the same menu removes the file that is currently open, for example before
@@ -2590,12 +2648,12 @@ window.I18N={
         <p><b>The tree stays empty.</b> No person is at the centre yet &ndash; type a name into the search box and
         pick somebody.</p>
         <p><b>The chart stays empty and the PDF button shows a note.</b> The root person is missing; choose one in
-        the search box (on a phone in the <b>&#9776;</b> menu).</p>
+        the search box (on a phone in the <b><span data-ico="menu" aria-hidden="true"></span></b> menu).</p>
         <p><b>Saving a file does nothing.</b> Some app wrappers block downloads. For the GEDCOM export use
         <b>Copy to clipboard</b> or <b>Show the text</b> in the export dialog; for charts, open the same file in a
         normal browser, where saving always works.</p>
         <p><b>Somebody is connected to the wrong family.</b> Put that person at the centre in the Tree tab, remove
-        the wrong link with <b>&#10005;</b> and set the right one. The person itself is not deleted.</p>
+        the wrong link with <b><span data-ico="close" aria-hidden="true"></span></b> and set the right one. The person itself is not deleted.</p>
         <p><b>The data is gone after reopening.</b> The browser cleared its storage. Load your last exported .ged
         file again &ndash; and export a little more often.</p>
       </section>
@@ -2632,11 +2690,11 @@ window.I18N={
         fetched from the internet, and there is no connection through which data could leave the device.</p>
         <p>You switch between the three tools with the tabs: <b>at the bottom of the screen</b> on a phone held
         upright, and <b>under the title</b> on a computer, a tablet or a phone turned sideways.</p>
-        <p>The <b>&#9974;</b> button gives the picture the whole screen: header, search bar and tabs disappear. It
-        works the same way in the tree and in the chart &ndash; in the chart it sits right next to the <b>&#9776;</b>
-        menu. The <b>&#10005;</b> floating over the picture brings everything back, and so do the Android back button
+        <p>The <b><span data-ico="full" aria-hidden="true"></span></b> button gives the picture the whole screen: header, search bar and tabs disappear. It
+        works the same way in the tree and in the chart &ndash; in the chart it sits right next to the <b><span data-ico="menu" aria-hidden="true"></span></b>
+        menu. The <b><span data-ico="close" aria-hidden="true"></span></b> floating over the picture brings everything back, and so do the Android back button
         and the Escape key. The app always starts with its menus in sight, so nobody can get stuck.</p>
-        <p>In the chart everything else lives behind the <b>&#9776;</b> menu, divided into four parts:
+        <p>In the chart everything else lives behind the <b><span data-ico="menu" aria-hidden="true"></span></b> menu, divided into four parts:
         <b>Root person</b>, <b>View</b>, <b>The selected person</b> and <b>Output</b>.</p>
         <p class="muted appver"></p>
       </section>
@@ -2675,10 +2733,10 @@ window.I18N={
         <p>Der Startbildschirm bietet zwei Wege an, und beide sind vollwertig. Man kann eine GEDCOM-Datei
         mitbringen &ndash; oder ganz ohne Datei anfangen.</p>
         <ol>
-          <li><b>Ohne Datei:</b> <b>&#10133; Familie selbst anlegen</b> w&auml;hlen, dann
-          <b>&#10133; Erste Person anlegen</b>. Einen Namen eintragen und sich von dort aus weiterarbeiten
+          <li><b>Ohne Datei:</b> <b><span data-ico="plus" aria-hidden="true"></span> Familie selbst anlegen</b> w&auml;hlen, dann
+          <b><span data-ico="plus" aria-hidden="true"></span> Erste Person anlegen</b>. Einen Namen eintragen und sich von dort aus weiterarbeiten
           &ndash; Eltern, Partner, Kinder. Jeder genannte Verwandte wird gleich mit angelegt.</li>
-          <li><b>Mit Datei:</b> <b>&#128193; GEDCOM-Datei &ouml;ffnen</b> w&auml;hlen und die eigene
+          <li><b>Mit Datei:</b> <b><span data-ico="open" aria-hidden="true"></span> GEDCOM-Datei &ouml;ffnen</b> w&auml;hlen und die eigene
           <b>.ged</b>-Datei aussuchen oder auf das Feld ziehen. Oben rechts erscheint die Zahl der Personen.</li>
           <li><b>Sp&auml;ter:</b> Dieselben zwei Angebote stehen im Datenmen&uuml; als
           <b>GEDCOM-Datei &ouml;ffnen</b> und <b>Beispielfamilie laden</b> &ndash; das Beispiel ist eine erfundene
@@ -2688,7 +2746,7 @@ window.I18N={
           hilft, etwa &bdquo;Wilhelm 1902&ldquo;) und die Person aus der Liste w&auml;hlen.</li>
           <li>Einen beliebigen Kasten antippen, um die Angaben dieser Person zu &ouml;ffnen, zu bearbeiten und
           Verwandte hinzuzuf&uuml;gen.</li>
-          <li>Zum Schluss mit <b>Daten &rarr; GEDCOM exportieren</b> die Arbeit sichern.</li>
+          <li>Zum Schluss mit <b>Daten &rarr; Jetzt sichern</b> die Arbeit als .ged-Datei sichern.</li>
         </ol>
         <div class="tip"><b>Erst einmal nur schauen?</b> <b>Beispielfamilie ausprobieren</b> l&auml;dt eine kleine
         erfundene Familie, an der sich alles zeigen l&auml;sst, bevor eigene Daten ins Spiel kommen.</div>
@@ -2718,18 +2776,18 @@ window.I18N={
         funktioniert also ebenso wie &bdquo;Hayes Ashford&ldquo;. Was gepasst hat, ist <b>im Treffer
         hervorgehoben</b> &ndash; so sieht man auf einen Blick, ob es der Name war, das Jahr oder der Ort.
         &Uuml;ber der Liste steht, wie das geht; findet sich nichts, steht dort, worin gesucht wurde. Das
-        <b>&#10005;</b> am rechten Rand leert das Feld mit einem Tipp.
+        <b><span data-ico="close" aria-hidden="true"></span></b> am rechten Rand leert das Feld mit einem Tipp.
         Die Schaltfl&auml;che <b>Filter</b> daneben grenzt die Liste ein: nach <b>Stamm oder Haus</b> und nach
         <b>Geburtsjahr</b> (&bdquo;ab 1900&ldquo;, &bdquo;bis 1950&ldquo; oder beides). Die Zahl auf der
         Schaltfl&auml;che sagt, wie viele Filter gesetzt sind; <b>Zur&uuml;cksetzen</b> hebt sie wieder auf. Ein Kasten antippen <b>&ouml;ffnet die Angaben</b>
-        dieser Person. Das kleine Fadenkreuz <b>&#8982;</b> in der Ecke eines Kastens <b>holt diese Person in die
+        dieser Person. Das kleine Fadenkreuz <b><span data-ico="target" aria-hidden="true"></span></b> in der Ecke eines Kastens <b>holt diese Person in die
         Mitte</b> &ndash; so wandert man Generation f&uuml;r Generation durch die Familie. Mit der Maus oder einem
         Finger ziehen verschiebt den Ausschnitt, <b>&ndash;</b> und <b>+</b> oder zwei Finger zoomen, und
         <b>Einpassen</b> holt alles wieder ins Bild. Einpassen zeigt wirklich alles &ndash; bei vier Generationen auf dem Handy wird dabei so weit herausgezoomt, dass die Namen klein werden. Dann einfach wieder hineinzoomen und schieben oder eine Generation abschalten.</p>
         <p>Ist <b>&#65291;&nbsp;Enkel</b> eingeschaltet, wird jedes Kind, das selbst Kinder hat, <b>zusammen mit dem
         Partner gezeigt, von dem diese Kinder stammen</b>, und jede Enkelgruppe h&auml;ngt unter ihrem eigenen Paar.
         Kinder ohne Nachkommen bleiben einzelne K&auml;sten, damit die Reihe nicht unn&ouml;tig breit wird.</p>
-        <p>Im Bearbeitungsfeld gibt es die Schaltfl&auml;che <b>&#128203; In der Nachfahrentafel zeigen</b>: Sie
+        <p>Im Bearbeitungsfeld gibt es die Schaltfl&auml;che <b><span data-ico="chart" aria-hidden="true"></span> In der Nachfahrentafel zeigen</b>: Sie
         &uuml;bernimmt die gerade angesehene Person direkt als Wurzelperson in den Reiter Nachfahrentafel.</p>
         <p>Das Bearbeitungsfeld ist in <b>Angaben</b>, <b>Eltern</b> und <b>Partner und Kinder</b> geteilt. Ein Tipp
         auf eine &Uuml;berschrift klappt den Teil zu, und die App merkt es sich: Wer meist nur Daten berichtigt, klappt
@@ -2756,7 +2814,7 @@ window.I18N={
         darunter. Erst daraus wird die Reihe gebaut. Deshalb steht eine Kindergruppe immer mittig unter ihrem eigenen
         Elternteil, und deshalb laufen zwei Verbindungslinien nie ineinander, egal wie viele Verwandte man
         dazuschaltet.</div>
-        <p>Auf dem Handy sind diese Einstellungen hinter der Schaltfl&auml;che <b>&#9776;</b> zusammengefasst, damit
+        <p>Auf dem Handy sind diese Einstellungen hinter der Schaltfl&auml;che <b><span data-ico="menu" aria-hidden="true"></span></b> zusammengefasst, damit
         mehr Platz f&uuml;r den Stammbaum bleibt.</p>
 
         <h5>Angaben bearbeiten</h5>
@@ -2770,7 +2828,7 @@ window.I18N={
         lassen, wenn das Datum unbekannt ist; wenn nur feststeht, dass jemand verstorben ist, das H&auml;kchen bei
         <b>verstorben</b> setzen.</p>
         <p><b>Notizen &amp; Quellen</b> stehen gleich unter den Angaben. Eine Person kann von beidem mehrere haben:
-        <b>&#10133; Notiz</b> oder <b>&#10133; Quelle</b> antippen und schreiben. Eine Quelle ist einfach, woher eine
+        <b><span data-ico="plus" aria-hidden="true"></span> Notiz</b> oder <b><span data-ico="plus" aria-hidden="true"></span> Quelle</b> antippen und schreiben. Eine Quelle ist einfach, woher eine
         Angabe stammt &ndash; &bdquo;Kirchenbuch St. Marien, Taufen 1823, S. 14&ldquo; gen&uuml;gt. Beides wird als
         <span class="code">NOTE</span> und <span class="code">SOUR</span> in die GEDCOM-Datei geschrieben, jedes andere
         Ahnenprogramm liest es also mit. Um einen Eintrag zu entfernen, das Feld leeren und verlassen.</p>
@@ -2783,22 +2841,22 @@ window.I18N={
         f&uuml;r weiblich, beige, wenn nichts eingetragen ist.</p>
 
         <h5>Personen und Verwandtschaften anlegen</h5>
-        <p><b>&#10133; Neue Person</b> in der Werkzeugleiste legt einen leeren Eintrag an und stellt ihn in die Mitte,
+        <p><b><span data-ico="plus" aria-hidden="true"></span> Neue Person</b> in der Werkzeugleiste legt einen leeren Eintrag an und stellt ihn in die Mitte,
         mit dem Cursor bereits im Namensfeld. Im Bearbeitungsfeld &ouml;ffnen die Schaltfl&auml;chen
-        <b>&#10133; Vater</b>, <b>&#10133; Mutter</b>, <b>&#10133; Partner</b> und <b>&#10133; Kind</b> jeweils eine
+        <b><span data-ico="plus" aria-hidden="true"></span> Vater</b>, <b><span data-ico="plus" aria-hidden="true"></span> Mutter</b>, <b><span data-ico="plus" aria-hidden="true"></span> Partner</b> und <b><span data-ico="plus" aria-hidden="true"></span> Kind</b> jeweils eine
         Auswahl.</p>
         <p>In dieser Auswahl <b>zuerst den Namen eintippen</b>. Ist die Person schon in der Datei, erscheint sie in der
         Liste und wird angetippt. Wenn nicht, lautet die Schaltfl&auml;che unten jetzt
-        <b>&#10133; Neue Person anlegen: &bdquo;&hellip;&ldquo;</b> mit dem eingetippten Namen, und ein Antippen legt
+        <b><span data-ico="plus" aria-hidden="true"></span> Neue Person anlegen: &bdquo;&hellip;&ldquo;</b> mit dem eingetippten Namen, und ein Antippen legt
         sie sofort unter diesem Namen an. L&auml;sst man das Feld leer, entsteht stattdessen ein leerer Eintrag &ndash;
         die App &ouml;ffnet ihn dann und wartet auf den Namen, damit nicht versehentlich etwas Namenloses
         zur&uuml;ckbleibt. Jede Ehe kann ein eigenes <b>Datum und einen eigenen Ort</b> tragen, und mehrere Ehen werden
         untereinander aufgef&uuml;hrt.</p>
         <p>Bei einem neuen, noch leeren Eintrag steht oben im Bearbeitungsfeld ein Hinweis mit drei
-        M&ouml;glichkeiten: Namen eintippen, mit <b>&#8617; Zur&uuml;ck</b> dorthin zur&uuml;ckkehren, wo man war, oder
-        den Eintrag mit <b>&#128465;</b> wieder entfernen.</p>
-        <p>Das <b>&#10005;</b> neben einem Eintrag l&ouml;st nur diese Verbindung; die Person bleibt in der Datei
-        erhalten. Um jemanden vollst&auml;ndig zu entfernen, dient <b>&#128465; Person l&ouml;schen</b> oben, das
+        M&ouml;glichkeiten: Namen eintippen, mit <b><span data-ico="back" aria-hidden="true"></span> Zur&uuml;ck</b> dorthin zur&uuml;ckkehren, wo man war, oder
+        den Eintrag mit <b><span data-ico="trash" aria-hidden="true"></span></b> wieder entfernen.</p>
+        <p>Das <b><span data-ico="close" aria-hidden="true"></span></b> neben einem Eintrag l&ouml;st nur diese Verbindung; die Person bleibt in der Datei
+        erhalten. Um jemanden vollst&auml;ndig zu entfernen, dient <b><span data-ico="trash" aria-hidden="true"></span> Person l&ouml;schen</b> oben, das
         vorher nachfragt, weil dabei auch die Verbindungen zu Eltern, Partnern und Kindern verloren gehen. Danach
         kehrt die App zu der Person zur&uuml;ck, von der man gekommen ist, und schlie&szlig;t das Bearbeitungsfeld
         &ndash; man bleibt also nie in einer Maske h&auml;ngen.</p>
@@ -2812,8 +2870,8 @@ window.I18N={
         nie die Daten selbst, sondern nur ihre <b>Darstellung</b> &ndash; echte Korrekturen geh&ouml;ren in den Reiter
         Stammbaum.</p>
         <ol>
-          <li><b>Wurzelperson suchen</b> im Feld oben (auf dem Handy &uuml;ber das Men&uuml; <b>&#9776;</b> oben
-          links). Die Tafel wird sofort gezeichnet und beginnt lesbar bei der Wurzelperson &ndash; <b>Einpassen</b> zeigt die ganze Tafel. Das <b>&#10005;</b> am Ende des Feldes leert es, damit sich die n&auml;chste Wurzelperson sofort eintippen l&auml;sst.</li>
+          <li><b>Wurzelperson suchen</b> im Feld oben (auf dem Handy &uuml;ber das Men&uuml; <b><span data-ico="menu" aria-hidden="true"></span></b> oben
+          links). Die Tafel wird sofort gezeichnet und beginnt lesbar bei der Wurzelperson &ndash; <b>Einpassen</b> zeigt die ganze Tafel. Das <b><span data-ico="close" aria-hidden="true"></span></b> am Ende des Feldes leert es, damit sich die n&auml;chste Wurzelperson sofort eintippen l&auml;sst.</li>
           <li><b>Einen Kasten antippen</b> f&uuml;r die Feinarbeit: einzelne Zweige ausblenden, einen Zweig durch einen
           <b>Verweiskasten</b> ersetzen (&bdquo;s. Tafel B&ldquo;), die Reihenfolge mehrerer Ehen festlegen und jede
           Textzeile von Hand &uuml;berschreiben &ndash; etwa die Vornamenzeile als &bdquo;Johann III.&ldquo; oder eine
@@ -2827,17 +2885,17 @@ window.I18N={
           jederzeit die vollst&auml;ndige Tafel. Die Einstellung merkt sich die App je Wurzelperson und speichert sie mit in
           die Projektdatei.</li>
           <li>Die <b>Darstellung</b> anpassen: Kastenbreite, Schriftgr&ouml;&szlig;e, &bdquo;nur erster Vorname&ldquo;
-          und &bdquo;Kinder nach Alter&ldquo;. Die Schaltfl&auml;che <b>&#128208; Druckvorlage (A3)</b> setzt die
+          und &bdquo;Kinder nach Alter&ldquo;. Die Schaltfl&auml;che <b><span data-ico="layout" aria-hidden="true"></span> Druckvorlage (A3)</b> setzt die
           kompakte, gut lesbare Kombination in einem Zug.</li>
           <li><b>Exportieren</b> als <b>PDF</b> (Seitengr&ouml;&szlig;e w&auml;hlbar, &bdquo;Automatisch&ldquo; sucht
           die beste Passung), als <b>SVG</b> zur Weiterarbeit in einem Grafikprogramm oder als <b>PNG</b> zum schnellen
           Weitergeben.</li>
         </ol>
-        <p><b>&#128450; Tafel speichern (.json)</b> schreibt eine <b>.json</b>-Datei, die die Familiendaten <i>und</i>
+        <p><b><span data-ico="archive" aria-hidden="true"></span> Tafel speichern (.json)</b> schreibt eine <b>.json</b>-Datei, die die Familiendaten <i>und</i>
         alle Tafeleinstellungen enth&auml;lt &ndash; Wurzelperson, ausgeblendete Zweige, Verweisk&auml;sten, Titel.
         <b>Tafel &ouml;ffnen (.json)</b> holt diesen Stand genau so zur&uuml;ck, sodass sich mehrere Tafeln nebeneinander
         f&uuml;hren lassen, ohne sich gegenseitig zu st&ouml;ren. Die Datei ist f&uuml;r Anceslio selbst gedacht; andere
-        Programme k&ouml;nnen sie nicht lesen. Die Sicherung der Daten ist <b>&#128190; Jetzt sichern</b> im
+        Programme k&ouml;nnen sie nicht lesen. Die Sicherung der Daten ist <b><span data-ico="save" aria-hidden="true"></span> Jetzt sichern</b> im
         Datenmen&uuml;.</p>
         <p class="muted">Die Tafel wird auch im dunklen Design auf wei&szlig;em Papier gezeigt, weil sie genau so
         gedruckt und exportiert wird.</p>
@@ -2966,16 +3024,21 @@ window.I18N={
         ist also beim n&auml;chsten &Ouml;ffnen alles wieder da. Dieser Speicher geh&ouml;rt <b>dieser App auf diesem
         Ger&auml;t</b>: Das Handy wei&szlig; nichts davon, was am Rechner bearbeitet wurde.</p>
         <p>Speichern ist deshalb nicht dasselbe wie Sichern. Die eigentliche Sicherung ist eine <b>.ged-Datei
-        au&szlig;erhalb der App</b>, und <b>Daten &rsaquo; &#128190; Jetzt sichern</b> legt sie mit einem Tipp an &ndash;
+        au&szlig;erhalb der App</b>, und <b>Daten &rsaquo; <span data-ico="save" aria-hidden="true"></span> Jetzt sichern</b> legt sie mit einem Tipp an &ndash;
         auf dem Handy landet sie im Ordner Downloads. Ob das Handy sie wirklich abgelegt hat, kann die App nicht
         sehen &ndash; beim ersten Mal lohnt deshalb ein Blick in diesen Ordner. Darunter steht im Men&uuml;, wie viele &Auml;nderungen noch nicht
         gesichert sind und wann zuletzt gesichert wurde. Solange es solche &Auml;nderungen gibt, sitzt eine kleine Zahl
         am Knopf <b>Daten</b>. Nach zehn davon oder nach einer Woche erinnert eine Zeile unter der Kopfzeile daran;
         <b>Sp&auml;ter</b> verschiebt das eine Weile.</p>
-        <p><b>&#128228; GEDCOM exportieren &ndash; weitere Wege</b> bietet dieselbe Datei zum Kopieren an, f&uuml;r eine
-        E-Mail, eine Notiz oder einen Cloud-Speicher, oder als Text zum Abschreiben. Speichern oder Kopieren von dort
-        z&auml;hlt ebenfalls als Sicherung. Sichern sollte man nach gr&ouml;&szlig;eren Bearbeitungen, und immer vor einem
-        Ger&auml;tewechsel oder bevor man die Browserdaten l&ouml;scht.</p>
+        <p>In der Browser-Fassung gibt es zus&auml;tzlich <b><span data-ico="copy" aria-hidden="true"></span> Als Text
+        kopieren</b>. Manche Browser verweigern Downloads stillschweigend &ndash; etwa der eingebaute von Facebook oder
+        WhatsApp auf dem iPhone. Den kopierten Text kann man in eine E-Mail an sich selbst, eine Notiz oder einen
+        Cloud-Speicher legen, und Kopieren z&auml;hlt ebenfalls als Sicherung. Die App aus dem Play Store braucht das nicht
+        und zeigt es nicht &ndash; au&szlig;er unter Android 9 und &auml;lter: Dort erlaubt Android der App nur ihren eigenen
+        Ordner, und der verschwindet mit der App. Dort bietet <b>Jetzt sichern</b> deshalb gleich den Text zum Kopieren
+        an.</p>
+        <p>Sichern sollte man nach gr&ouml;&szlig;eren Bearbeitungen, und immer vor einem Ger&auml;tewechsel oder bevor man
+        die Browserdaten l&ouml;scht.</p>
         <p>Die gespeicherte Datei tr&auml;gt den Namen der Familie und den Zeitpunkt: den Nachnamen, der in der
         Datei am h&auml;ufigsten vorkommt, dann Datum und Uhrzeit bis zur Minute, etwa
         <b>Hayes_2026-10-10_2214.ged</b>. Zwei Exporte am selben Tag lassen sich so auseinanderhalten. Sticht kein
@@ -3002,12 +3065,12 @@ window.I18N={
         behalten; kommt eine siebte dazu, weicht die &auml;lteste, und die App sagt, welche es war. Eine Datei mit
         ungesicherten &Auml;nderungen weicht als letzte, und die App sagt es dazu, falls es doch eine davon sein musste. Entfernen wirkt
         nur in diesem Browser &ndash; eine exportierte .ged-Datei auf dem Ger&auml;t bleibt unber&uuml;hrt.</p>
-        <p>Eine Datei muss nicht von irgendwoher stammen: <b>Daten &rsaquo; &#10133; Weitere Familie anlegen</b>
+        <p>Eine Datei muss nicht von irgendwoher stammen: <b>Daten &rsaquo; <span data-ico="plus" aria-hidden="true"></span> Weitere Familie anlegen</b>
         &ouml;ffnet eine neue, leere neben den anderen, die man Person f&uuml;r Person aufbaut. Was schon da ist,
         bleibt unber&uuml;hrt.</p>
         <p>Jede Datei merkt sich ihren eigenen Stand: die Person in der Mitte des Stammbaums, die Wurzel der
         Nachfahrentafel, die beiden Personen im Verwandtschaftsrechner. Im Bearbeitungsfeld legt
-        <b>&#9873; Als Startperson merken</b> fest, bei wem genau diese Datei k&uuml;nftig &ouml;ffnet &ndash;
+        <b><span data-ico="flag" aria-hidden="true"></span> Als Startperson merken</b> fest, bei wem genau diese Datei k&uuml;nftig &ouml;ffnet &ndash;
         praktisch, wenn eine Datei die eigene Linie betrifft und eine andere einen fremden Zweig. Noch einmal
         dr&uuml;cken l&ouml;scht die Festlegung wieder.</p>
         <p><b>Daten auf diesem Ger&auml;t l&ouml;schen</b> im selben Men&uuml; entfernt absichtlich alles, etwa bevor
@@ -3031,12 +3094,12 @@ window.I18N={
         <p><b>Der Stammbaum bleibt leer.</b> Es steht noch keine Person in der Mitte &ndash; einen Namen ins Suchfeld
         tippen und jemanden ausw&auml;hlen.</p>
         <p><b>Die Tafel bleibt leer und die PDF-Schaltfl&auml;che zeigt einen Hinweis.</b> Die Wurzelperson fehlt; im
-        Suchfeld eine ausw&auml;hlen (auf dem Handy im Men&uuml; <b>&#9776;</b>).</p>
+        Suchfeld eine ausw&auml;hlen (auf dem Handy im Men&uuml; <b><span data-ico="menu" aria-hidden="true"></span></b>).</p>
         <p><b>Das Speichern einer Datei tut nichts.</b> Manche App-H&uuml;llen sperren Downloads. F&uuml;r den
         GEDCOM-Export im Exportdialog <b>In die Zwischenablage</b> oder <b>Text anzeigen</b> verwenden; f&uuml;r Tafeln
         dieselbe Datei in einem normalen Browser &ouml;ffnen, dort funktioniert das Speichern immer.</p>
         <p><b>Jemand h&auml;ngt an der falschen Familie.</b> Diese Person im Reiter Stammbaum in die Mitte holen, die
-        falsche Verbindung mit <b>&#10005;</b> l&ouml;sen und die richtige setzen. Die Person selbst wird dabei nicht
+        falsche Verbindung mit <b><span data-ico="close" aria-hidden="true"></span></b> l&ouml;sen und die richtige setzen. Die Person selbst wird dabei nicht
         gel&ouml;scht.</p>
         <p><b>Nach dem erneuten &Ouml;ffnen sind die Daten weg.</b> Der Browser hat seinen Speicher geleert. Die
         zuletzt exportierte .ged-Datei wieder laden &ndash; und k&uuml;nftig etwas h&auml;ufiger exportieren.</p>
@@ -3080,12 +3143,12 @@ window.I18N={
         <p>Zwischen den drei Werkzeugen wechselt man &uuml;ber die Reiter: auf dem hochkant gehaltenen Handy
         <b>am unteren Bildschirmrand</b>, am Rechner, auf dem Tablet und beim quer gehaltenen Handy
         <b>unter dem Titel</b>.</p>
-        <p>Die Schaltfl&auml;che <b>&#9974;</b> gibt dem Bild den ganzen Bildschirm: Kopfzeile, Suchleiste und
+        <p>Die Schaltfl&auml;che <b><span data-ico="full" aria-hidden="true"></span></b> gibt dem Bild den ganzen Bildschirm: Kopfzeile, Suchleiste und
         Reiter verschwinden. Sie wirkt im Stammbaum und in der Nachfahrentafel gleich &ndash; in der Nachfahrentafel sitzt sie
-        direkt neben dem <b>&#9776;</b>-Men&uuml;. Das <b>&#10005;</b>, das &uuml;ber dem Bild schwebt, holt alles
+        direkt neben dem <b><span data-ico="menu" aria-hidden="true"></span></b>-Men&uuml;. Das <b><span data-ico="close" aria-hidden="true"></span></b>, das &uuml;ber dem Bild schwebt, holt alles
         zur&uuml;ck, ebenso die Zur&uuml;ck-Taste des Handys und die Escape-Taste. Die App startet immer mit
         sichtbaren Men&uuml;s, damit niemand darin h&auml;ngenbleibt.</p>
-        <p>In der Nachfahrentafel steckt alles Weitere hinter dem <b>&#9776;</b>-Men&uuml;, in vier Teile gegliedert:
+        <p>In der Nachfahrentafel steckt alles Weitere hinter dem <b><span data-ico="menu" aria-hidden="true"></span></b>-Men&uuml;, in vier Teile gegliedert:
         <b>Wurzelperson</b>, <b>Ansicht</b>, <b>Die gew&auml;hlte Person</b> und <b>Ausgeben</b>.</p>
         <p class="muted appver"></p>
       </section>
@@ -3121,7 +3184,7 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='4.1';
+var APPVERSION='4.2';
 
 /* ====================================================================
    Welche Kodierung hat die Datei?
@@ -4516,11 +4579,11 @@ $('askYes').onclick=function(){ var c=askCb; askCb=null; closeModal('mdAsk'); if
 $('askNo').onclick =function(){ askCb=null; closeModal('mdAsk'); };
 
 /* person picker */
-var pickCb=null, pickExclude={}, pickNewLabel=L('➕ Create a new person');
+var pickCb=null, pickExclude={}, pickNewLabel=L('Create a new person');
 function pickPerson(opts){
   opts=opts||{};
   pickCb=opts.onPick||null; pickExclude=opts.exclude||{};
-  pickNewLabel=opts.newLabel||L('➕ Create a new person');
+  pickNewLabel=opts.newLabel||L('Create a new person');
   $('pickTitle').textContent=opts.title||L('Select a person');
   $('pickNew').style.display=(opts.allowNew===false)?'none':'';
   $('pickSearch').value='';
@@ -4534,7 +4597,7 @@ function pickPerson(opts){
    so nobody ends up with a nameless entry they did not expect. */
 function updateNewLabel(){
   var q=$('pickSearch').value.trim();
-  $('pickNew').textContent = q ? (L('➕ Create new person “')+q+'”') : pickNewLabel;
+  $('pickNew').textContent = q ? (L('Create new person “')+q+'”') : pickNewLabel;
 }
 var PARTICLE=/^(von|van|de|der|den|dem|du|del|di|da|dos|das|la|le|zu|und|of|el|al|ter|ten|op|ten)$/i;
 function splitName(s){
@@ -4709,13 +4772,12 @@ function gedName(){ var hn=hauptName(); return (hn?hn+'_':'family_')+stamp(true)
 function exportGed(){
   if(!FP.count()){ ask(L('Nothing to export'),L('There are no people in the file yet.'),null,'OK'); return; }
   var ged=FP.serialize(), name=gedName();
-  $('expInfo').textContent=FP.count()+' people, '+Math.max(1,Math.round(ged.length/1024))+' KB · '+name;
+  $('expInfo').textContent=FP.count()+L(' people')+', '+Math.max(1,Math.round(ged.length/1024))+' KB · '+name;
+  $('expNote').hidden=!(imApp() && altesAndroid());
   $('expText').value=ged;
   $('expText').classList.add('hidden');
   openModal('mdExport');
-  /* Gespeichert oder kopiert ist gesichert. Nur angezeigt ist es nicht. */
-  $('expSave').onclick=function(){
-    if(download(new Blob([ged],{type:'text/plain;charset=utf-8'}), name)){ FP.gesichert(); hinweisMerken(); } };
+  /* Kopiert ist gesichert. Nur angezeigt ist es nicht. */
   $('expCopy').onclick=function(){
     copyText(ged, L('GEDCOM copied to the clipboard'), function(){ FP.gesichert(); hinweisMerken(); }); };
   $('expShow').onclick=function(){
@@ -4806,7 +4868,7 @@ function paintBackup(){
                                                   : L('This file exists only inside the app'))+'</b> – '+esc(L('not backed up yet.'));
     $('backupLater').textContent=L('Later');
   }
-  $('backupNow').textContent=L('💾 Back up now');
+  $('backupNow').textContent=L('Back up now');
   if(barArt) platziereLeiste();
 }
 function platziereLeiste(){
@@ -4814,13 +4876,30 @@ function platziereLeiste(){
   $('backupBar').style.top=Math.round(Math.max(0,r.bottom)+6)+'px';
 }
 window.addEventListener('resize', function(){ if(barArt) platziereLeiste(); });
+/* Android bis Version 9 erlaubt der App ohne Berechtigung nur ihren
+   eigenen Ordner - der Rahmen speichert dort, und der Ordner verschwindet
+   mit der App. Fuer eine Sicherung taugt das nicht. Erst ab Android 10
+   landet die Datei im allgemeinen Ordner Downloads. Die Version steht in
+   der Kennung der WebView. */
+function altesAndroid(){
+  var m=/Android (\d+)/.exec(navigator.userAgent||'');
+  return !!(m && +m[1]<10);
+}
+/* „Als Text kopieren" im Menue: im Browser, weil manche Browser Downloads
+   still verweigern (etwa der eingebaute von Facebook oder WhatsApp auf
+   dem iPhone), und auf altem Android. In der App sonst nicht - dort
+   speichert Android selbst, und ein zweiter Weg waere nur Verwirrung. */
+function imApp(){ try{ return !!window.AnceslioBridge; }catch(e){ return false; } }
+function textWeg(){ return !imApp() || altesAndroid(); }
 function sichernJetzt(){
   closeDataMenu();
   if(!FP.count()){ ask(L('Nothing to back up'), L('There are no people in the file yet.'), null, 'OK'); return; }
+  if(imApp() && altesAndroid()){ exportGed(); return; }
   if(download(new Blob([FP.serialize()],{type:'text/plain;charset=utf-8'}), gedName())){
     FP.gesichert(); hinweisMerken();
-  }
+  } else exportGed();
 }
+$('miExport').hidden=!textWeg();
 $('miBackup').onclick=sichernJetzt;
 $('backupNow').onclick=sichernJetzt;
 $('backupLater').onclick=function(){
@@ -4897,7 +4976,7 @@ function paintFileRows(){
     h+='<div class="filerow"><input type="text" data-ren="'+esc(list[i].id)+'" value="'+
        esc(list[i].name)+'" maxlength="60">'+
        '<button class="btn small danger" data-del="'+esc(list[i].id)+'" title="'+esc(L('Remove this file'))+
-       '" aria-label="'+esc(L('Remove this file'))+'">\ud83d\uddd1</button>'+
+       '" aria-label="'+esc(L('Remove this file'))+'" data-ico="trash"></button>'+
        '<div class="filemeta muted">'+(list[i].count? list[i].count+L(' people') : L('empty'))+
        (list[i].bytes? ' \u00b7 '+sizeText(list[i].bytes) : '')+
        (list[i].current? ' \u00b7 '+L('open now') : '')+
@@ -5361,8 +5440,8 @@ function render(){
        button instead of being one: with no data at all, this is the only thing
        on the screen, so it may as well be the way in. */
     hint.innerHTML=L('No people yet.')+
-      '<div class="hintact"><button class="btn primary" id="trHintNew">'+
-      L('➕ Add the first person')+'</button></div>'+
+      '<div class="hintact"><button class="btn primary" id="trHintNew" data-ico="plus">'+
+      L('Add the first person')+'</button></div>'+
       '<div class="hintor">'+L('or load a GEDCOM file from the <b>Data</b> menu above.')+'</div>';
     hint.classList.add('empty');
     var hb=$('trHintNew'); if(hb) hb.onclick=function(){ newPerson(); };
@@ -5877,7 +5956,11 @@ function render(){
       var bx=item.x+BW-15, by=y+BH-13;
       var gb=el('g',{'class':'ctr'},svg);
       el('circle',{cx:bx, cy:by, r:11, fill:C('--tbox'), stroke:C('--tstroke'),'stroke-width':1}, gb);
-      txt(bx, by+4, '⌖', 13, gb, {'text-anchor':'middle', fill:C('--accent')});
+      /* Gezeichnet statt als Schriftzeichen: „⌖" fehlt in manchen
+         Android-Schriften und sah neben den neuen Symbolen fremd aus. */
+      el('circle',{cx:bx, cy:by, r:3.6, fill:'none', stroke:C('--accent'), 'stroke-width':1.3}, gb);
+      el('path',{d:'M'+bx+' '+(by-7)+'v2.6M'+bx+' '+(by+4.4)+'v2.6M'+(bx-7)+' '+by+'h2.6M'+(bx+4.4)+' '+by+'h2.6',
+                 stroke:C('--accent'), 'stroke-width':1.3, 'stroke-linecap':'round', fill:'none'}, gb);
       /* The drawn circle stays small; the circle you actually hit is bigger.
          It reaches into the gap between the boxes, which is empty anyway, so
          nothing else loses ground. 36 units instead of 28. */
@@ -6221,14 +6304,14 @@ function openPanel(id){
 
   var unnamed=!givenOf(p) && !surnameOf(p);
   h+='<h3>'+esc(FP.fullName(p))+'</h3>';
-  if(unnamed) h+='<div class="newhint">'+L('This is a <b>new, empty entry</b>. Type a name below – or use <b>↩ Back</b> to return to where you were, or <b>🗑</b> to remove it again.')+'</div>';
+  if(unnamed) h+='<div class="newhint">'+L('This is a <b>new, empty entry</b>. Type a name below – or use <b><span data-ico="back"></span> Back</b> to return to where you were, or <b><span data-ico="trash"></span></b> to remove it again.')+'</div>';
   h+='<div class="addrow" style="margin:0 0 12px">'+
-     (trail.length?'<button class="btn small" id="pBack">'+L('↩ Back')+'</button>':'')+
-     (id===FOCUS?'':'<button class="btn small" id="pFocus">'+L('⌖ Centre on this person')+'</button>')+
-     '<button class="btn small" id="pChart">'+L('📋 Show in Descendants')+'</button>'+
-     '<button class="btn small'+(FP.startPerson()===id?' on':'')+'" id="pStart">'+
-       (FP.startPerson()===id ? L('⚑ Start person') : L('⚑ Make start person'))+'</button>'+
-     '<button class="btn small danger" id="pDel">'+L('🗑 Delete person')+'</button></div>';
+     (trail.length?'<button class="btn small" id="pBack" data-ico="back">'+L('Back')+'</button>':'')+
+     (id===FOCUS?'':'<button class="btn small" id="pFocus" data-ico="target">'+L('Centre on this person')+'</button>')+
+     '<button class="btn small" id="pChart" data-ico="chart">'+L('Show in Descendants')+'</button>'+
+     '<button class="btn small'+(FP.startPerson()===id?' on':'')+'" id="pStart" data-ico="flag">'+
+       (FP.startPerson()===id ? L('Start person') : L('Make start person'))+'</button>'+
+     '<button class="btn small danger" id="pDel" data-ico="trash">'+L('Delete person')+'</button></div>';
 
   /* Daten */
   h+=sect('details', L('Details'), '')+
@@ -6266,11 +6349,11 @@ function openPanel(id){
     var pp=FP.person(parents[i]);
     h+='<div class="rel"><span class="nm">'+nm(parents[i])+
        '<span class="role">'+(pp.sex==='F'?L('Mother'):(pp.sex==='M'?L('Father'):L('Parent')))+'</span></span>'+
-       '<button class="btn small" data-goto="'+esc(parents[i])+'" title="'+esc(L('Put this person in the centre'))+'" aria-label="'+esc(L('Put this person in the centre'))+'">⌖</button>'+
-       '<button class="btn small danger" data-delpar="'+esc(parents[i])+'" title="'+esc(L('Undo this link (the person stays)'))+'" aria-label="'+esc(L('Undo this link (the person stays)'))+'">✕</button></div>';
+       '<button class="btn small" data-goto="'+esc(parents[i])+'" title="'+esc(L('Put this person in the centre'))+'" aria-label="'+esc(L('Put this person in the centre'))+'" data-ico="target"></button>'+
+       '<button class="btn small danger" data-delpar="'+esc(parents[i])+'" title="'+esc(L('Undo this link (the person stays)'))+'" aria-label="'+esc(L('Undo this link (the person stays)'))+'" data-ico="close"></button></div>';
   }
-  h+='<div class="addrow"><button class="btn small" data-addpar="M">'+L('➕ Father')+'</button>'+
-     '<button class="btn small" data-addpar="F">'+L('➕ Mother')+'</button></div></details>';
+  h+='<div class="addrow"><button class="btn small" data-addpar="M" data-ico="plus">'+L('Father')+'</button>'+
+     '<button class="btn small" data-addpar="F" data-ico="plus">'+L('Mother')+'</button></div></details>';
 
   /* marriages / partners / children */
   var kidCount=0;
@@ -6283,9 +6366,9 @@ function openPanel(id){
     h+='<div class="rel" style="border:none;padding-top:0">'+
        '<span class="nm">'+(partner?nm(partner):'<i class="muted">'+L('no partner')+'</i>')+
        '<span class="role">'+(fams.length>1?(L('Marriage ')+(i+1)):L('Partner'))+'</span></span>'+
-       (partner?'<button class="btn small" data-goto="'+esc(partner)+'" title="'+esc(L('Put this person in the centre'))+'" aria-label="'+esc(L('Put this person in the centre'))+'">⌖</button>':'')+
-       (partner?'<button class="btn small danger" data-delpartner="'+esc(fam.id)+'" title="'+esc(L('Undo this link (the person stays)'))+'" aria-label="'+esc(L('Undo this link (the person stays)'))+'">✕</button>'
-               :'<button class="btn small" data-addpartner="'+esc(fam.id)+'">'+L('➕ Partner')+'</button>')+
+       (partner?'<button class="btn small" data-goto="'+esc(partner)+'" title="'+esc(L('Put this person in the centre'))+'" aria-label="'+esc(L('Put this person in the centre'))+'" data-ico="target"></button>':'')+
+       (partner?'<button class="btn small danger" data-delpartner="'+esc(fam.id)+'" title="'+esc(L('Undo this link (the person stays)'))+'" aria-label="'+esc(L('Undo this link (the person stays)'))+'" data-ico="close"></button>'
+               :'<button class="btn small" data-addpartner="'+esc(fam.id)+'" data-ico="plus">'+L('Partner')+'</button>')+
        '</div>';
     h+='<div class="two" style="margin-top:6px">'+
        fld(L('Married on'),'marrD'+i,FP.gedToText(fam.marrDate),L('e.g. 4 May 1894'))+
@@ -6293,14 +6376,14 @@ function openPanel(id){
     var kids=FP.sortByAge((fam.children||[]).filter(function(c){ return FP.person(c); }));
     for(var k=0;k<kids.length;k++){
       h+='<div class="rel"><span class="nm">'+nm(kids[k])+'<span class="role">'+L('Child')+'</span></span>'+
-         '<button class="btn small" data-goto="'+esc(kids[k])+'" title="'+esc(L('Put this person in the centre'))+'" aria-label="'+esc(L('Put this person in the centre'))+'">⌖</button>'+
-         '<button class="btn small danger" data-delkid="'+esc(fam.id)+'|'+esc(kids[k])+'" title="'+esc(L('Undo this link (the person stays)'))+'" aria-label="'+esc(L('Undo this link (the person stays)'))+'">✕</button></div>';
+         '<button class="btn small" data-goto="'+esc(kids[k])+'" title="'+esc(L('Put this person in the centre'))+'" aria-label="'+esc(L('Put this person in the centre'))+'" data-ico="target"></button>'+
+         '<button class="btn small danger" data-delkid="'+esc(fam.id)+'|'+esc(kids[k])+'" title="'+esc(L('Undo this link (the person stays)'))+'" aria-label="'+esc(L('Undo this link (the person stays)'))+'" data-ico="close"></button></div>';
     }
-    h+='<div class="addrow"><button class="btn small" data-addkid="'+esc(fam.id)+'">'+L('➕ Child')+'</button></div>';
+    h+='<div class="addrow"><button class="btn small" data-addkid="'+esc(fam.id)+'" data-ico="plus">'+L('Child')+'</button></div>';
     h+='</div>';
   }
-  h+='<div class="addrow"><button class="btn small" id="pAddPartner">'+L('➕ Partner / marriage')+'</button>'+
-     '<button class="btn small" id="pAddChild">'+L('➕ Child')+'</button></div>'+
+  h+='<div class="addrow"><button class="btn small" id="pAddPartner" data-ico="plus">'+L('Partner / marriage')+'</button>'+
+     '<button class="btn small" id="pAddChild" data-ico="plus">'+L('Child')+'</button></div>'+
      '<div class="hint">'+L('New people can be created straight from these buttons.')+'</div></details>';
 
   box.innerHTML=h;
@@ -6331,8 +6414,8 @@ function qnListe(items, tag){
     }
   }
   h+='<div data-neu="'+tag+'"></div>'+
-     '<div class="addrow" style="margin-top:2px"><button class="btn small" data-addqn="'+tag+'">'+
-     (tag==='NOTE'?L('➕ Note'):L('➕ Source'))+'</button></div>';
+     '<div class="addrow" style="margin-top:2px"><button class="btn small" data-addqn="'+tag+'" data-ico="plus">'+
+     (tag==='NOTE'?L('Note'):L('Source'))+'</button></div>';
   return h;
 }
 function fld(lbl,idf,val,ph){
