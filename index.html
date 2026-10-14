@@ -685,34 +685,49 @@ label.fld{display:block; font-size:12.5px; font-weight:600; color:var(--accent);
 #panelRel .opt:hover,#panelRel .opt.active{background:var(--hl)}
 #panelRel .opt .nm{font-weight:600}
 #panelRel .opt .meta{color:var(--muted); font-size:14px}
-.result{background:linear-gradient(180deg,var(--panel),var(--soft)); border:1px solid var(--gold);
-  border-radius:14px; padding:20px; margin-top:18px; display:none}
+.result{background:var(--panel); border:1px solid var(--gold); border-radius:14px; padding:20px 22px;
+  margin:0 0 16px; display:none; box-shadow:0 1px 3px rgba(60,45,20,.05)}
 .result.show{display:block}
 .rel{font-family:Georgia,serif; font-size:21px; line-height:1.4; margin:0 0 6px; overflow-wrap:anywhere}
 .rel .term{color:var(--accent); font-weight:700}
 .rel2{color:var(--muted); font-size:15.5px; margin:0 0 14px}
-.badges{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 16px}
+.badges{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 18px}
 .badge{background:var(--hl); border:1px solid var(--gold); color:var(--accent); border-radius:20px;
-  padding:4px 12px; font-size:14px; font-weight:600}
-.path{background:var(--soft); border:1px solid var(--line); border-radius:10px; padding:14px 16px}
-.path .ttl{font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted);
-  margin-bottom:10px; display:flex; justify-content:space-between; align-items:center}
-.plist{max-height:340px; overflow:auto; margin:0; padding:0; list-style:none}
-.prow{display:flex; align-items:baseline; gap:10px; padding:5px 0; font-size:14px; border-bottom:1px dotted var(--line)}
-.prow:last-child{border-bottom:none}
-.prow .g{flex:0 0 30px; text-align:right; color:var(--muted); font-size:12.5px; font-variant-numeric:tabular-nums}
-.prow .nm2{flex:1; min-width:0; overflow-wrap:anywhere}
-.prow.lca{background:var(--hl); border-radius:6px; padding-left:6px; font-weight:600}
-.prow.lca .tag{font-size:12.5px; color:var(--accent); background:var(--field); border:1px solid var(--gold);
-  border-radius:10px; padding:1px 7px; margin-left:6px}
+  padding:4px 12px; font-size:14px; font-weight:600; white-space:nowrap}
+/* Abschnitte im Ergebnis: Überschrift mit Linie statt eigener Kästen */
+.ksec{margin:22px 0 0}
+.khd{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:2px 12px;
+  padding:0 0 8px; border-bottom:1px solid var(--line)}
+.khd b{font-size:12.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); white-space:nowrap}
+.khd span{font-size:12.5px; color:var(--muted); white-space:nowrap}
+.khint{margin:8px 0 0; font-size:14px; color:var(--muted); line-height:1.5}
+/* die Kette als Zeitleiste: Nummer im Kreis, senkrechte Linie dahinter */
+.plist{margin:6px 0 0; padding:0; list-style:none}
+.prow{position:relative; display:flex; align-items:flex-start; gap:12px; padding:6px 0}
+.prow::before{content:""; position:absolute; left:14px; top:0; bottom:0; width:2px; background:var(--line)}
+.prow:first-child::before{top:18px}
+.prow:last-child::before{bottom:auto; height:18px}
+.prow:only-child::before{display:none}
+.prow .g{position:relative; flex:0 0 30px; width:30px; height:24px; padding:0;
+  display:inline-flex; align-items:center; justify-content:center; border-radius:12px;
+  background:var(--panel); border:1.5px solid var(--line); color:var(--muted);
+  font-size:12px; font-variant-numeric:tabular-nums}
+.prow .nm2{flex:1; min-width:0; padding-top:2px; line-height:1.35; overflow-wrap:anywhere}
+.prow .plb{display:block; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--accent2); margin-bottom:1px}
+.prow .pn{display:block; font-size:15.5px; color:var(--ink)}
+.prow .py{display:block; font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums}
+.prow.ende .g{border-color:var(--accent2); color:var(--accent); font-weight:600}
+.prow.lca .g{background:var(--accent); border-color:var(--accent); color:var(--onaccent); font-weight:700}
+.prow.lca .pn{font-weight:700; color:var(--accent)}
 .none{color:var(--accent2); font-size:15.5px}
 .swaprow{display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap; margin:14px 0 2px}
 .swapbtn{background:var(--field); border:1px solid var(--line); color:var(--accent); border-radius:22px;
   padding:11px 18px; font-size:15.5px; font-weight:600; cursor:pointer; display:inline-flex;
   align-items:center; gap:7px; min-height:44px}
 .swapbtn:hover{background:var(--hl); border-color:var(--accent2)}
-.plainbox{background:var(--notebg); border:1px solid var(--noteline); border-left:3px solid var(--ok);
-  border-radius:8px; padding:12px 14px; margin:0 0 14px; font-size:15.5px; line-height:1.55}
+.plainbox{background:var(--notebg); border-left:3px solid var(--ok);
+  border-radius:4px 10px 10px 4px; padding:12px 14px; margin:0; font-size:15.5px; line-height:1.55}
 .plainbox .pbttl{font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ok);
   font-weight:700; margin-bottom:5px}
 .plainbox b{color:var(--accent)}
@@ -731,16 +746,18 @@ label.fld{display:block; font-size:12.5px; font-weight:600; color:var(--accent);
 .refgrp{margin:0 0 12px}
 .refgrp h4{margin:0 0 4px; font-size:14px; color:var(--accent); text-transform:uppercase; letter-spacing:.03em}
 .refgrp p{margin:0; font-size:14px; line-height:1.55}
-.otherlines{background:var(--soft); border:1px solid var(--line); border-left:3px solid var(--gold);
-  border-radius:8px; padding:10px 14px; margin:0 0 14px}
-.otherlines .olttl{font-size:14px; font-weight:700; color:var(--accent); margin-bottom:4px}
-.otherlines ul{margin:4px 0 0; padding-left:0}
-.otherlines li{list-style:none; font-size:14px; margin:6px 0; line-height:1.5}
-.olitem>summary{cursor:pointer; color:var(--accent); font-size:14px; padding:5px 0; list-style:none}
+.olitem{border-bottom:1px solid var(--line)}
+.olitem>summary{list-style:none; cursor:pointer; display:block; position:relative;
+  padding:11px 34px 11px 0; min-height:44px}
 .olitem>summary::-webkit-details-marker{display:none}
-.olitem>summary::before{content:"\25B8  "; color:var(--gold)}
-.olitem[open]>summary::before{content:"\25BE  "; color:var(--gold)}
-.olitem .path{margin-top:8px}
+.olitem>summary::after{content:""; position:absolute; right:8px; top:50%; width:8px; height:8px;
+  border-right:2px solid var(--gold); border-bottom:2px solid var(--gold);
+  transform:translateY(-70%) rotate(45deg); transition:transform .15s ease}
+.olitem[open]>summary::after{transform:translateY(-25%) rotate(-135deg)}
+.olitem>summary:hover .olt{text-decoration:underline}
+.olt{display:block; color:var(--accent); font-weight:600; font-size:15.5px; line-height:1.4}
+.olv{display:block; color:var(--muted); font-size:14px; line-height:1.45; margin-top:2px}
+.olbody{padding:0 0 12px}
 .hb{color:var(--muted); font-size:12.5px}
 .foot{color:var(--muted); font-size:12.5px; margin-top:24px; text-align:center; line-height:1.6}
 
@@ -862,6 +879,7 @@ label.fld{display:block; font-size:12.5px; font-weight:600; color:var(--accent);
   #relWrap{padding:16px 13px 48px}
   #panelRel h2{font-size:21px}
   .rel{font-size:19px}
+  .result{padding:16px 15px}
   .filterbar .lbl{flex-basis:100%}
   .filterbar input{flex:1; min-width:0; width:auto}
   .filterbar .cnt{flex-basis:100%; margin-left:0; text-align:right}
@@ -1288,8 +1306,8 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
           <button class="btn small" id="clearY" data-i18n="Reset">Reset</button>
           <span class="cnt" id="cnt"></span>
         </div>
-        <div class="result" id="result"></div>
       </div>
+      <div class="result" id="result"></div>
 
       <details class="reference">
         <summary><span class="ic">&#9432;</span> <span data-i18n="Kinship terms explained">Kinship terms explained</span></summary>
@@ -2488,10 +2506,10 @@ window.I18N={
         common ancestor and down again &ndash; the civil-law method used in inheritance law in many countries), the
         number of <b>&bdquo;great&ldquo;</b> steps for distant ancestors, and <b>half blood</b> when only one parent
         is shared. The green <b>Derivation</b> box retraces the same relationship step by step, and the
-        <b>chain of descent</b> underneath lists every person on the path from one to the other, with the common
-        ancestor highlighted.</p>
+        <b>chain of descent</b> underneath lists every person on the path &ndash; from Person A up to the common
+        ancestor and back down to Person B, each with their years. The common ancestor is highlighted.</p>
         <p>When two people are related through several branches at once &ndash; common in large families &ndash; the
-        closest relationship is shown first and the other lines can be opened below it. The <b>year filter</b> narrows
+        closest relationship is shown first; the other lines follow under <b>Further connections</b> and open with a tap. The <b>year filter</b> narrows
         the pick lists when many people share a given name, and <b>Swap A and B</b> turns the question around. At the
         bottom of the tab, <b>Kinship terms explained</b> is there whenever a word is unfamiliar.</p>
       </section>
@@ -2913,9 +2931,11 @@ window.I18N={
         Erbrecht verwendet wird), die Anzahl der <b>&bdquo;Ur&ldquo;</b>-Stufen bei entfernten Vorfahren und
         <b>halbb&uuml;rtig</b>, wenn nur ein Elternteil gemeinsam ist. Der gr&uuml;ne Kasten <b>Herleitung</b>
         f&uuml;hrt dieselbe Beziehung Schritt f&uuml;r Schritt auf den gemeinsamen Vorfahren zur&uuml;ck, und die <b>Abstammungskette</b> darunter f&uuml;hrt jede
-        Person auf dem Weg von der einen zur anderen auf, mit hervorgehobenem gemeinsamem Vorfahren.</p>
+        Person auf dem Weg auf &ndash; von Person A hinauf zum gemeinsamen Vorfahren und wieder hinab zu Person B, jeweils
+        mit ihren Jahren. Der gemeinsame Vorfahr ist hervorgehoben.</p>
         <p>Sind zwei Personen &uuml;ber mehrere Zweige zugleich verwandt &ndash; in gro&szlig;en Familien h&auml;ufig
-        &ndash;, wird die n&auml;chste Beziehung zuerst gezeigt, die weiteren Linien lassen sich darunter aufklappen.
+        &ndash;, wird die n&auml;chste Beziehung zuerst gezeigt; die anderen Linien folgen unter <b>Weitere Verbindungen</b> und
+        klappen mit einem Tipp auf.
         Der <b>Jahresfilter</b> engt die Auswahllisten ein, wenn viele Personen denselben Vornamen tragen, und
         <b>A und B tauschen</b> dreht die Frage um. Ganz unten im Reiter steht
         <b>Verwandtschaftsbegriffe erkl&auml;rt</b> bereit, wann immer ein Wort unklar ist.</p>
@@ -3184,7 +3204,7 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='4.2';
+var APPVERSION='4.3';
 
 /* ====================================================================
    Welche Kodierung hat die Datei?
@@ -5431,10 +5451,16 @@ function sexColor(p){ return p.sex==='M' ? C('--tmale') : (p.sex==='F' ? C('--tf
 /* ===================================================================
    Building the picture
    =================================================================== */
+function leereFlaeche(){
+  CW=CH=0;
+  svg.removeAttribute('width'); svg.removeAttribute('height'); svg.removeAttribute('viewBox');
+  svg.style.width=svg.style.height=svg.style.marginLeft=svg.style.marginTop='';
+  wrap.scrollLeft=0; wrap.scrollTop=0;
+}
 function render(){
   while(svg.firstChild) svg.removeChild(svg.firstChild);
   var hint=$('trHint');
-  if(!FP.count()){ CW=CH=0; svg.removeAttribute('width'); hint.style.display='block';
+  if(!FP.count()){ leereFlaeche(); hint.style.display='block';
     /* The first two sentences used to sit here in plain English, so a German
        user got half a translated sentence. And the hint told people about a
        button instead of being one: with no data at all, this is the only thing
@@ -5446,7 +5472,7 @@ function render(){
     hint.classList.add('empty');
     var hb=$('trHintNew'); if(hb) hb.onclick=function(){ newPerson(); };
     return; }
-  if(!FOCUS || !FP.person(FOCUS)){ CW=CH=0; svg.removeAttribute('width'); hint.style.display='block';
+  if(!FOCUS || !FP.person(FOCUS)){ leereFlaeche(); hint.style.display='block';
     hint.classList.remove('empty');
     hint.innerHTML=L('Search for a <b>person</b> above – they then become the centre of the tree.');
     hint.onclick=function(){ var f=$('trSearch'); if(f){ f.focus(); f.select&&f.select(); } };
@@ -7285,7 +7311,9 @@ function render(){
   svg.innerHTML='';
   var hint=$('emptyHint');
   if(!ROOT || !DB.indi[ROOT]){
-    CUR_W=CUR_H=0; svg.removeAttribute('width'); svg.style.margin='0';
+    CUR_W=CUR_H=0; svg.removeAttribute('width'); svg.removeAttribute('height'); svg.removeAttribute('viewBox');
+    svg.style.width=svg.style.height=''; svg.style.margin='0';
+    var sw=$('stageWrap'); if(sw){ sw.scrollLeft=0; sw.scrollTop=0; }
     if(hint) hint.style.display = Object.keys(DB.indi||{}).length ? 'block' : 'none';
     return;
   }
@@ -8196,18 +8224,35 @@ function pathUp(id,ancId){
   }
   return null;
 }
-function pathBlock(aId,bId,lcaId){
+/* Die Kette läuft von A hinauf zum gemeinsamen Vorfahren und wieder hinab
+   zu B. Name und Jahre stehen untereinander, damit lange Namen nicht mitten
+   in der Jahreszahl umbrechen. */
+function chainList(aId,bId,lcaId){
   var pa=pathUp(aId,lcaId), pb=pathUp(bId,lcaId);
-  if(!pa||!pb) return '';
+  if(!pa||!pb) return null;
   var full=pa.concat(pb.slice(0,-1).reverse());
-  var lcaIdx=pa.length-1, rows='';
+  var lcaIdx=pa.length-1, last=full.length-1, rows='';
   full.forEach(function(id,i){
-    var isL=(i===lcaIdx);
-    rows+='<li class="prow'+(isL?' lca':'')+'"><span class="g">'+(i+1)+'</span><span class="nm2">'+
-      lifeName(id)+(isL?'<span class="tag">'+(de()?'gemeinsamer Vorfahr':'common ancestor')+'</span>':'')+'</span></li>';
+    var isL=(i===lcaIdx), lb=[];
+    if(i===0) lb.push(de()?'Person A':'Person A');
+    if(isL && i!==0 && i!==last) lb.push(de()?(G.indi[id].sex==='F'?'Gemeinsame Vorfahrin':'Gemeinsamer Vorfahr'):'Common ancestor');
+    if(i===last) lb.push(de()?'Person B':'Person B');
+    var y=lifeYears(id);
+    rows+='<li class="prow'+(isL?' lca':'')+((i===0||i===last)?' ende':'')+'"><span class="g">'+(i+1)+'</span><span class="nm2">'+
+      (lb.length?'<span class="plb">'+lb.join(' · ')+'</span>':'')+
+      '<span class="pn">'+esc(rawName(id))+'</span>'+(y?'<span class="py">'+y+'</span>':'')+'</span></li>';
   });
-  return '<div class="path"><div class="ttl"><span>'+(de()?'Abstammungskette':'Chain of descent')+'</span><span>'+full.length+
-    (de()?' Personen':' people')+'</span></div><ul class="plist">'+rows+'</ul></div>';
+  return {n:full.length, html:'<ul class="plist">'+rows+'</ul>'};
+}
+function pathBlock(aId,bId,lcaId){
+  var c=chainList(aId,bId,lcaId);
+  if(!c) return '';
+  return '<div class="ksec"><div class="khd"><b>'+(de()?'Abstammungskette':'Chain of descent')+'</b><span>'+c.n+
+    (de()?' Personen':' people')+'</span></div>'+c.html+'</div>';
+}
+function lifeYears(id){
+  var p=G.indi[id], b=FP.yearOf(p.birth), dd=FP.yearOf(p.death);
+  return b&&dd ? b+'–'+dd : (b ? '*'+b : (dd ? '†'+dd : ''));
 }
 function rawName(id){ return fullName(G.indi[id]); }
 function shortName(id){ var p=G.indi[id], y=FP.yearOf(p.birth); return esc(rawName(id)+(y?' (*'+y+')':'')); }
@@ -8287,16 +8332,24 @@ function render(){
     var pb=plainBox(rAB,selA,selB);
     if(rAB.half) pb+=de()?' <b>Hinweis:</b> Das ist eine halbbürtige Beziehung – auf dieser Stufe teilen sie nur einen Vorfahren, nicht ein Paar.':' <b>Note:</b> this is a half relationship – at that level they share only one ancestor, not a couple.';
     if(pb) html+='<div class="plainbox"><div class="pbttl">'+(de()?'Herleitung':'Derivation')+'</div>'+pb+'</div>';
-    if(rAB.lines && rAB.lines.length>1){
-      var items='';
-      rAB.lines.slice(1).forEach(function(L){
-        var head=L.term+(L.half?' <span class="hb">('+(de()?'halbbürtig':'half blood')+')</span>':'')+(de()?' &ndash; über ':' &ndash; through ')+
-                 L.lcas.map(shortName).join(' &amp; ');
-        items+='<li><details class="olitem"><summary>'+head+'</summary>'+pathBlock(selA,selB,L.lcas[0])+'</details></li>';
-      });
-      html+='<div class="otherlines"><div class="olttl">'+(de()?'Diese beiden sind über mehr als eine Linie verwandt &ndash; weitere Verbindungen. Zum Öffnen antippen:':'These two are related through more than one line &ndash; further connection(s). Tap to open:')+'</div><ul>'+items+'</ul></div>';
-    }
+    /* erst die nächste Verbindung, dann die übrigen - vorher stand die
+       Liste der weiteren Linien vor der Hauptkette */
     if(rAB.type==='blood'&&rAB.lca) html+=pathBlock(selA,selB,rAB.lca);
+    if(rAB.lines && rAB.lines.length>1){
+      var items='', more=rAB.lines.length-1;
+      rAB.lines.slice(1).forEach(function(ln){
+        var c=chainList(selA,selB,ln.lcas[0]);
+        items+='<details class="olitem"><summary><span class="olt">'+ln.term+
+          (ln.half?' <span class="hb">('+(de()?'halbbürtig':'half blood')+')</span>':'')+'</span>'+
+          '<span class="olv">'+(de()?'über ':'through ')+ln.lcas.map(shortName).join(' &amp; ')+
+          (c?' &middot; '+c.n+(de()?' Personen':' people'):'')+'</span></summary>'+
+          (c?'<div class="olbody">'+c.html+'</div>':'')+'</details>';
+      });
+      html+='<div class="ksec"><div class="khd"><b>'+(de()?'Weitere Verbindungen':'Further connections')+'</b><span>'+
+        more+(de()?(more===1?' Linie':' Linien'):(more===1?' line':' lines'))+'</span></div>'+
+        '<p class="khint">'+(de()?'Die beiden sind über mehr als eine Linie verwandt. Zum Aufklappen antippen.':'These two are related through more than one line. Tap one to open it.')+'</p>'+
+        items+'</div>';
+    }
   } else {
     html+='<p class="rel">'+nameA+(de()?' und ':' and ')+nameB+'</p><p class="none">'+(de()?'Es wurde weder eine Blutsverwandtschaft noch eine Verbindung durch Heirat gefunden – die beiden sind vermutlich nur über Ehen oder gar nicht verbunden.':'No blood relationship or marriage link could be found – these two are probably connected only through marriages, or not at all.')+'</p>';
   }
@@ -10865,8 +10918,11 @@ function neuRechnen(){
 
 function summe(){
   var w=zahlVon('w'), u=zahlVon('u'), ss=zahlVon('s');
-  var txt=T('Checked: '+ERG.personen+' people. '+w+' contradictions, '+u+' unlikely, '+ss+' notations.',
-            'Geprüft: '+ERG.personen+' Personen. '+w+' Widersprüche, '+u+' unstimmig, '+ss+' Schreibweisen.');
+  var np=ERG.personen;
+  var txt=T('Checked: '+np+(np===1?' person. ':' people. ')+w+(w===1?' contradiction, ':' contradictions, ')+u+' unlikely, '+
+              ss+(ss===1?' notation.':' notations.'),
+            'Geprüft: '+np+(np===1?' Person. ':' Personen. ')+w+(w===1?' Widerspruch, ':' Widersprüche, ')+u+' unstimmig, '+
+              ss+(ss===1?' Schreibweise.':' Schreibweisen.'));
   /* Wenn Platzhalterdaten erkannt wurden, gehört der Satz dazu: Er
      erklärt, warum hier weniger Widersprüche stehen als eine
      stumpfe Prüfung melden würde - und dass das Absicht ist. */
