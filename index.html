@@ -589,6 +589,8 @@ body.fullscreen #fullExit{display:flex}
 #trSide .qnfremd{border:1px dashed var(--line); border-radius:8px; padding:8px 9px; margin:0 0 9px;
   font-size:14px; white-space:pre-wrap; overflow-wrap:anywhere; background:var(--panel)}
 #trSide .qnfremd .muted{white-space:normal; margin-top:3px}
+#trSide .qnfremd .altnm .muted{display:inline; margin-top:0}
+#trSide .qnfremd .altnm+.altnm{margin-top:3px}
 #trSide .two{display:flex; gap:8px}
 #trSide .two>*{flex:1; min-width:0}
 #trSide .rel{display:flex; align-items:center; gap:6px; padding:6px 0; border-bottom:1px dotted var(--line)}
@@ -599,6 +601,37 @@ body.fullscreen #fullExit{display:flex}
 #trSide .newhint{background:var(--hl); border:1px solid var(--gold); border-radius:9px;
   padding:9px 11px; font-size:12.5px; color:var(--accent); margin:0 0 10px; line-height:1.4}
 #trSide .addrow{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+/* Ein langer Knopf („In der Nachfahrentafel zeigen") bricht um, statt bei
+   grosser Schrift auf schmalem Handy aus dem Bild zu ragen. */
+#trSide .addrow .btn{white-space:normal; text-align:left; max-width:100%}
+/* Die Symbole sind Masken und malen sich deshalb ueber eine Leiste, die
+   kein z-index hat: Beim Hochschieben stand die Fahne von „Als
+   Startperson merken" mitten im Wort „Person". */
+#trDrawerBar,#drawerBar{z-index:3}
+/* Ansicht zum Lesen (4.6): Beschriftung links, Wert rechts; Verwandte
+   als ganze Zeilen zum Antippen; Notizen behalten ihre Zeilenumbrueche. */
+#trSide .vliste{display:grid; grid-template-columns:max-content minmax(0,1fr); column-gap:14px; row-gap:7px;
+  font-size:14.5px; line-height:1.4}
+#trSide .vl{color:var(--muted); font-size:12.5px; padding-top:2px}
+#trSide .vw{min-width:0; overflow-wrap:anywhere}
+#trSide .vgo{display:flex; flex-direction:column; align-items:flex-start; width:100%; text-align:left;
+  background:none; border:none; border-bottom:1px dotted var(--line); border-radius:0; padding:8px 2px;
+  font:inherit; color:var(--accent); cursor:pointer; min-height:44px}
+#trSide .vgo:last-child{border-bottom:none}
+#trSide .vgo .vn{font-size:14.5px; overflow-wrap:anywhere}
+#trSide .vgo .role{font-size:12.5px; color:var(--muted)}
+@media (hover:hover){ #trSide .vgo:hover .vn{text-decoration:underline} }
+#trSide .vgo:focus-visible .vn{text-decoration:underline}
+#trSide .vfam{border:1px solid var(--line); border-radius:9px; padding:2px 10px; margin:8px 0; background:var(--field)}
+#trSide .vleer{padding:8px 2px}
+#trSide .vheirat{font-size:13.5px; padding:2px 2px 8px; border-bottom:1px dotted var(--line); overflow-wrap:anywhere}
+#trSide .vheirat:last-child{border-bottom:none}
+#trSide .vtext{font-size:14px; line-height:1.45; white-space:pre-wrap; overflow-wrap:anywhere; padding:6px 0;
+  border-bottom:1px dotted var(--line)}
+#trSide .vtext:last-child{border-bottom:none}
+#trSide .vtext .muted{white-space:normal}
+#trSide .vev{font-size:12.5px; font-weight:600; color:var(--muted); white-space:normal}
+#trSide .vtext a,#trSide .qnfremd a{color:var(--accent); text-decoration:underline; overflow-wrap:anywhere}
 #trDrawerBar{display:none}
 #trBtnPanel{display:none}
 
@@ -2150,9 +2183,9 @@ var DE = {
 'Reset':'Zurücksetzen','from':'von','to':'bis',
 'Filter':'Filter','Show filters':'Filter anzeigen','Hide filters':'Filter ausblenden',
 'Name, year or place':'Name, Jahr oder Ort',
-'Given and family name, birth and death (date and place). Several words narrow it down: William 1902 Ashford':'Vor- und Nachname, Geburt und Tod (Datum und Ort). Mehrere Wörter grenzen ein: Wilhelm 1902 Ashford',
+'All names, birth and death (date and place). Several words narrow it down: William 1902 Ashford':'Alle Namen, Geburt und Tod (Datum und Ort). Mehrere Wörter grenzen ein: Wilhelm 1902 Ashford',
 'Names of all members, marriage (date and place). Several words narrow it down: Hayes 1928':'Namen aller Mitglieder, Heirat (Datum und Ort). Mehrere Wörter grenzen ein: Hayes 1928',
-'No matches. The search looked at given and family name, birth and death (date and place) and the ID.':'Keine Treffer. Gesucht wurde in Vor- und Nachname, Geburt und Tod (Datum und Ort) und der Kennung.',
+'No matches. The search looked at all names, birth and death (date and place) and the ID.':'Keine Treffer. Gesucht wurde in allen Namen, Geburt und Tod (Datum und Ort) und der Kennung.',
 'No matches. The search looked at the names of all members, the marriage (date and place) and the ID.':'Keine Treffer. Gesucht wurde in den Namen aller Mitglieder, der Heirat (Datum und Ort) und der Kennung.',
 'Name or marriage':'Name oder Heirat',
 '\u26A0 Check the data':'\u26A0 Daten pr\u00fcfen','Check now':'Jetzt pr\u00fcfen',
@@ -2216,6 +2249,19 @@ var DE = {
 'Further details from the file are kept.':'Weitere Angaben dazu aus der Datei bleiben erhalten.',
 'Record not found in the file':'Dieser Satz fehlt in der Datei',
 'Shared record':'Gemeinsamer Satz', 'read only here':'hier nur lesbar',
+'Other names':'Weitere Namen', 'aka':'auch',
+'Person':'Person', 'Done':'Fertig', 'Born':'Geboren', 'Died':'Gestorben', 'date unknown':'Datum unbekannt',
+'No details yet.':'Noch keine Angaben.', 'On events':'An Ereignissen',
+'Birth':'Geburt', 'Baptism':'Taufe', 'Death':'Tod', 'Burial':'Beerdigung', 'Cremation':'Einäscherung',
+'Marriage':'Heirat', 'Divorce':'Scheidung', 'Engagement':'Verlobung', 'Banns':'Aufgebot',
+'Residence':'Wohnort', 'Education':'Ausbildung', 'Confirmation':'Konfirmation', 'First communion':'Erstkommunion',
+'Emigration':'Auswanderung', 'Immigration':'Einwanderung', 'Naturalisation':'Einbürgerung', 'Census':'Volkszählung',
+'Graduation':'Abschluss', 'Retirement':'Ruhestand', 'Probate':'Nachlassverfahren', 'Will':'Testament',
+'Adoption':'Adoption', 'Title':'Titel', 'Religion':'Religion', 'Name':'Name', 'Fact':'Merkmal', 'Event':'Ereignis',
+'Family':'Familie',
+'birth name':'Geburtsname', 'maiden name':'Geburtsname', 'married name':'Ehename', 'also known as':'auch genannt',
+'immigrant name':'Name nach Einwanderung', 'professional name':'Berufs- oder Künstlername',
+'From the file, read only here – written back unchanged.':'Aus der Datei, hier nur zum Lesen – wird unverändert mitgeschrieben.',
 'Also in the file: sources or notes ':'Außerdem in der Datei: Quellen oder Notizen ',
 'on the birth':'zur Geburt', 'on the death':'zum Tod',
 ' – kept, but not edited here.':' – bleiben erhalten, werden hier aber nicht bearbeitet.',
@@ -2439,8 +2485,8 @@ window.I18N={
 
         <h5>Moving around</h5>
         <p>Every search box in the app works the same way, and each says so. A person is found by
-        <b>given and family name</b>, by <b>birth and death</b> &ndash; date as well as place &ndash; and by
-        the record ID (&bdquo;#I17&ldquo;). Several words are combined, so &bdquo;Ruth 1933&ldquo; and
+        <b>given and family name</b> &ndash; further names from the file included &ndash;, by <b>birth and
+        death</b> &ndash; date as well as place &ndash; and by the record ID (&bdquo;#I17&ldquo;). Several words are combined, so &bdquo;Ruth 1933&ldquo; and
         &bdquo;Hayes Ashford&ldquo; both work. Whatever matched is <b>marked in the result</b>, so you can see
         at a glance whether it was the name, the year or the place. The line above the list says how it works;
         if nothing matches, it says what the search looked at. The <b><span data-ico="close" aria-hidden="true"></span></b> at the right-hand end empties
@@ -2454,6 +2500,12 @@ window.I18N={
         <p>With <b>&#65291;&nbsp;Grandchildren</b> switched on, every child who has children of their own is drawn
         <b>together with the partner those children come from</b>, and each set of grandchildren hangs under its own
         couple. Children without descendants stay single boxes, so the row does not grow for nothing.</p>
+        <p>A person opens <b>for reading</b> first: dates, occupation, relatives, notes and sources &ndash; including
+        sources and notes on events such as a baptism, a wedding or a burial, with the page they were found on. Web
+        addresses in them are <b>links</b>: tapping one opens the page in your browser, for instance the parish
+        register at Matricula or Archion. Tapping a relative takes you to them. <b><span data-ico="pencil" aria-hidden="true"></span> Edit</b>
+        switches to the form, <b><span data-ico="check" aria-hidden="true"></span> Done</b> back again; the <b>Edit</b> button in the toolbar opens the
+        form straight away, and a new, empty entry always starts in the form.</p>
         <p>The edit panel has a <b><span data-ico="chart" aria-hidden="true"></span> Show in Descendants</b> button: it takes the person you are looking at
         straight into the Descendants tab as the root of a descendant chart.</p>
         <p>The edit panel is divided into <b>Details</b>, <b>Parents</b> and <b>Partners &amp; children</b>. Tapping a
@@ -2493,8 +2545,9 @@ window.I18N={
         program reads them. To remove an entry, empty the field and leave it.</p>
         <p>Larger programs often keep sources and notes as <b>shared records</b> that many people point to. Those are
         shown with their title and marked <i>read only here</i>: changing one in Anceslio would change it for everybody
-        who points to it, without you seeing that. Edit them in the program they come from. Sources attached to the
-        birth or the death are kept and counted, but not edited here.</p>
+        who points to it, without you seeing that. Edit them in the program they come from. Sources and notes on
+        events &ndash; birth, baptism, marriage, burial and others &ndash; are kept and shown when reading, but not
+        edited here.</p>
         <p>The narrow coloured stripe on the left of each box shows sex: blue for male, rose for female, beige when
         nothing is recorded.</p>
 
@@ -2636,6 +2689,11 @@ window.I18N={
         the day was not. The app does not guess this; it counts. Only when a date falls on one day far more often
         than chance allows does it say so, and it gives the number that would be expected. Which of them are real
         birthdays it cannot know, so look before you take them over.</p>
+        <p>Where the file marks a child as <b>adopted, foster or step-child</b> &ndash; with
+        <span class="code">PEDI</span>, <span class="code">_FREL</span> / <span class="code">_MREL</span> or an
+        adoption event &ndash; the rules about the parents&rsquo; age and the spacing of siblings leave that link out,
+        because they rest on birth. Siblings are compared by their mother, across all her marriages; twins born on
+        the same or the next day are not reported.</p>
         <p>Nothing is changed without you, the last ten steps can be undone, and <b>Save list</b> writes everything
         to a text file &ndash; the way to go when the corrections have to be made in a spreadsheet somewhere else.</p>
       </section>
@@ -2747,6 +2805,11 @@ window.I18N={
         sources on events, media, custom facts &ndash; is <b>written back unchanged</b> on export, so a round trip
         through Anceslio loses as little as possible.
         Existing identifiers such as <span class="code">@I137@</span> are kept; new people get the next free number.</p>
+        <p>When something appears more than once in a person or family &ndash; several names, births or occupations,
+        a civil and a church wedding &ndash; the app shows and edits the <b>first</b>, as GEDCOM intends, and writes
+        the others back unchanged. Further names are shown under the surname and found by the search. Additions to a
+        name (title, nickname, name type) and details on a family link such as
+        <span class="code">2 PEDI adopted</span> are kept as well.</p>
         <p>Files from other programs are not always tidy, so the app repairs what it can while reading: a long place
         name or note split across <span class="code">CONC</span> / <span class="code">CONT</span> lines is put back
         together, and a family link recorded on only one side &ndash; in the family record but not on the person, or
@@ -2766,7 +2829,8 @@ window.I18N={
         there the choice <b>Follow the device</b> is simply not offered and the app starts in the light theme, which
         can be switched to dark by hand at any time. A device language other than German gives the English version.</p>
         <p>The whole app is a single HTML file with <b>no external content</b>: no scripts, fonts or images are
-        fetched from the internet, and there is no connection through which data could leave the device.</p>
+        fetched from the internet, and there is no connection through which data could leave the device. A web
+        address in a note or source opens in your browser only when you tap it.</p>
         <p>You switch between the three tools with the tabs: <b>at the bottom of the screen</b> on a phone held
         upright, and <b>under the title</b> on a computer, a tablet or a phone turned sideways.</p>
         <p>The <b><span data-ico="full" aria-hidden="true"></span></b> button gives the picture the whole screen: header, search bar and tabs disappear. It
@@ -2850,8 +2914,8 @@ window.I18N={
 
         <h5>Sich bewegen</h5>
         <p>Jedes Suchfeld der App arbeitet gleich, und jedes sagt es auch. Eine Person wird gefunden &uuml;ber
-        <b>Vor- und Nachnamen</b>, &uuml;ber <b>Geburt und Tod</b> &ndash; Datum wie Ort &ndash; und &uuml;ber die
-        Kennung (&bdquo;#I17&ldquo;). Mehrere W&ouml;rter werden verkn&uuml;pft, &bdquo;Ruth 1933&ldquo;
+        <b>Vor- und Nachnamen</b> &ndash; auch weitere Namen aus der Datei &ndash;, &uuml;ber <b>Geburt und
+        Tod</b> &ndash; Datum wie Ort &ndash; und &uuml;ber die Kennung (&bdquo;#I17&ldquo;). Mehrere W&ouml;rter werden verkn&uuml;pft, &bdquo;Ruth 1933&ldquo;
         funktioniert also ebenso wie &bdquo;Hayes Ashford&ldquo;. Was gepasst hat, ist <b>im Treffer
         hervorgehoben</b> &ndash; so sieht man auf einen Blick, ob es der Name war, das Jahr oder der Ort.
         &Uuml;ber der Liste steht, wie das geht; findet sich nichts, steht dort, worin gesucht wurde. Das
@@ -2866,6 +2930,13 @@ window.I18N={
         <p>Ist <b>&#65291;&nbsp;Enkel</b> eingeschaltet, wird jedes Kind, das selbst Kinder hat, <b>zusammen mit dem
         Partner gezeigt, von dem diese Kinder stammen</b>, und jede Enkelgruppe h&auml;ngt unter ihrem eigenen Paar.
         Kinder ohne Nachkommen bleiben einzelne K&auml;sten, damit die Reihe nicht unn&ouml;tig breit wird.</p>
+        <p>Eine Person &ouml;ffnet sich zuerst <b>zum Lesen</b>: Lebensdaten, Beruf, Verwandte, Notizen und Quellen
+        &ndash; auch Quellen und Notizen an Ereignissen wie Taufe, Heirat oder Beerdigung, mit der Seite, auf der sie
+        stehen. Webadressen darin sind <b>Links</b>: Ein Tipp &ouml;ffnet die Seite im Browser, etwa das Kirchenbuch
+        bei Matricula oder Archion. Ein Tipp auf einen Verwandten f&uuml;hrt zu ihm.
+        <b><span data-ico="pencil" aria-hidden="true"></span> Bearbeiten</b> wechselt ins Formular, <b><span data-ico="check" aria-hidden="true"></span> Fertig</b> wieder zur&uuml;ck; der
+        Knopf <b>Bearbeiten</b> in der Leiste &ouml;ffnet gleich das Formular, und ein neuer, leerer Eintrag beginnt
+        immer im Formular.</p>
         <p>Im Bearbeitungsfeld gibt es die Schaltfl&auml;che <b><span data-ico="chart" aria-hidden="true"></span> In der Nachfahrentafel zeigen</b>: Sie
         &uuml;bernimmt die gerade angesehene Person direkt als Wurzelperson in den Reiter Nachfahrentafel.</p>
         <p>Das Bearbeitungsfeld ist in <b>Angaben</b>, <b>Eltern</b> und <b>Partner und Kinder</b> geteilt. Ein Tipp
@@ -2914,8 +2985,8 @@ window.I18N={
         <p>Gr&ouml;&szlig;ere Programme f&uuml;hren Quellen und Notizen oft als <b>gemeinsame S&auml;tze</b>, auf die viele
         Personen zeigen. Die erscheinen mit ihrem Titel und dem Vermerk <i>hier nur lesbar</i>: Sie in Anceslio zu
         &auml;ndern, w&uuml;rde sie bei allen &auml;ndern, die darauf zeigen, ohne dass man es sieht. Bearbeitet werden sie
-        im Programm, aus dem sie stammen. Quellen an Geburt oder Tod bleiben erhalten und werden gez&auml;hlt, hier aber
-        nicht bearbeitet.</p>
+        im Programm, aus dem sie stammen. Quellen und Notizen an Ereignissen &ndash; Geburt, Taufe, Heirat, Beerdigung
+        und andere &ndash; bleiben erhalten und erscheinen beim Lesen, werden hier aber nicht bearbeitet.</p>
         <p>Der schmale farbige Streifen links an jedem Kasten zeigt das Geschlecht: blau f&uuml;r m&auml;nnlich, rosa
         f&uuml;r weiblich, beige, wenn nichts eingetragen ist.</p>
 
@@ -3082,6 +3153,12 @@ window.I18N={
         der Tag nicht. Die App r&auml;t das nicht, sie z&auml;hlt: Erst wenn ein Datum weit h&auml;ufiger auf einen
         Tag f&auml;llt, als der Zufall zul&auml;sst, sagt sie etwas, und sie nennt die Zahl, die zu erwarten
         w&auml;re. Welche davon echte Geburtstage sind, kann sie nicht wissen &ndash; also vorher hineinsehen.</p>
+        <p>Ist ein Kind in der Datei als <b>Adoptiv-, Pflege- oder Stiefkind</b> gekennzeichnet &ndash; mit
+        <span class="code">PEDI</span>, <span class="code">_FREL</span> / <span class="code">_MREL</span> oder einem
+        Adoptionsereignis &ndash;, lassen die Regeln zum Alter der Eltern und zum Abstand der Geschwister diese
+        Verbindung aus, denn sie beruhen auf der Geburt. Geschwister werden &uuml;ber ihre Mutter verglichen, auch
+        &uuml;ber mehrere Ehen hinweg; Zwillinge, am selben oder am n&auml;chsten Tag geboren, werden nicht
+        gemeldet.</p>
         <p>Ohne Ihre Zustimmung wird nichts ge&auml;ndert, die letzten zehn Schritte lassen sich zur&uuml;cknehmen, und
         <b>Liste speichern</b> schreibt alles in eine Textdatei &ndash; der Weg, wenn die Korrekturen in einer
         Tabelle woanders gemacht werden m&uuml;ssen.</p>
@@ -3208,6 +3285,12 @@ window.I18N={
         beim Export <b>unver&auml;ndert zur&uuml;ckgeschrieben</b>, sodass ein Durchlauf durch Anceslio so wenig wie
         m&ouml;glich verliert. Vorhandene Kennungen wie <span class="code">@I137@</span> bleiben erhalten; neue
         Personen bekommen die n&auml;chste freie Nummer.</p>
+        <p>Steht etwas mehrfach in einer Person oder Familie &ndash; mehrere Namen, Geburten oder Berufe, eine
+        standesamtliche und eine kirchliche Heirat &ndash;, zeigt und bearbeitet die App den <b>ersten</b> Eintrag,
+        wie GEDCOM es vorsieht, und schreibt die &uuml;brigen unver&auml;ndert zur&uuml;ck. Weitere Namen stehen
+        unter dem Nachnamen und werden bei der Suche gefunden. Zus&auml;tze zum Namen (Titel, Rufname, Namensart)
+        und Angaben an einer Familienverkn&uuml;pfung wie <span class="code">2 PEDI adopted</span> bleiben ebenso
+        erhalten.</p>
         <p>Dateien aus anderen Programmen sind nicht immer sauber, deshalb repariert die App beim Lesen, was sie
         kann: ein langer Ortsname oder eine Notiz, die &uuml;ber <span class="code">CONC</span>- und
         <span class="code">CONT</span>-Zeilen verteilt ist, wird wieder zusammengesetzt, und eine
@@ -3231,7 +3314,8 @@ window.I18N={
         Ger&auml;tesprache als Deutsch erscheint die englische Fassung.</p>
         <p>Die gesamte App ist eine einzige HTML-Datei <b>ohne externe Inhalte</b>: Es werden keine Skripte,
         Schriften oder Bilder aus dem Internet geladen, und es gibt keine Verbindung, &uuml;ber die Daten das
-        Ger&auml;t verlassen k&ouml;nnten.</p>
+        Ger&auml;t verlassen k&ouml;nnten. Eine Webadresse in einer Notiz oder Quelle &ouml;ffnet sich erst auf Ihren
+        Tipp im Browser.</p>
         <p>Zwischen den drei Werkzeugen wechselt man &uuml;ber die Reiter: auf dem hochkant gehaltenen Handy
         <b>am unteren Bildschirmrand</b>, am Rechner, auf dem Tablet und beim quer gehaltenen Handy
         <b>unter dem Titel</b>.</p>
@@ -3276,7 +3360,7 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='4.4';
+var APPVERSION='4.6';
 
 /* ====================================================================
    Welche Kodierung hat die Datei?
@@ -3418,7 +3502,7 @@ function joinContinuations(lines){
 function parseGedcom(text){
   var lines = joinContinuations(String(text).replace(/\r\n?/g,'\n').split('\n'));
   var indi={}, fam={}, order={indi:[],fam:[]};
-  var rec=null, kind=null, l1=null, block=null, ev=null;
+  var rec=null, kind=null, l1=null, block=null, ev=null, sub=null;
   /* Eine GEDCOM-Datei kennt mehr als Personen und Familien: Quellen
      (SOUR), Notizen (NOTE), Bilder (OBJE), Archive (REPO), den
      Einsender (SUBM). Die App wertet sie nicht aus - aber sie muss
@@ -3448,18 +3532,20 @@ function parseGedcom(text){
     var lvl=+m[1], xref=m[2]||null, tag=m[3].toUpperCase(), val=(m[4]||'').trim();
 
     if(lvl===0){
-      pushBlock(); pushRest(); l1=null; ev=null;
+      pushBlock(); pushRest(); l1=null; ev=null; sub=null;
       if(xref && tag==='INDI'){
         var idI=xref.replace(/@/g,'');
         rec=indi[idI]={id:idI, given:'', surname:'', sex:'', birthDate:'', birthPlace:'',
                        deathDate:'', deathPlace:'', dead:false, occ:'', stamm:'',
-                       famc:[], fams:[], birtSub:[], deatSub:[], extra:[]};
+                       famc:[], fams:[], birtSub:[], deatSub:[], extra:[],
+                       nameSub:[], occSub:[], stammSub:[],
+                       famcSub:Object.create(null), famsSub:Object.create(null)};
         if(!seenI[idI]){ seenI[idI]=1; order.indi.push(idI); }
         kind='INDI';
       } else if(xref && tag==='FAM'){
         var idF=xref.replace(/@/g,'');
         rec=fam[idF]={id:idF, husb:null, wife:null, children:[], marrDate:'', marrPlace:'',
-                      marrSub:[], extra:[]};
+                      marrSub:[], extra:[], chilSub:Object.create(null)};
         if(!seenF[idF]){ seenF[idF]=1; order.fam.push(idF); }
         kind='FAM';
       } else if(tag==='HEAD'){ rec=null; kind='HEAD'; }
@@ -3477,26 +3563,51 @@ function parseGedcom(text){
     if(!rec) continue;
 
     if(lvl===1){
-      pushBlock(); l1=tag; ev=null;
+      pushBlock(); l1=tag; ev=null; sub=null;
       if(kind==='INDI'){
+        /* Steht etwas mehrfach da - zwei Namen, zwei Geburten, zwei
+           Berufe -, wertet die App das ERSTE aus; in GEDCOM ist das erste
+           das bevorzugte. Bis 4.4 gewann das letzte, und alle davor
+           gingen verloren: Von „Anna Maria /Muster/" (Geburtsname) und
+           „Anna /Beispiel/" (Ehename) blieb nur der Ehename, Titel,
+           Rufname und Namensart fielen weg. Alles Weitere wandert jetzt
+           unveraendert in die Ablage (extra), und die Unterzeilen des
+           ausgewerteten Eintrags bleiben bei ihm (sub). */
         if(tag==='NAME'){
-          var nm=val.match(/^(.*?)\/(.*?)\//);
-          if(nm){ if(nm[1].trim()) rec.given=nm[1].trim(); if(nm[2].trim()) rec.surname=nm[2].trim(); }
-          else if(val.trim()) rec.given=val.trim();
+          if(rec._nm) block=[raw];
+          else {
+            rec._nm=1; rec.nameVal=val; sub=rec.nameSub;
+            var nm=val.match(/^(.*?)\/(.*?)\//);
+            if(nm){ if(nm[1].trim()) rec.given=nm[1].trim(); if(nm[2].trim()) rec.surname=nm[2].trim(); }
+            else if(val.trim()) rec.given=val.trim();
+          }
         }
         else if(tag==='SEX') rec.sex=val.trim().toUpperCase().charAt(0)||'';
-        else if(tag==='BIRT'){ ev='BIRT'; }
-        else if(tag==='DEAT'){ ev='DEAT'; rec.dead=true; }
-        else if(tag==='OCCU') rec.occ=val;
+        else if(tag==='BIRT'){ if(rec._birt) block=[raw]; else { rec._birt=1; ev='BIRT'; if(val) rec.birtVal=val; } }
+        else if(tag==='DEAT'){ rec.dead=true; if(rec._deat) block=[raw]; else { rec._deat=1; ev='DEAT'; } }
+        else if(tag==='OCCU'){ if(rec._occ || !val) block=[raw]; else { rec._occ=1; rec.occ=val; sub=rec.occSub; } }
         else if(tag==='FACT'){ rec._fact=val; block=[raw]; }
-        else if(tag==='FAMC'){ var fc=val.replace(/@/g,''); if(fc && rec.famc.indexOf(fc)<0) rec.famc.push(fc); }
-        else if(tag==='FAMS'){ var fs=val.replace(/@/g,''); if(fs && rec.fams.indexOf(fs)<0) rec.fams.push(fs); }
+        /* Die Unterzeilen einer Verknuepfung - etwa „2 PEDI adopted" -
+           gehoeren zu genau dieser Familie und bleiben bei ihr. */
+        else if(tag==='FAMC'){ var fc=val.replace(/@/g,'');
+          if(!fc) block=[raw];
+          else { if(rec.famc.indexOf(fc)<0) rec.famc.push(fc); sub=rec.famcSub[fc]||(rec.famcSub[fc]=[]); } }
+        else if(tag==='FAMS'){ var fs=val.replace(/@/g,'');
+          if(!fs) block=[raw];
+          else { if(rec.fams.indexOf(fs)<0) rec.fams.push(fs); sub=rec.famsSub[fs]||(rec.famsSub[fs]=[]); } }
         else block=[raw];
       } else {
-        if(tag==='HUSB') rec.husb=val.replace(/@/g,'')||null;
-        else if(tag==='WIFE') rec.wife=val.replace(/@/g,'')||null;
-        else if(tag==='CHIL'){ var ch=val.replace(/@/g,''); if(ch && rec.children.indexOf(ch)<0) rec.children.push(ch); }
-        else if(tag==='MARR'){ ev='MARR'; }
+        /* „2 AGE" am Ehepartner gilt fuer genau diesen Partner, „2 _FREL" /
+           „2 _MREL" fuer genau dieses Kind. */
+        if(tag==='HUSB'){ rec.husb=val.replace(/@/g,'')||null; rec.husbSub={id:rec.husb, z:[]}; sub=rec.husbSub.z; }
+        else if(tag==='WIFE'){ rec.wife=val.replace(/@/g,'')||null; rec.wifeSub={id:rec.wife, z:[]}; sub=rec.wifeSub.z; }
+        else if(tag==='CHIL'){ var ch=val.replace(/@/g,'');
+          if(!ch) block=[raw];
+          else { if(rec.children.indexOf(ch)<0) rec.children.push(ch); sub=rec.chilSub[ch]||(rec.chilSub[ch]=[]); } }
+        /* Standesamt und Kirche: zwei Heiraten in einer Familie. Die
+           erste wird gezeigt, die zweite bleibt - bis 4.4 nahm die zweite
+           der ersten das Datum und behielt deren Ort. */
+        else if(tag==='MARR'){ if(rec._marr) block=[raw]; else { rec._marr=1; ev='MARR'; if(val) rec.marrVal=val; } }
         else block=[raw];
       }
       continue;
@@ -3504,20 +3615,35 @@ function parseGedcom(text){
 
     /* level 2 and deeper */
     if(kind==='INDI'){
-      if(l1==='NAME'){ if(tag==='GIVN') rec.given=val; else if(tag==='SURN') rec.surname=val; else if(block) block.push(raw); }
+      /* Nur GIVN und SURN direkt unter dem ersten Namen sind Vor- und
+         Nachname. Ein „3 GIVN" unter einer Umschrift (ROMN, FONE)
+         ueberschrieb bis 4.4 den Vornamen. */
+      if(sub){
+        if(sub===rec.nameSub && lvl===2 && tag==='GIVN') rec.given=val;
+        else if(sub===rec.nameSub && lvl===2 && tag==='SURN') rec.surname=val;
+        else sub.push(raw);
+      }
       else if(ev==='BIRT'){ if(tag==='DATE') rec.birthDate=val; else if(tag==='PLAC') rec.birthPlace=val; else rec.birtSub.push(raw); }
       else if(ev==='DEAT'){ if(tag==='DATE'){ rec.deathDate=val; rec.dead=true; } else if(tag==='PLAC') rec.deathPlace=val; else rec.deatSub.push(raw); }
       else if(l1==='FACT'){
-        if(tag==='TYPE' && /stamm|lineage|branch|house/i.test(val)){ rec.stamm=rec._fact||''; rec.stammType=val; block=null; }
+        /* Der erste Stamm wird ausgewertet, seine uebrigen Unterzeilen
+           (Quelle, Datum) bleiben bei ihm. Ein zweiter bleibt, wie er ist. */
+        if(lvl===2 && tag==='TYPE' && /stamm|lineage|branch|house/i.test(val) && block && rec._fact && !rec._stamm){
+          rec._stamm=1; rec.stamm=rec._fact; rec.stammType=val;
+          rec.stammSub=block.slice(1); sub=rec.stammSub; block=null;
+        }
         else if(block) block.push(raw);
       }
       else if(block) block.push(raw);
     } else {
-      if(ev==='MARR'){ if(tag==='DATE') rec.marrDate=val; else if(tag==='PLAC') rec.marrPlace=val; else rec.marrSub.push(raw); }
+      if(sub) sub.push(raw);
+      else if(ev==='MARR'){ if(tag==='DATE') rec.marrDate=val; else if(tag==='PLAC') rec.marrPlace=val; else rec.marrSub.push(raw); }
       else if(block) block.push(raw);
     }
   }
   pushBlock(); pushRest();
+  /* Woran sich beim Schreiben erkennen laesst, ob der Name geaendert wurde */
+  for(var nid in indi){ var r0=indi[nid]; if(r0.nameVal!=null) r0.nameOrig=r0.given+'|'+r0.surname; }
   linkFamilies(indi, fam);
   return {indi:indi, fam:fam, order:order, rest:rest, headSubm:headSubm};
 }
@@ -3565,6 +3691,17 @@ function linkFamilies(indi, fam){
 function dazu(out, zeilen, ganz){
   for(var i=0;i<zeilen.length;i++) out.push(ganz ? zeilen[i].trim() : zeilen[i].replace(/\s+$/,''));
 }
+function unterZeilen(out, z){ if(z) for(var i=0;i<z.length;i++) out.push(String(z[i]).trim()); }
+function istName(bl){ return /^\s*1\s+NAME(?:\s|$)/i.test((bl&&bl[0])||''); }
+/* Unveraendert bleibt der Name so stehen, wie er in der Datei stand -
+   mit allem, was darin steht („Dr. Anna /Muster/ jun."). Wer ihn
+   aendert, bekommt die schlichte Form; Titel, Rufname und Namensart in
+   den Unterzeilen bleiben dabei erhalten. */
+function nameWert(p){
+  var g=p.given||'', s=p.surname||'';
+  if(p.nameVal && /\S/.test(p.nameVal) && p.nameOrig===g+'|'+s) return p.nameVal;
+  return g+' /'+s+'/';
+}
 function serializeGedcom(D){
   var out=[];
   out.push('0 HEAD','1 SOUR Anceslio','2 NAME Anceslio (family tree, descendant chart, kinship)',
@@ -3575,12 +3712,15 @@ function serializeGedcom(D){
   for(i=0;i<ids.length;i++){
     var p=D.indi[ids[i]]; if(!p) continue;
     out.push('0 @'+p.id+'@ INDI');
-    out.push('1 NAME '+(p.given||'')+' /'+(p.surname||'')+'/');
+    out.push('1 NAME '+nameWert(p));
     if(p.given) out.push('2 GIVN '+p.given);
     if(p.surname) out.push('2 SURN '+p.surname);
+    unterZeilen(out, p.nameSub);
+    /* weitere Namen gleich hinter den ersten, nicht ans Ende */
+    for(j=0;j<(p.extra||[]).length;j++) if(istName(p.extra[j])) dazu(out, p.extra[j], true);
     out.push('1 SEX '+(p.sex||'U'));
-    if(p.birthDate||p.birthPlace||(p.birtSub&&p.birtSub.length)){
-      out.push('1 BIRT');
+    if(p.birthDate||p.birthPlace||(p.birtSub&&p.birtSub.length)||p.birtVal){
+      out.push('1 BIRT'+(p.birtVal?' '+p.birtVal:''));
       if(p.birthDate) out.push('2 DATE '+p.birthDate);
       if(p.birthPlace) out.push('2 PLAC '+p.birthPlace);
       for(j=0;j<(p.birtSub||[]).length;j++) out.push(p.birtSub[j].trim());
@@ -3591,24 +3731,29 @@ function serializeGedcom(D){
       if(p.deathPlace) out.push('2 PLAC '+p.deathPlace);
       for(j=0;j<(p.deatSub||[]).length;j++) out.push(p.deatSub[j].trim());
     } else if(p.dead) out.push('1 DEAT Y');
-    if(p.occ) out.push('1 OCCU '+p.occ);
-    if(p.stamm){ out.push('1 FACT '+p.stamm); out.push('2 TYPE '+(p.stammType||'Lineage')); }
-    for(j=0;j<(p.famc||[]).length;j++) if(D.fam[p.famc[j]]) out.push('1 FAMC @'+p.famc[j]+'@');
-    for(j=0;j<(p.fams||[]).length;j++) if(D.fam[p.fams[j]]) out.push('1 FAMS @'+p.fams[j]+'@');
-    for(j=0;j<(p.extra||[]).length;j++) dazu(out, p.extra[j], true);
+    if(p.occ){ out.push('1 OCCU '+p.occ); unterZeilen(out, p.occSub); }
+    if(p.stamm){ out.push('1 FACT '+p.stamm); out.push('2 TYPE '+(p.stammType||'Lineage')); unterZeilen(out, p.stammSub); }
+    for(j=0;j<(p.famc||[]).length;j++) if(D.fam[p.famc[j]]){
+      out.push('1 FAMC @'+p.famc[j]+'@'); unterZeilen(out, p.famcSub && p.famcSub[p.famc[j]]); }
+    for(j=0;j<(p.fams||[]).length;j++) if(D.fam[p.fams[j]]){
+      out.push('1 FAMS @'+p.fams[j]+'@'); unterZeilen(out, p.famsSub && p.famsSub[p.fams[j]]); }
+    for(j=0;j<(p.extra||[]).length;j++) if(!istName(p.extra[j])) dazu(out, p.extra[j], true);
   }
   for(i=0;i<fids.length;i++){
     var f=D.fam[fids[i]]; if(!f) continue;
     out.push('0 @'+f.id+'@ FAM');
-    if(f.husb && D.indi[f.husb]) out.push('1 HUSB @'+f.husb+'@');
-    if(f.wife && D.indi[f.wife]) out.push('1 WIFE @'+f.wife+'@');
-    if(f.marrDate||f.marrPlace||(f.marrSub&&f.marrSub.length)){
-      out.push('1 MARR');
+    if(f.husb && D.indi[f.husb]){ out.push('1 HUSB @'+f.husb+'@');
+      if(f.husbSub && f.husbSub.id===f.husb) unterZeilen(out, f.husbSub.z); }
+    if(f.wife && D.indi[f.wife]){ out.push('1 WIFE @'+f.wife+'@');
+      if(f.wifeSub && f.wifeSub.id===f.wife) unterZeilen(out, f.wifeSub.z); }
+    if(f.marrDate||f.marrPlace||(f.marrSub&&f.marrSub.length)||f.marrVal){
+      out.push('1 MARR'+(f.marrVal?' '+f.marrVal:''));
       if(f.marrDate) out.push('2 DATE '+f.marrDate);
       if(f.marrPlace) out.push('2 PLAC '+f.marrPlace);
       for(j=0;j<(f.marrSub||[]).length;j++) out.push(f.marrSub[j].trim());
     }
-    for(j=0;j<(f.children||[]).length;j++) if(D.indi[f.children[j]]) out.push('1 CHIL @'+f.children[j]+'@');
+    for(j=0;j<(f.children||[]).length;j++) if(D.indi[f.children[j]]){
+      out.push('1 CHIL @'+f.children[j]+'@'); unterZeilen(out, f.chilSub && f.chilSub[f.children[j]]); }
     for(j=0;j<(f.extra||[]).length;j++) dazu(out, f.extra[j], true);
   }
   /* Die fremden Saetze stehen nach den Familien und vor dem Abschluss,
@@ -3799,8 +3944,13 @@ function entryFor(id){
   if(p.birthPlace) meta.push(p.birthPlace);
   if(p.deathDate) meta.push('† '+gedToText(p.deathDate));
   if(p.deathPlace) meta.push((p.deathDate?'':'† ')+p.deathPlace);
+  /* Weitere Namen werden gefunden - und stehen deshalb auch sichtbar
+     in der Zeile, sonst waere ein Treffer darueber unerklaerlich. */
+  var alt=weitereNamen(id).map(function(x){ return x.name; })
+    .filter(function(n,i,a){ return n!==name && a.indexOf(n)===i; });
+  if(alt.length) meta.push(L('aka')+' '+alt.join(', '));
   return { id:id, name:name, meta:meta.join(' · '), year:by,
-    search:(name+' '+gedToText(p.birthDate)+' '+(by||'')+' '+
+    search:(name+' '+alt.join(' ')+' '+gedToText(p.birthDate)+' '+(by||'')+' '+
             gedToText(p.deathDate)+' '+(dy||'')+' '+
             (p.birthPlace||'')+' '+(p.deathPlace||'')+' #'+id).toLowerCase() };
 }
@@ -4096,6 +4246,82 @@ function quellenNotizen(id){
     var n=0;
     (p[e[1]]||[]).forEach(function(z){ var h2=qnKopf(z); if(h2 && h2.lvl===2 && (h2.tag==='SOUR'||h2.tag==='NOTE')) n++; });
     if(n) out.events.push({ev:e[0], n:n});
+  });
+  return out;
+}
+/* Die weiteren Namen einer Person, wie sie in der Datei stehen. Sie
+   werden gezeigt und gefunden, aber nicht bearbeitet - das geschieht im
+   Programm, aus dem die Datei kommt. */
+function weitereNamen(id){
+  var p=D.indi[id], out=[]; if(!p) return out;
+  var ex=p.extra||[];
+  for(var k=0;k<ex.length;k++){
+    var bl=ex[k]; if(!istName(bl)) continue;
+    var h=qnKopf(bl[0]), g='', s='', typ='';
+    var n=String((h&&h.val)||'').replace(/\//g,' ').replace(/\s+/g,' ').trim();
+    for(var i=1;i<bl.length;i++){
+      var u=qnKopf(bl[i]); if(!u || u.lvl!==2) continue;
+      if(u.tag==='TYPE') typ=u.val.trim(); else if(u.tag==='GIVN') g=u.val.trim(); else if(u.tag==='SURN') s=u.val.trim();
+    }
+    if(!n) n=[g,s].filter(Boolean).join(' ');
+    if(n) out.push({name:n, typ:typ});
+  }
+  return out;
+}
+/* Quellen und Notizen an Ereignissen (4.6). Gramps und andere Programme
+   haengen die Fundstelle meist an das Ereignis - Taufe, Heirat,
+   Beerdigung - und nicht an die Person; unter „Seite" (3 PAGE) steht
+   dann oft der Link ins Kirchenbuch bei Matricula oder Archion. Bis 4.5
+   zaehlte die App solche Angaben nur. Jetzt zeigt die Ansicht sie, nur
+   zum Lesen: Sie gehoeren zum Ereignis, das die App nicht bearbeitet. */
+var EREIGNIS_OHNE={NOTE:1, SOUR:1, OBJE:1, CHAN:1, RIN:1, RFN:1, AFN:1, REFN:1, _UID:1, UID:1, RESN:1,
+                   SUBM:1, ASSO:1, ALIA:1, ANCI:1, DESI:1};
+/* In den Unterzeilen eines Ereignisses die Zeilen „lvl SOUR" und
+   „lvl NOTE" finden, jede mit der ersten Seitenangabe darunter. */
+function belegeAus(zeilen, lvl){
+  var out=[], typ='', i, j, h, u;
+  zeilen=zeilen||[];
+  for(i=0;i<zeilen.length;i++){
+    h=qnKopf(zeilen[i]); if(!h) continue;
+    if(h.lvl===lvl && h.tag==='TYPE' && !typ) typ=h.val;
+    if(h.lvl!==lvl || (h.tag!=='SOUR' && h.tag!=='NOTE')) continue;
+    var ptr=qnZeiger(h.val), it={art:h.tag, ptr:ptr, page:''};
+    if(ptr){ var t=satzText(ptr); it.text=(t==null ? '' : t); it.fehlt=(t==null); }
+    else it.text=qnAus(h.val);
+    for(j=i+1;j<zeilen.length;j++){
+      u=qnKopf(zeilen[j]); if(!u || u.lvl<=lvl) break;
+      if(u.lvl===lvl+1 && u.tag==='PAGE' && !it.page) it.page=u.val;
+    }
+    out.push(it);
+  }
+  return {belege:out, typ:typ};
+}
+function ereignisQuellen(id){
+  var p=D.indi[id], out=[]; if(!p) return out;
+  function nimm(tag, zeilen, lvl){
+    var b=belegeAus(zeilen, lvl||2);
+    b.belege.forEach(function(it){ it.ereignis=tag; it.typ=b.typ; out.push(it); });
+  }
+  function bloecke(liste, familie){
+    (liste||[]).forEach(function(bl){
+      var h=qnKopf(bl[0]); if(!h || h.lvl!==1) return;
+      /* Notiz und Quelle direkt an der Familie zaehlen hier mit;
+         die direkt an der Person stehen schon unter Notizen/Quellen. */
+      if(familie && (h.tag==='NOTE' || h.tag==='SOUR')){ nimm('FAM', bl, 1); return; }
+      if(EREIGNIS_OHNE[h.tag]) return;
+      nimm(h.tag, bl.slice(1), 2);
+    });
+  }
+  nimm('NAME', p.nameSub);
+  nimm('BIRT', p.birtSub);
+  nimm('DEAT', p.deatSub);
+  nimm('OCCU', p.occSub);
+  nimm('_STAMM', p.stammSub);
+  bloecke(p.extra, false);
+  (p.fams||[]).forEach(function(fid){
+    var f=D.fam[fid]; if(!f || (f.husb!==id && f.wife!==id)) return;
+    nimm('MARR', f.marrSub);
+    bloecke(f.extra, true);
   });
   return out;
 }
@@ -4450,6 +4676,8 @@ window.FP = {
   onSicherung:function(cb){ sicherCbs.push(cb); },
   /* ---------- Quellen und Notizen ---------- */
   quellenNotizen:quellenNotizen,
+  weitereNamen:weitereNamen,
+  ereignisQuellen:ereignisQuellen,
   setzeEintrag:setzeEintrag,
   neuerEintrag:neuerEintrag,
   batch:batch,
@@ -4487,10 +4715,10 @@ window.FP = {
     ? L('Name or marriage') : L('Name, year or place'); },
   suchWie:function(art){ return art==='f'
     ? L('Names of all members, marriage (date and place). Several words narrow it down: Hayes 1928')
-    : L('Given and family name, birth and death (date and place). Several words narrow it down: William 1902 Ashford'); },
+    : L('All names, birth and death (date and place). Several words narrow it down: William 1902 Ashford'); },
   suchLeer:function(art){ return art==='f'
     ? L('No matches. The search looked at the names of all members, the marriage (date and place) and the ID.')
-    : L('No matches. The search looked at given and family name, birth and death (date and place) and the ID.'); },
+    : L('No matches. The search looked at all names, birth and death (date and place) and the ID.'); },
   /* Die gefundenen Stellen im Treffer hervorheben. Das beantwortet die
      Frage „was hat denn jetzt gepasst?" dort, wo sie entsteht - am
      Treffer selbst - und spart jede weitere Erklaerung. Markiert wird
@@ -6225,14 +6453,17 @@ function selectPerson(id){
   SEL=id; render(); openPanel(id); setDrawer(true);
 }
 function deselectPerson(){
-  SEL=null; render(); setDrawer(false);
+  SEL=null; BEARB=null; render(); setDrawer(false);
 }
 var drawerMode=false;
 function isDrawer(){
   try{ return window.matchMedia('(max-width:860px)').matches; }catch(e){ return false; }
 }
 function setDrawer(open){
+  var war=$('trSide').classList.contains('open');
   $('trSide').classList.toggle('open', open);
+  if(open && !war) $('trSide').scrollTop=0;
+  if(!open) GEZEIGT='';
   if(!isDrawer()){ drawerMode=false; return; }
   if(open && !drawerMode){
     drawerMode=true;
@@ -6244,7 +6475,11 @@ function setDrawer(open){
 }
 /* closing also lets go of the person, so tapping that box opens it again */
 $('trDrawerClose').onclick=function(){ deselectPerson(); };
-$('trBtnPanel').onclick=function(){ setDrawer(true); if(!SEL&&FOCUS) openPanel(FOCUS); };
+$('trBtnPanel').onclick=function(){
+  var id=(SEL && FP.person(SEL)) ? SEL : FOCUS;
+  if(id){ BEARB=id; openPanel(id); }
+  setDrawer(true);
+};
 
 /* ---------- search ---------- */
 var hi=-1, items=[];
@@ -6396,14 +6631,21 @@ function wireSections(){
 function openPanel(id){
   var p=FP.person(id);
   var box=$('trSideBody');
-  if(!p){ box.innerHTML='<div class="muted">'+L('Select a person – search above or tap a box.')+'</div>'; return; }
+  if(!p){ panelTitel(false); nachOben(''); box.innerHTML='<div class="muted">'+L('Select a person – search above or tap a box.')+'</div>'; return; }
+  var unnamed=!givenOf(p) && !surnameOf(p);
+  /* Das Formular gilt nur fuer die Person, fuer die es geoeffnet wurde;
+     wer zu einer anderen geht, beendet es. */
+  if(BEARB!==id) BEARB=null;
+  if(unnamed) BEARB=id;
+  if(BEARB!==id){ panelTitel(false); ansicht(id); nachOben(id+'|lesen'); return; }
+  panelTitel(true);
   var fams=FP.famsOf(id), parents=FP.parentsOf(id), i;
   var h='';
 
-  var unnamed=!givenOf(p) && !surnameOf(p);
   h+='<h3>'+esc(FP.fullName(p))+'</h3>';
   if(unnamed) h+='<div class="newhint">'+L('This is a <b>new, empty entry</b>. Type a name below – or use <b><span data-ico="back"></span> Back</b> to return to where you were, or <b><span data-ico="trash"></span></b> to remove it again.')+'</div>';
   h+='<div class="addrow" style="margin:0 0 12px">'+
+     '<button class="btn small primary" id="pEditOff" data-ico="check">'+L('Done')+'</button>'+
      (trail.length?'<button class="btn small" id="pBack" data-ico="back">'+L('Back')+'</button>':'')+
      (id===FOCUS?'':'<button class="btn small" id="pFocus" data-ico="target">'+L('Centre on this person')+'</button>')+
      '<button class="btn small" id="pChart" data-ico="chart">'+L('Show in Descendants')+'</button>'+
@@ -6415,6 +6657,7 @@ function openPanel(id){
   h+=sect('details', L('Details'), '')+
      fld(L('Given name(s)'),'pGiven',p.given)+
      fld(L('Surname'),'pSurname',p.surname)+
+     weitereNamenHtml(id)+
      '<div class="fld"><label>'+L('Sex')+'</label><select id="pSex">'+
        opt('',L('unknown'),p.sex)+opt('M',L('male'),p.sex)+opt('F',L('female'),p.sex)+'</select></div>'+
      '<div class="two">'+fld(L('Date of birth'),'pBirth',FP.gedToText(p.birthDate),L('e.g. 12 Apr 1901'))+
@@ -6488,6 +6731,7 @@ function openPanel(id){
   box.setAttribute('data-pid', id);
   wireSections();
   wirePanel(id, fams);
+  nachOben(id+'|formular');
 }
 /* Die Hoehe kommt aus dem Text, nicht aus der Messung: Das Fenster ist
    beim Aufbauen oft noch zu und misst dann null. */
@@ -6495,6 +6739,21 @@ function qnZeilen(t){
   var z=String(t||'').split('\n'), n=0;
   for(var i=0;i<z.length;i++) n+=1+Math.floor(z[i].length/38);
   return Math.min(8, Math.max(2, n));
+}
+/* Weitere Namen: gezeigt wie ein gemeinsamer Satz - lesbar, mit der
+   Namensart dahinter, aber ohne Feld, denn bearbeitet wird nur der erste. */
+var NAMENSART={aka:'also known as', birth:'birth name', maiden:'maiden name', married:'married name',
+               immigrant:'immigrant name', professional:'professional name'};
+function namensArt(t){
+  var k=String(t||'').trim().toLowerCase();
+  return NAMENSART[k] ? L(NAMENSART[k]) : String(t||'').trim();
+}
+function weitereNamenHtml(id){
+  var w=FP.weitereNamen(id); if(!w.length) return '';
+  return '<div class="fld" id="pAltNames"><label>'+L('Other names')+'</label><div class="qnfremd">'+
+    w.map(function(x){ var a=namensArt(x.typ);
+      return '<div class="altnm">'+esc(x.name)+(a?'<span class="muted"> · '+esc(a)+'</span>':'')+'</div>'; }).join('')+
+    '<div class="muted">'+L('From the file, read only here – written back unchanged.')+'</div></div></div>';
 }
 function qnListe(items, tag){
   var h='<div class="qnhead">'+(tag==='NOTE'?L('Notes'):L('Sources'))+'</div>';
@@ -6506,8 +6765,8 @@ function qnListe(items, tag){
          (it.mehr?'<div class="hint">'+L('Further details from the file are kept.')+'</div>':'')+'</div>';
     } else {
       h+='<div class="qnfremd">'+(it.fehlt ? '<i>'+L('Record not found in the file')+'</i>'
-                                             : (esc(it.text)||'<i>…</i>'))+
-         (it.page?'<span class="muted"> · '+esc(it.page)+'</span>':'')+
+                                             : (verlinke(it.text)||'<i>…</i>'))+
+         (it.page?'<span class="muted"> · </span>'+verlinke(it.page):'')+
          '<div class="muted">'+L('Shared record')+' '+esc(it.ptr)+' – '+L('read only here')+'</div></div>';
     }
   }
@@ -6522,6 +6781,145 @@ function fld(lbl,idf,val,ph){
 }
 function opt(v,t,cur){ return '<option value="'+v+'"'+(cur===v?' selected':'')+'>'+t+'</option>'; }
 
+/* ---------- Ansicht zum Lesen (4.6) ----------
+   Ein Tipp auf eine Person zeigt sie zuerst zum Lesen: Lebensdaten,
+   Verwandte, Notizen und Quellen, Webadressen als Links. Erst
+   „Bearbeiten" oeffnet das Formular, „Fertig" schliesst es wieder.
+   Gemerkt wird nur, WELCHE Person gerade bearbeitet wird; wer zu einer
+   anderen geht, sieht diese zuerst wieder zum Lesen. Ein neuer, noch
+   leerer Eintrag oeffnet gleich im Formular - dort wird er ausgefuellt. */
+var BEARB=null;
+/* Was zuletzt im Fenster stand: Person und Art (lesen/Formular) */
+var GEZEIGT='';
+function nachOben(was){
+  if(was===GEZEIGT) return;
+  GEZEIGT=was;
+  var s=$('trSide'); if(s) s.scrollTop=0;
+}
+function panelTitel(bearb){
+  var bar=$('trDrawerBar'), b=bar && bar.querySelector('b'); if(!b) return;
+  var k=bearb ? 'Edit' : 'Person';
+  b.setAttribute('data-i18n', k); b.textContent=L(k);
+}
+/* Webadressen in einem Text als Links. Zerlegt wird der rohe Text,
+   maskiert erst danach - ein „&" in der Adresse bleibt so, was es ist.
+   Nur http, https und www. werden zum Link; ein „javascript:" nie.
+   Ein Satzzeichen am Ende gehoert nicht zur Adresse, eine schliessende
+   Klammer nur, wenn die Adresse auch eine oeffnet. */
+var URL_RE=/\b(?:https?:\/\/|www\.)[^\s<>"]+/gi;
+function verlinke(t){
+  t=String(t==null ? '' : t);
+  var out='', last=0, m;
+  URL_RE.lastIndex=0;
+  while((m=URL_RE.exec(t))){
+    var url=m[0], rest='', tr=/[.,;:!?)\]}'"»«“”„]+$/.exec(url);
+    if(tr){
+      rest=tr[0]; url=url.slice(0, url.length-rest.length);
+      while(rest.charAt(0)===')' && url.split('(').length>url.split(')').length){ url+=')'; rest=rest.slice(1); }
+    }
+    out+=esc(t.slice(last, m.index));
+    if(/^(?:https?:\/\/|www\.)$/i.test(url)) out+=esc(m[0]);
+    else out+='<a href="'+esc(/^www\./i.test(url) ? 'https://'+url : url)+'" target="_blank" rel="noopener noreferrer">'+
+              esc(url)+'</a>'+esc(rest);
+    last=m.index+m[0].length;
+  }
+  return out+esc(t.slice(last));
+}
+var EREIGNIS_NAME={BIRT:'Birth', CHR:'Baptism', BAPM:'Baptism', DEAT:'Death', BURI:'Burial', CREM:'Cremation',
+  MARR:'Marriage', DIV:'Divorce', ENGA:'Engagement', MARB:'Banns', OCCU:'Occupation', RESI:'Residence',
+  EDUC:'Education', CONF:'Confirmation', FCOM:'First communion', EMIG:'Emigration', IMMI:'Immigration',
+  NATU:'Naturalisation', CENS:'Census', GRAD:'Graduation', RETI:'Retirement', PROB:'Probate', WILL:'Will',
+  ADOP:'Adoption', TITL:'Title', RELI:'Religion', NAME:'Name', FACT:'Fact', EVEN:'Event',
+  _STAMM:'Lineage / house', FAM:'Family'};
+function ereignisName(it){
+  if((it.ereignis==='EVEN' || it.ereignis==='FACT') && it.typ) return it.typ;
+  var k=EREIGNIS_NAME[it.ereignis];
+  return k ? L(k) : it.ereignis;
+}
+function vPerson(pid, rolle){
+  return '<button class="vgo" data-goto="'+esc(pid)+'"><span class="vn">'+nm(pid)+'</span>'+
+         (rolle ? '<span class="role">'+rolle+'</span>' : '')+'</button>';
+}
+/* Zum Lesen genuegt der Text: ob er aus einem gemeinsamen Satz kommt,
+   zaehlt erst im Formular, wo man ihn aendern wollen koennte. */
+function belegHtml(it){
+  var t = it.fehlt ? '<i>'+L('Record not found in the file')+'</i>' : (verlinke(it.text) || '<i>…</i>');
+  return t+(it.page ? '<span class="muted"> · </span>'+verlinke(it.page) : '');
+}
+function ansicht(id){
+  var p=FP.person(id), box=$('trSideBody');
+  var fams=FP.famsOf(id), parents=FP.parentsOf(id), h='';
+  h+='<h3>'+esc(FP.fullName(p))+'</h3>';
+  h+='<div class="addrow" style="margin:0 0 12px">'+
+     '<button class="btn small primary" id="pEditOn" data-ico="pencil">'+L('Edit')+'</button>'+
+     (trail.length?'<button class="btn small" id="pBack" data-ico="back">'+L('Back')+'</button>':'')+
+     (id===FOCUS?'':'<button class="btn small" id="pFocus" data-ico="target">'+L('Centre on this person')+'</button>')+
+     '<button class="btn small" id="pChart" data-ico="chart">'+L('Show in Descendants')+'</button>'+
+     '<button class="btn small'+(FP.startPerson()===id?' on':'')+'" id="pStart" data-ico="flag">'+
+       (FP.startPerson()===id ? L('Start person') : L('Make start person'))+'</button></div>';
+
+  /* Angaben: nur, was es gibt */
+  var z=[];
+  function zeile(lbl, html){ z.push('<div class="vl">'+lbl+'</div><div class="vw">'+html+'</div>'); }
+  var geb=[FP.gedToText(p.birthDate), p.birthPlace].filter(Boolean).join(', ');
+  var tod=[FP.gedToText(p.deathDate), p.deathPlace].filter(Boolean).join(', ');
+  if(geb) zeile(L('Born'), esc(geb));
+  if(tod) zeile(L('Died'), esc(tod)); else if(p.dead) zeile(L('Died'), L('date unknown'));
+  if(p.occ) zeile(L('Occupation'), esc(p.occ));
+  if(p.stamm) zeile(L('Lineage / house'), esc(p.stamm));
+  if(p.sex==='M' || p.sex==='F') zeile(L('Sex'), p.sex==='M' ? L('male') : L('female'));
+  var w=FP.weitereNamen(id);
+  if(w.length) zeile(L('Other names'), w.map(function(x){ var a=namensArt(x.typ);
+    return esc(x.name)+(a ? ' <span class="muted">· '+esc(a)+'</span>' : ''); }).join('<br>'));
+  h+=sect('details', L('Details'), '')+
+     (z.length ? '<div class="vliste">'+z.join('')+'</div>' : '<div class="muted">'+L('No details yet.')+'</div>')+
+     '</details>';
+
+  /* Notizen und Quellen, auch die an Ereignissen */
+  var qn=FP.quellenNotizen(id), ev=FP.ereignisQuellen(id), qz=qn.notes.length+qn.sources.length;
+  if(qz || ev.length){
+    h+=sect('sources', L('Notes &amp; sources'), String(qz+ev.length));
+    if(qn.notes.length) h+='<div class="qnhead">'+L('Notes')+'</div>'+
+      qn.notes.map(function(it){ return '<div class="vtext">'+belegHtml(it)+'</div>'; }).join('');
+    if(qn.sources.length) h+='<div class="qnhead">'+L('Sources')+'</div>'+
+      qn.sources.map(function(it){ return '<div class="vtext">'+belegHtml(it)+'</div>'; }).join('');
+    if(ev.length) h+='<div class="qnhead">'+L('On events')+'</div>'+
+      ev.map(function(it){ return '<div class="vtext"><div class="vev">'+esc(ereignisName(it))+
+        (it.art==='NOTE' ? ' · '+L('Note') : ' · '+L('Source'))+'</div>'+belegHtml(it)+'</div>'; }).join('');
+    h+='</details>';
+  }
+
+  /* Eltern */
+  h+=sect('parents', L('Parents'), parents.length?String(parents.length):'');
+  if(!parents.length) h+='<div class="muted">'+L('No parents recorded.')+'</div>';
+  parents.forEach(function(pid){ var pp=FP.person(pid);
+    h+=vPerson(pid, pp.sex==='F' ? L('Mother') : (pp.sex==='M' ? L('Father') : L('Parent'))); });
+  h+='</details>';
+
+  /* Partner und Kinder */
+  var kidCount=0;
+  fams.forEach(function(f){ kidCount+=(f.children||[]).filter(function(c){ return FP.person(c); }).length; });
+  h+=sect('families', L('Partners &amp; children'), (fams.length||kidCount)?(fams.length+' / '+kidCount):'');
+  if(!fams.length) h+='<div class="muted">'+L('No partner or children recorded.')+'</div>';
+  fams.forEach(function(fam, i){
+    var partner=FP.partnerOfFam(fam, id);
+    h+='<div class="vfam">';
+    h+= partner ? vPerson(partner, fams.length>1 ? (L('Marriage ')+(i+1)) : L('Partner'))
+                : '<div class="vleer muted">'+L('no partner')+'</div>';
+    var hz=[FP.gedToText(fam.marrDate), fam.marrPlace].filter(Boolean).join(', ');
+    if(hz) h+='<div class="vheirat"><span class="muted">⚭</span> '+esc(hz)+'</div>';
+    FP.sortByAge((fam.children||[]).filter(function(c){ return FP.person(c); }))
+      .forEach(function(c){ h+=vPerson(c, L('Child')); });
+    h+='</div>';
+  });
+  h+='</details>';
+
+  box.innerHTML=h;
+  box.setAttribute('data-pid', id);
+  wireSections();
+  /* dieselben Knoepfe wie im Formular; Felder gibt es hier keine */
+  wirePanel(id, []);
+}
 function wirePanel(id, fams){
   var box=$('trSideBody');
   /* Geschrieben wird nur, was sich am Feld wirklich geaendert hat. Bis 4.0
@@ -6611,6 +7009,20 @@ function wirePanel(id, fams){
   })(fams[i],i);}
 
   if($('pBack')) $('pBack').onclick=function(){ if(!goBackOne()) SHELL.toast(L('Nowhere to go back to.')); };
+  if($('pEditOn')) $('pEditOn').onclick=function(){ BEARB=id; openPanel(id); };
+  /* „Fertig": Ein Feld, in dem noch getippt wurde, hat beim Antippen
+     schon den Fokus verloren und damit gespeichert. */
+  if($('pEditOff')) $('pEditOff').onclick=function(){
+    var q=FP.person(id);
+    /* Ein Eintrag ohne Namen bleibt im Formular - er waere sonst nicht
+       wiederzufinden. */
+    if(q && !givenOf(q) && !surnameOf(q)){
+      SHELL.toast(L('New entry created – please type a name for it.'));
+      var g=$('pGiven'); if(g) g.focus();
+      return;
+    }
+    BEARB=null; openPanel(id);
+  };
   if($('pFocus')) $('pFocus').onclick=function(){ setFocus(id); };
   if($('pChart')) $('pChart').onclick=function(){ setDrawer(false); SHELL.showInChart(id); };
   /* Which person this file opens on next time. Pressing it again clears it. */
@@ -6677,7 +7089,7 @@ function excl(id){ var e={}; e[id]=1; return e; }
 /* Makes it obvious that a brand new, still empty entry has appeared:
    it is selected, its panel opens, and the name field is waiting. */
 function justCreated(pid, typed){
-  SEL=pid; render(); openPanel(pid); setDrawer(true);
+  SEL=pid; BEARB=pid; render(); openPanel(pid); setDrawer(true);
   if(typed && typed.trim()){
     SHELL.toast(L('Created: ')+FP.fullName(FP.person(pid)));
   } else {
@@ -6797,9 +7209,10 @@ function pickDefaultFocus(){
   return best;
 }
 FP.on(function(type, restored){
-  if(type==='clear'){ FOCUS=null; SEL=null; $('trSearch').value=''; toggleClear();
+  if(type==='clear'){ FOCUS=null; SEL=null; BEARB=null; $('trSearch').value=''; toggleClear();
     resetFilter(); fillStammList(); paintFilter(); render(); openPanel(null); return; }
   if(type==='load'){
+    BEARB=null;
     FOCUS=pickDefaultFocus();
     /* the same file as last time – carry on where the app was left */
     if(restored) restoreView(); else resetView();
@@ -9145,6 +9558,11 @@ function zusammenlegen(plan){
   plan.felder.forEach(function(fz){
     var q=fz.wahl && P[fz.wahl] ? P[fz.wahl][fz.feld.k] : '';
     if(q) zielP[fz.feld.k]=q;
+    /* Mit Beruf und Stamm wandern ihre Unterzeilen (Datum, Ort, Quelle) -
+       sonst stuende der uebernommene Beruf mit dem Datum des alten da. */
+    var von=fz.wahl!==haupt && P[fz.wahl];
+    if(q && von && fz.feld.k==='occ') zielP.occSub=(von.occSub||[]).slice();
+    if(q && von && fz.feld.k==='stamm'){ zielP.stammSub=(von.stammSub||[]).slice(); zielP.stammType=von.stammType; }
   });
   if(zielP.deathDate) zielP.dead=true;
 
@@ -9172,6 +9590,11 @@ function zusammenlegen(plan){
       zielP.extra.push(bl); vorhanden[s]=1; tags[t]=1;
     });
     ['birtSub','deatSub'].forEach(function(k){ zielP[k]=zielP[k]||[]; mischeUnter(zielP[k], q[k]); });
+    /* Unterzeilen der Verknuepfungen („2 PEDI adopted") gehen mit */
+    ['famcSub','famsSub'].forEach(function(k){
+      if(!q[k]) return; zielP[k]=zielP[k]||Object.create(null);
+      for(var x in q[k]) if(!zielP[k][x]) zielP[k][x]=q[k][x];
+    });
   });
 
   /* 3. Die aufgegebenen Kennungen festhalten, damit der Weg
@@ -9184,6 +9607,9 @@ function zusammenlegen(plan){
       var f=F[fid];
       if(f.husb===id) f.husb=haupt;
       if(f.wife===id) f.wife=haupt;
+      if(f.husbSub && f.husbSub.id===id) f.husbSub.id=haupt;
+      if(f.wifeSub && f.wifeSub.id===id) f.wifeSub.id=haupt;
+      if(f.chilSub && f.chilSub[id]){ if(!f.chilSub[haupt]) f.chilSub[haupt]=f.chilSub[id]; delete f.chilSub[id]; }
       var k=f.children.indexOf(id);
       if(k>=0){ if(f.children.indexOf(haupt)>=0) f.children.splice(k,1); else f.children[k]=haupt; }
     }
@@ -9213,6 +9639,11 @@ function zusammenlegen(plan){
     f.children.forEach(function(c){ if(ziel.children.indexOf(c)<0) ziel.children.push(c); });
     if(!ziel.marrDate && f.marrDate) ziel.marrDate=f.marrDate;
     if(!ziel.marrPlace && f.marrPlace) ziel.marrPlace=f.marrPlace;
+    if(!ziel.marrVal && f.marrVal) ziel.marrVal=f.marrVal;
+    ziel.chilSub=ziel.chilSub||Object.create(null);
+    for(var cz in (f.chilSub||{})) if(!ziel.chilSub[cz]) ziel.chilSub[cz]=f.chilSub[cz];
+    if(!(ziel.husbSub && ziel.husbSub.id===ziel.husb && ziel.husbSub.z.length) && f.husbSub && f.husbSub.id===ziel.husb) ziel.husbSub=f.husbSub;
+    if(!(ziel.wifeSub && ziel.wifeSub.id===ziel.wife && ziel.wifeSub.z.length) && f.wifeSub && f.wifeSub.id===ziel.wife) ziel.wifeSub=f.wifeSub;
     /* Quellen zur Heirat gingen bisher mit der zweiten Familie unter,
        und gleiche Bloecke standen danach doppelt da. */
     ziel.marrSub=ziel.marrSub||[]; mischeUnter(ziel.marrSub, f.marrSub);
@@ -9224,6 +9655,10 @@ function zusammenlegen(plan){
       var pp=P[pid];
       var i1=pp.famc.indexOf(fid); if(i1>=0){ pp.famc.splice(i1,1); if(pp.famc.indexOf(ziel.id)<0) pp.famc.push(ziel.id); }
       var i2=pp.fams.indexOf(fid); if(i2>=0){ pp.fams.splice(i2,1); if(pp.fams.indexOf(ziel.id)<0) pp.fams.push(ziel.id); }
+      ['famcSub','famsSub'].forEach(function(k){
+        var m=pp[k]; if(!m || !m[fid]) return;
+        if(!m[ziel.id]) m[ziel.id]=m[fid]; delete m[fid];
+      });
     }
     delete F[fid];
     var of=FP.data().order.fam, k2=of.indexOf(fid); if(k2>=0) of.splice(k2,1);
@@ -10159,6 +10594,76 @@ function ringeFinden(P,F){
   return aufRing;
 }
 
+/* Ist ein Kind mit Vater und Mutter seiner Familie leiblich verwandt?
+   Die Dateien sagen es auf drei Wegen:
+     1 FAMC @F1@ / 2 PEDI adopted          (GEDCOM, fuer beide Eltern)
+     1 CHIL @I3@ / 2 _FREL Adopted, 2 _MREL Birth   (Gramps, Family Tree Maker)
+     1 ADOP / 2 FAMC @F1@ / 3 ADOP HUSB    (Adoptionsereignis)
+   Leiblich ist, was ohne Angabe ist oder birth/natural/unknown heisst.
+   Alles andere - adopted, foster, step, sponsored, sealing, eigene
+   Werte - gilt als nicht leiblich, damit keine Regel daraus einen
+   Widerspruch macht, der keiner ist. */
+var LEIBLICH={husb:true, wife:true};
+var LEIBLICH_WERT=/^(birth|natural|biological|leiblich|unknown|unbekannt)?$/i;
+function zeileKopf(z){
+  var m=/^\s*(\d+)\s+(\S+)(?:\s+([\s\S]*))?$/.exec(z||'');
+  return m ? {lvl:+m[1], tag:m[2].toUpperCase(), val:(m[3]||'').trim()} : null;
+}
+function abstammungRoh(P,F,cid,fid){
+  var r={husb:true, wife:true}, c=P[cid], f=F[fid];
+  function nicht(rolle, v){ if(!LEIBLICH_WERT.test(String(v||'').trim())) r[rolle]=false; }
+  function lies(zeilen){
+    (zeilen||[]).forEach(function(z){
+      var h=zeileKopf(z); if(!h || h.lvl!==2) return;
+      if(h.tag==='PEDI'){ nicht('husb',h.val); nicht('wife',h.val); }
+      else if(h.tag==='_FREL') nicht('husb',h.val);
+      else if(h.tag==='_MREL') nicht('wife',h.val);
+    });
+  }
+  if(c && c.famcSub) lies(c.famcSub[fid]);
+  if(f && f.chilSub) lies(f.chilSub[cid]);
+  (c && c.extra || []).forEach(function(bl){
+    var h=zeileKopf(bl[0]); if(!h || h.lvl!==1 || h.tag!=='ADOP') return;
+    var fam=null, wer='BOTH';
+    for(var i=1;i<bl.length;i++){
+      var s=zeileKopf(bl[i]); if(!s) continue;
+      if(s.lvl===2 && s.tag==='FAMC') fam=s.val.replace(/@/g,'');
+      else if(s.lvl===3 && s.tag==='ADOP' && fam===fid) wer=s.val.toUpperCase();
+    }
+    if(fam===fid){ if(wer!=='WIFE') r.husb=false; if(wer!=='HUSB') r.wife=false; }
+  });
+  return r;
+}
+/* Einmal je Pruefung fuer alle Kinder; gemerkt wird nur, was abweicht. */
+function abstammungen(P,F){
+  var B=Object.create(null);
+  for(var fid in F){ var f=F[fid];
+    (f.children||[]).forEach(function(cid){
+      if(!P[cid]) return;
+      var r=abstammungRoh(P,F,cid,fid);
+      if(!r.husb || !r.wife) B[fid+'|'+cid]=r;
+    });
+  }
+  return B;
+}
+function leiblich(ctx,fid,cid){ return (ctx.B && ctx.B[fid+'|'+cid]) || LEIBLICH; }
+
+/* Kalendergenaue Tageszahl. tagVon() rechnet jeden Monat mit 30,44
+   Tagen - fuer Jahre und Monate genau genug, fuer Zwillinge nicht: Am
+   28. Februar und 1. Maerz geboren lagen dort drei Tage auseinander. */
+function tagNr(j,m,t){
+  var a=Math.floor((14-m)/12), y=j+4800-a, mm=m+12*a-3;
+  return t+Math.floor((153*mm+2)/5)+365*y+Math.floor(y/4)-Math.floor(y/100)+Math.floor(y/400)-32045;
+}
+function genaueSpanne(v, platz){
+  if(!v || unscharf(v)) return null;
+  var d=teile(v); if(d.jahr==null) return null;
+  if(d.tag!=null && d.mon!=null && !platz[d.tag+'.'+d.mon]){ var n=tagNr(d.jahr,d.mon,d.tag); return [n,n]; }
+  if(d.mon!=null && d.tag==null)
+    return [tagNr(d.jahr,d.mon,1), (d.mon===12 ? tagNr(d.jahr+1,1,1) : tagNr(d.jahr,d.mon+1,1))-1];
+  return [tagNr(d.jahr,1,1), tagNr(d.jahr,12,31)];
+}
+
 function vorEltern(P,F,id){
   var p=P[id], out=[];
   (p.famc||[]).forEach(function(fid){
@@ -10241,8 +10746,10 @@ var REGELN=[
      (f.children||[]).forEach(function(cid){
        var c=P[cid]; if(!c) return;
        var kg=S[cid].g; if(!kg) return;
+       var lb=leiblich(ctx,fid,cid);
        [f.husb,f.wife].forEach(function(eid){
          var e=eid&&P[eid]; if(!e) return;
+         if(!lb[eid===f.husb?'husb':'wife']) return;
          var eg=S[eid].g; if(!eg) return;
          if(kg[1] + spiel(S[cid].gx, S[eid].gx) < eg[0])
            out.push({ids:[cid,eid], text:nm(cid)+' * '+dt(c.birthDate)+
@@ -10261,8 +10768,10 @@ var REGELN=[
      (f.children||[]).forEach(function(cid){
        var c=P[cid]; if(!c) return;
        var kg=S[cid].g; if(!kg) return;
-       [[f.wife,0],[f.husb,280]].forEach(function(q){
+       var lb=leiblich(ctx,fid,cid);
+       [[f.wife,0,'wife'],[f.husb,280,'husb']].forEach(function(q){
          var e=q[0]&&P[q[0]]; if(!e||!e.deathDate) return;
+         if(!lb[q[2]]) return;
          var es=S[e.id].s; if(!es) return;
          if(kg[0] > es[1]+q[1]+spiel(S[cid].gx, S[e.id].sx))
            out.push({ids:[cid,e.id], text:nm(cid)+' * '+dt(c.birthDate)+
@@ -10394,20 +10903,40 @@ var REGELN=[
  }},
 {k:'geschwister_dicht', band:'u',
  t:['Siblings born too close together','Geschwister zu dicht beieinander geboren'],
- e:['Two children of the same parents, born between one and eight months apart, both with a full date. Twins share a date; this looks more like a wrong year.',
-    'Zwei Kinder derselben Eltern, zwischen einem und acht Monaten auseinander geboren, beide mit vollem Datum. Zwillinge haben dasselbe Datum; das hier sieht eher nach einer falschen Jahreszahl aus.'],
+ e:['Two children of the same mother, born between two days and eight months apart. Twins arrive on the same or the next day; otherwise less than eight months is hardly possible. Usually a year or a day is wrong, or a baptism date stands in for the birth. Adopted, foster and step-children are not compared.',
+    'Zwei Kinder derselben Mutter, zwischen zwei Tagen und acht Monaten auseinander geboren. Zwillinge kommen am selben oder am nächsten Tag zur Welt; sonst ist ein Abstand unter acht Monaten kaum möglich. Meist ist eine Jahreszahl oder ein Tag falsch, oder ein Taufdatum steht als Geburtsdatum. Adoptiv-, Pflege- und Stiefkinder werden nicht verglichen.'],
  f:function(P,F,out,ctx){
-   /* Nur taggenaue Daten. Ein Platzhalter auf dem 1. Januar neben
-      einem echten Datum ergab vorher einen Abstand, den es gar
-      nicht gibt - an einer echten Datei die Hälfte der Funde. */
-   var platz=ctx.platz.satz, S=ctx.S;
+   /* Verglichen werden Geburten derselben Mutter, ueber alle ihre
+      Familien - zwei Kinder von zwei Vaetern kann sie nicht im Abstand
+      von vier Monaten bekommen. Ist die Mutter unbekannt, bleibt es bei
+      den Kindern dieser einen Familie. Bis 4.4: nur dieselbe Familie,
+      und ein Kind aus zweiter Ehe fiel durch.
+      Jedes Datum ist ein Zeitraum (Tag, Monat oder Jahr). Gemeldet wird
+      nur, was bei jeder Lesart zwischen 2 und 244 Tagen liegt: „Maerz
+      1850" und „Juni 1850" ja, „1850" und „1850" nicht - das koennten
+      Zwillinge sein. Ein Platzhalter auf dem 1. Januar zaehlt als Jahr,
+      sonst entstuende ein Abstand, den es gar nicht gibt. */
+   var platz=ctx.platz.satz, gruppen=Object.create(null), key, i, j;
    for(var fid in F){ var f=F[fid];
-     var ki=(f.children||[]).filter(function(c){
-       return P[c] && genauesDatum(P[c].birthDate, platz); });
-     for(var i=0;i<ki.length;i++) for(var j=i+1;j<ki.length;j++){
-       var a=S[ki[i]].g[0], b=S[ki[j]].g[0], d=Math.abs(a-b);
-       if(d>25&&d<245) out.push({ids:[ki[i],ki[j]],
-         text:nm(ki[i])+' * '+dt(P[ki[i]].birthDate)+'  \u2014 '+nm(ki[j])+' * '+dt(P[ki[j]].birthDate)});
+     (f.children||[]).forEach(function(c){
+       if(!P[c]) return;
+       var lb=leiblich(ctx,fid,c), k=null;
+       if(f.wife && P[f.wife]){ if(lb.wife) k='M'+f.wife; }
+       else if(lb.husb) k='F'+fid;
+       if(!k) return;
+       var g=gruppen[k]||(gruppen[k]=[]);
+       if(g.indexOf(c)<0) g.push(c);
+     });
+   }
+   for(key in gruppen){
+     var ki=gruppen[key].map(function(c){ return {id:c, s:genaueSpanne(P[c].birthDate, platz)}; })
+                        .filter(function(x){ return x.s; });
+     for(i=0;i<ki.length;i++) for(j=i+1;j<ki.length;j++){
+       var a=ki[i].s, b=ki[j].s;
+       var min=Math.max(0, Math.max(a[0],b[0])-Math.min(a[1],b[1]));
+       var max=Math.max(a[1]-b[0], b[1]-a[0]);
+       if(min>=2 && max<=244) out.push({ids:[ki[i].id,ki[j].id],
+         text:nm(ki[i].id)+' * '+dt(P[ki[i].id].birthDate)+'  \u2014 '+nm(ki[j].id)+' * '+dt(P[ki[j].id].birthDate)});
      }
    }
  }},
@@ -10722,6 +11251,7 @@ function altersRegel(P,F,out,rolle,ueber,unter,zeichen,ctx){
     var eg=S[e.id].g; if(!eg) continue;
     (f.children||[]).forEach(function(cid){
       var c=P[cid]; if(!c) return;
+      if(!leiblich(ctx,fid,cid)[rolle]) return;
       var kg=S[cid].g; if(!kg) return;
       /* Gerechnet wird in vollen Jahren, und zwar in denselben, die
          danach dastehen. Ohne das Abrunden entschied die vierte
@@ -10761,12 +11291,12 @@ function ruesten(P,F){
   for(fid in F){ f=F[fid];
     M[fid]={ h:spanne(f.marrDate, platz.satz), hx:genauesDatum(f.marrDate, platz.satz) };
   }
-  return {S:S, M:M, platz:platz, ring:ringeFinden(P,F)};
+  return {S:S, M:M, platz:platz, ring:ringeFinden(P,F), B:abstammungen(P,F)};
 }
 function suchen(){
   var P=FP.indi(), F=FP.fam(), ctx={}, erg=[];
   var vor=ruesten(P,F);
-  ctx.S=vor.S; ctx.M=vor.M; ctx.platz=vor.platz; ctx.ring=vor.ring;
+  ctx.S=vor.S; ctx.M=vor.M; ctx.platz=vor.platz; ctx.ring=vor.ring; ctx.B=vor.B;
   var t0=(window.performance&&performance.now)?performance.now():0;
   /* Eine Regel, die stolpert, darf das Fenster nicht mitreissen -
      aber sie darf auch nicht lautlos verschwinden. Beim Bauen hat
