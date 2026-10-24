@@ -23,9 +23,9 @@ Wer in der Familie forscht, hat die Daten meist auf dem Rechner und steht beim F
 
 **Aufräumen.** Dubletten finden (auch über Schreibvarianten wie Müller und Mueller), die Datei nach fünfundzwanzig Regeln prüfen, und eine zweite GEDCOM-Datei mit der eigenen abgleichen: wer schon da ist, wer neu ist, wo die andere Datei etwas weiß, das der eigenen fehlt. Geändert wird nur, was bestätigt wird; die letzten zehn Schritte lassen sich zurücknehmen.
 
-**Notizen und Quellen.** Zu jeder Person lassen sich Notizen und Quellen festhalten, gespeichert als `NOTE` und `SOUR` — jedes große Programm liest sie mit. Quellensätze, auf die mehrere Personen verweisen, werden mit ihrem Titel angezeigt, aber nicht verändert.
+**Notizen und Quellen.** Zu jeder Person lassen sich Notizen und Quellen festhalten, gespeichert als `NOTE` und `SOUR` — jedes große Programm liest sie mit. Quellensätze, auf die mehrere Personen verweisen, werden mit ihrem Titel angezeigt, aber nicht verändert. Eine Person öffnet sich zuerst zum Lesen; Quellen an Ereignissen wie Taufe oder Heirat stehen mit ihrer Seitenangabe dabei, und Webadressen — etwa ins Kirchenbuch bei Matricula oder Archion — öffnen sich mit einem Tipp im Browser.
 
-**GEDCOM rein wie raus.** Gelesen wird GEDCOM 5.5.1, geschrieben ebenso, in UTF-8. Was die App selbst nicht anzeigt — etwa Bildverweise oder Quellen an Ereignissen — steht nach dem Export wieder an seiner Stelle. Dateien aus älteren Programmen werden auch dann richtig gelesen, wenn sie nicht UTF-8 sind: ANSEL und Windows-1252 werden erkannt.
+**GEDCOM rein wie raus.** Gelesen wird GEDCOM 5.5.1, geschrieben ebenso, in UTF-8. Was die App selbst nicht bearbeitet — etwa Bildverweise, Quellen an Ereignissen oder weitere Namen einer Person — steht nach dem Export wieder an seiner Stelle. Dateien aus älteren Programmen werden auch dann richtig gelesen, wenn sie nicht UTF-8 sind: ANSEL und Windows-1252 werden erkannt.
 
 ## Was sie nicht kann
 
@@ -63,9 +63,9 @@ Family history usually lives on a computer at home, and when the family actually
 
 **Tidying up:** find duplicates (including spellings such as Mueller and Müller), check the file against twenty-five rules, and compare a second GEDCOM file with your own: who you already have, who is new, where the other file knows something you do not. Only what you confirm is changed, and the last ten steps can be undone.
 
-**Notes and sources:** keep notes and sources for every person, stored as `NOTE` and `SOUR` so every major program reads them. Source records shared by several people are shown with their title but not changed.
+**Notes and sources:** keep notes and sources for every person, stored as `NOTE` and `SOUR` so every major program reads them. Source records shared by several people are shown with their title but not changed. A person opens for reading first; sources on events such as a baptism or a wedding are shown with their page, and web addresses — say into a parish register at Matricula or Archion — open in the browser with a tap.
 
-**GEDCOM in and out:** GEDCOM 5.5.1 in UTF-8. Whatever the app does not show itself — media links, sources on events — is put back where it was. Files from older programs are read correctly even when they are not UTF-8: ANSEL and Windows-1252 are recognised.
+**GEDCOM in and out:** GEDCOM 5.5.1 in UTF-8. Whatever the app does not edit itself — media links, sources on events, further names of a person — is put back where it was. Files from older programs are read correctly even when they are not UTF-8: ANSEL and Windows-1252 are recognised.
 
 **What it does not do:** it is not a replacement for a full genealogy program. No sync between devices, no searching of online archives, no management of images or documents. The way between two devices is the file.
 
