@@ -252,9 +252,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 /* Die Zahl sitzt auf der Ecke des Knopfs und nimmt keinen Platz in der
    Zeile weg - bei 320 px ist dort keiner uebrig. */
 #btnData{position:relative}
-#dataBadge{position:absolute; top:-7px; right:-7px; min-width:19px; height:19px; padding:0 5px;
-  border-radius:10px; background:var(--warn); color:#fff; font-size:11.5px; font-weight:700;
-  line-height:19px; text-align:center; box-shadow:0 0 0 2px var(--panel); pointer-events:none}
+/* seit 4.8 ein Punkt statt einer Zahl, und erst wenn eine Sicherung fällig ist */
+#dataBadge{position:absolute; top:-4px; right:-4px; width:11px; height:11px; padding:0;
+  border-radius:50%; background:var(--warn); box-shadow:0 0 0 2px var(--panel); pointer-events:none}
 /* Die Leiste schwebt ueber dem Inhalt, statt ihn nach unten zu schieben.
    In der ersten Fassung schob sie alles darunter um ihre Hoehe weiter -
    und weil sie genau bei einer Aenderung erscheint, also mitten im
@@ -728,6 +728,12 @@ body.fullscreen #fullExit{display:flex}
    4) Tab "Descendant chart"
    =================================================================== */
 #panelChart{position:absolute; inset:0}
+/* Ahnentafel (4.8): derselbe Reiter, ein Umschalter, eigene Optionen */
+#panelChart.ahnen .nurNach, #panelChart:not(.ahnen) .nurAhnen, #panelChart.ahnen #genFull{display:none !important}
+.tafelart{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; flex:0 0 auto}
+.tafelart .seg{border:none; background:var(--field); color:var(--ink); font:inherit; font-size:13px; padding:5px 11px; min-height:32px; cursor:pointer}
+.tafelart .seg+.seg{border-left:1px solid var(--line)}
+.tafelart .seg.on{background:var(--accent); color:var(--onaccent); font-weight:600}
 #toolbar{flex:0 0 auto; display:flex; gap:8px; align-items:center; flex-wrap:wrap;
   background:var(--panel); border-bottom:1px solid var(--line); padding:8px 12px}
 #toolbar button,#toolbar .btn{font-size:14px; padding:7px 11px; min-height:34px}
@@ -822,6 +828,10 @@ body.fullscreen #fullExit{display:flex}
 #panelRel .card{box-shadow:0 1px 3px rgba(60,45,20,.05)}
 #panelRel input[type=text],#panelRel input[type=number]{width:100%; padding:11px 12px;
   border:1px solid var(--line); border-radius:9px; font-size:17.5px; background:var(--field)}
+/* Felder mit X zum Leeren: rechts Platz lassen. Die Regel darüber setzt
+   das Polster mit gleicher Stärke zurück, deshalb lief ein langer Name
+   bis 4.7 unter das X und verdeckte es. */
+#panelRel .combo input[type=text]{padding-right:40px; text-overflow:ellipsis}
 #panelRel input:focus{border-color:var(--accent2)}
 .filterbar{display:none; align-items:center; gap:10px; flex-wrap:wrap; margin-top:14px;
   padding-top:14px; border-top:1px dotted var(--line)}
@@ -1245,7 +1255,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   </div>
   <nav id="tabbar">
     <button class="tab active" data-tab="tree"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="2.4" width="6" height="4.4" rx="1.1"/><rect x="2.3" y="17.2" width="6" height="4.4" rx="1.1"/><rect x="15.7" y="17.2" width="6" height="4.4" rx="1.1"/><path d="M12 6.8v6.6M5.3 13.4h13.4M5.3 13.4v3.8M18.7 13.4v3.8"/></svg></span> <span data-i18n="Tree">Tree</span></button>
-    <button class="tab" data-tab="chart"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4.2" y="2.6" width="15.6" height="18.8" rx="2.2"/><path d="M7.6 8h8.8M9.8 12.3h6.6M12 16.6h4.4"/></svg></span> <span data-i18n="Descendants">Descendants</span></button>
+    <button class="tab" data-tab="chart"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4.2" y="2.6" width="15.6" height="18.8" rx="2.2"/><path d="M7.6 8h8.8M9.8 12.3h6.6M12 16.6h4.4"/></svg></span> <span data-i18n="Chart">Chart</span></button>
     <button class="tab" data-tab="rel"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="7.4" cy="8.1" r="3.1"/><circle cx="16.6" cy="8.1" r="3.1"/><path d="M2.4 19.6c0-2.9 2.2-4.6 5-4.6s5 1.7 5 4.6"/><path d="M11.6 19.6c0-2.9 2.2-4.6 5-4.6s5 1.7 5 4.6"/></svg></span> <span data-i18n="Kinship">Kinship</span></button>
   </nav>
 </header>
@@ -1322,7 +1332,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
     <div id="toolbar" class="noprint">
 
       <div class="tgrp">
-        <div class="tgrph" data-i18n="Root person">Root person</div>
+        <div class="tgrph" id="rootHead" data-i18n="Root person">Root person</div>
         <div class="combo">
           <input id="rootSearch" data-i18n-ph="Name, year or place"
                  placeholder="Name, year or place" autocomplete="off" disabled>
@@ -1343,7 +1353,9 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
         </div>
         <button class="btn" id="chFullMenu" data-ico="full" data-i18n="Full screen" data-i18n-title="Full screen" title="Full screen">Full screen</button>
         <label class="muted"><input type="checkbox" id="optFirstName" checked> <span data-i18n="First given name only">First given name only</span></label>
-        <label class="muted"><input type="checkbox" id="optAgeSort" checked> <span data-i18n="Children by age">Children by age</span></label>
+        <label class="muted nurNach"><input type="checkbox" id="optAgeSort" checked> <span data-i18n="Children by age">Children by age</span></label>
+        <label class="muted nurAhnen"><input type="checkbox" id="optKekule" checked> <span data-lang="en">Ancestor numbers</span><span data-lang="de">Ahnennummern</span></label>
+        <label class="muted nurAhnen"><input type="checkbox" id="optLeer"> <span data-lang="en">Empty boxes to fill in</span><span data-lang="de">Leere K&auml;sten zum Ausf&uuml;llen</span></label>
         <label class="muted"><span data-i18n="Boxes:">Boxes:</span>
           <select id="boxWidth" data-i18n-title="Box width" title="Box width" aria-label="Box width">
             <option value="auto" selected data-i18n="automatic (fits the text)">automatic (fits the text)</option>
@@ -1399,6 +1411,9 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
       </div>
 
         <div id="genNote" style="display:none">
+          <div class="tafelart" role="group" aria-label="Nachfahren- oder Ahnentafel">
+            <button type="button" class="seg on" id="artNach" aria-pressed="true"><span data-lang="en">Descendants</span><span data-lang="de">Nachfahren</span></button><button type="button" class="seg" id="artAhnen" aria-pressed="false"><span data-lang="en">Ancestors</span><span data-lang="de">Ahnen</span></button>
+          </div>
           <select id="genLimit" data-i18n-title="How many generations of descendants to show" title="How many generations of descendants to show" aria-label="Generations"></select>
           <button class="btn small" id="genFull" data-i18n="Show all">Show all</button>
           <button class="btn small" id="btnTitle" data-i18n="Chart title">Chart title</button>
@@ -1975,7 +1990,7 @@ var DE = {
 '❔ Guide':'❔ Anleitung',
 'Open the user guide':'Anleitung öffnen',
 'Language and appearance':'Sprache und Darstellung',
-'Tree':'Stammbaum','Descendants':'Nachfahrentafel','Kinship':'Verwandtschaft',
+'Tree':'Stammbaum','Descendants':'Nachfahrentafel', 'Chart':'Tafel','Kinship':'Verwandtschaft',
 'no data loaded':'keine Daten geladen',
 '1 person':'1 Person',
 ' people':' Personen',
@@ -2404,7 +2419,7 @@ var DE = {
 'Back up now':'Jetzt sichern', 'Back up now (.ged)':'Jetzt sichern (.ged)',
 'Add the first person':'Erste Person anlegen', 'Create a new person':'Neue Person anlegen',
 'Create new person “':'Neue Person anlegen: „', 'Partner / marriage':'Partner / Ehe',
-'Centre on this person':'Diese Person in die Mitte', 'Show in Descendants':'In der Nachfahrentafel zeigen',
+'Centre on this person':'Diese Person in die Mitte', 'Show in Descendants':'In der Nachfahrentafel zeigen', 'Show in the ancestor chart':'In der Ahnentafel zeigen',
 'This is a <b>new, empty entry</b>. Type a name below – or use <b><span data-ico="back"></span> Back</b> to return to where you were, or <b><span data-ico="trash"></span></b> to remove it again.':
   'Das ist ein <b>neuer, leerer Eintrag</b>. Unten einen Namen eintippen – oder mit <b><span data-ico="back"></span> Zurück</b> dorthin zurückkehren, wo Sie waren, oder ihn mit <b><span data-ico="trash"></span></b> wieder entfernen.',
 
@@ -2555,8 +2570,8 @@ window.I18N={
         can actually look at, work with and print. It holds three tools that all share the same data:</p>
         <p><b>Tree</b> puts one person at the centre and shows their parents, partners and children. This is where
         you edit: change names and dates, add people, connect them.<br>
-        <b>Descendants</b> builds the classic descendant chart in the style of a printed family book, ready to export as
-        PDF, SVG or PNG.<br>
+        <b>Chart</b> builds the classic descendant chart in the style of a printed family book, or the ancestor chart
+        of one person, ready to export as PDF, SVG or PNG.<br>
         <b>Kinship</b> works out how any two people in the file are related, and shows how that follows.</p>
         <p>There is no account and no sign-in, and the app works without an internet connection. Nothing is uploaded:
         your family data stays on the device you are using.</p>
@@ -2622,7 +2637,8 @@ window.I18N={
         switches to the form, <b><span data-ico="check" aria-hidden="true"></span> Done</b> back again; the <b>Edit</b> button in the toolbar opens the
         form straight away, and a new, empty entry always starts in the form.</p>
         <p>The edit panel has a <b><span data-ico="chart" aria-hidden="true"></span> Show in Descendants</b> button: it takes the person you are looking at
-        straight into the Descendants tab as the root of a descendant chart.</p>
+        straight into the Chart tab as the root of a descendant chart. <b>Show in the ancestor chart</b> does the same
+        for the ancestor chart.</p>
         <p>The edit panel is divided into <b>Details</b>, <b>Parents</b> and <b>Partners &amp; children</b>. Tapping a
         heading folds that part away, and the app remembers it: if you mostly correct dates, fold the relatives once
         and they stay folded. The number beside a folded heading still tells you what is inside.</p>
@@ -2683,9 +2699,10 @@ window.I18N={
         <div class="note"><b>Good to know:</b> every change takes effect in the other two tabs at once. Correct a date
         of birth here and the chart and the kinship result use it immediately.</div>
       </section>
-      <section class="sec" id="h5" data-nav="Descendants">
-        <h4>The Descendants tab</h4>
-        <p>This is where the classic <b>descendant chart</b> is built: a root person at the top, all descendants
+      <section class="sec" id="h5" data-nav="Chart">
+        <h4>The Chart tab</h4>
+        <p>The switch below the chart chooses between the <b>descendant chart</b> and the <b>ancestor chart</b>
+        (see below). Here the classic <b>descendant chart</b> is built: a root person at the top, all descendants
         below, in plain black-and-white boxes like a printed family book. This tab never changes your data, only the
         way it is <b>presented</b> &ndash; real corrections belong in the Tree tab.</p>
         <ol>
@@ -2713,6 +2730,23 @@ window.I18N={
         state back exactly as it was, so you can keep several charts side by side without them interfering. The file
         is meant for Anceslio itself; other programs cannot read it. The backup of your data is
         <b><span data-ico="save" aria-hidden="true"></span> Back up now</b> in the Data menu.</p>
+        <h4>The ancestor chart</h4>
+        <p><b>Ancestors</b> in the switch below the chart shows the forebears of one person, the mirror image of the
+        descendant chart: the <b>starting person</b> at the bottom, above them the parents, grandparents and so on, in
+        the same boxes. It starts with the person in the middle of the tree; any other person is chosen in the search
+        box or with <b>Use as starting person</b> after tapping a box. Each chart remembers its own person.</p>
+        <ul>
+          <li>The small number above each box is the <b>ancestor number</b> used in genealogy: 1 for the starting
+          person, 2 for the father, 3 for the mother, 4 to 7 for the grandparents. Fathers have even numbers, mothers
+          odd ones. It can be switched off.</li>
+          <li>Choose <b>2 to 10 generations</b> below the chart; the app starts with 5. From 6 generations on the top
+          row gets very wide &ndash; A3 or A2 landscape is the right paper for it.</li>
+          <li><b>Empty boxes to fill in</b> draws a box for every unknown ancestor too, handy as a form for research.</li>
+          <li>If the same person appears twice, for instance after a marriage between cousins, the second box only
+          says <b>see no. &hellip;</b> and does not repeat their ancestors.</li>
+          <li>The title goes to the bottom right; the top is where the wide row of ancestors is. Text, export and
+          the project file work as in the descendant chart.</li>
+        </ul>
       </section>
       <section class="sec" id="h6" data-nav="Kinship">
         <h4>The Kinship tab</h4>
@@ -2865,8 +2899,9 @@ window.I18N={
         <b>Data &rsaquo; <span data-ico="save" aria-hidden="true"></span> Back up now</b> writes one with a single tap &ndash; on a phone it lands in the
         Downloads folder. The app cannot see whether the phone really stored it, so the first time, take a look
         in that folder. Underneath, the menu says how many changes are not backed up yet and when you last backed up.
-        While there are such changes, a small number sits on the <b>Data</b> button. After ten of them, or after a
-        week, a line below the header reminds you; <b>Later</b> puts it off for a while.</p>
+        The app only speaks up when a backup is due: after twenty changes, after two weeks with changes that are not
+        backed up, or straight away for a file merged in the app. Then a small dot sits on the <b>Data</b> button and a
+        line below the header reminds you; <b>Later</b> puts it off for a while.</p>
         <p>In the browser version there is also <b><span data-ico="copy" aria-hidden="true"></span> Copy as text</b>.
         Some browsers refuse downloads without a word &ndash; the one built into Facebook or WhatsApp on an iPhone, for
         instance. The copied text can go into an e-mail to yourself, a note or a cloud drive, and copying counts as a
@@ -3002,8 +3037,8 @@ window.I18N={
         sich dieselben Daten teilen:</p>
         <p><b>Stammbaum</b> stellt eine Person in die Mitte und zeigt ihre Eltern, Partner und Kinder. Hier wird
         bearbeitet: Namen und Daten &auml;ndern, Personen anlegen, Verwandtschaften kn&uuml;pfen.<br>
-        <b>Nachfahrentafel</b> baut die klassische Nachkommentafel im Stil gedruckter Familienb&uuml;cher, fertig zum Export
-        als PDF, SVG oder PNG.<br>
+        <b>Tafel</b> baut die klassische Nachkommentafel im Stil gedruckter Familienb&uuml;cher oder die Ahnentafel einer
+        Person, fertig zum Export als PDF, SVG oder PNG.<br>
         <b>Verwandtschaft</b> ermittelt zu zwei Personen aus der Datei das Verwandtschaftsverh&auml;ltnis und wie es sich ergibt.</p>
         <p>Es gibt kein Konto und keine Anmeldung, und die App funktioniert ohne Internetverbindung. Nichts wird
         hochgeladen: Die Familiendaten bleiben auf dem Ger&auml;t, das gerade benutzt wird.</p>
@@ -3075,7 +3110,8 @@ window.I18N={
         Knopf <b>Bearbeiten</b> in der Leiste &ouml;ffnet gleich das Formular, und ein neuer, leerer Eintrag beginnt
         immer im Formular.</p>
         <p>Im Bearbeitungsfeld gibt es die Schaltfl&auml;che <b><span data-ico="chart" aria-hidden="true"></span> In der Nachfahrentafel zeigen</b>: Sie
-        &uuml;bernimmt die gerade angesehene Person direkt als Wurzelperson in den Reiter Nachfahrentafel.</p>
+        &uuml;bernimmt die gerade angesehene Person direkt als Wurzelperson in die Nachfahrentafel im Reiter Tafel.
+        <b>In der Ahnentafel zeigen</b> macht dasselbe f&uuml;r die Ahnentafel.</p>
         <p>Das Bearbeitungsfeld ist in <b>Angaben</b>, <b>Eltern</b> und <b>Partner und Kinder</b> geteilt. Ein Tipp
         auf eine &Uuml;berschrift klappt den Teil zu, und die App merkt es sich: Wer meist nur Daten berichtigt, klappt
         die Verwandten einmal weg und hat sie dann weg. Die Zahl neben einer zugeklappten &Uuml;berschrift sagt
@@ -3150,9 +3186,10 @@ window.I18N={
         <div class="note"><b>Gut zu wissen:</b> Jede &Auml;nderung wirkt sofort auch in den anderen beiden Reitern.
         Wird hier ein Geburtsdatum korrigiert, rechnen Nachfahrentafel und Verwandtschaftsrechner sofort damit.</div>
       </section>
-      <section class="sec" id="d5" data-nav="Nachfahrentafel">
-        <h4>Der Reiter Nachfahrentafel</h4>
-        <p>Hier entsteht die klassische <b>Nachkommentafel</b>: eine Wurzelperson oben, darunter alle Nachkommen, in
+      <section class="sec" id="d5" data-nav="Tafel">
+        <h4>Der Reiter Tafel</h4>
+        <p>Der Umschalter unter der Tafel w&auml;hlt zwischen <b>Nachfahrentafel</b> und <b>Ahnentafel</b> (siehe
+        unten). Hier entsteht die klassische <b>Nachkommentafel</b>: eine Wurzelperson oben, darunter alle Nachkommen, in
         schlichten schwarzwei&szlig;en K&auml;sten wie in einem gedruckten Familienbuch. Dieser Reiter ver&auml;ndert
         nie die Daten selbst, sondern nur ihre <b>Darstellung</b> &ndash; echte Korrekturen geh&ouml;ren in den Reiter
         Stammbaum.</p>
@@ -3184,6 +3221,25 @@ window.I18N={
         f&uuml;hren lassen, ohne sich gegenseitig zu st&ouml;ren. Die Datei ist f&uuml;r Anceslio selbst gedacht; andere
         Programme k&ouml;nnen sie nicht lesen. Die Sicherung der Daten ist <b><span data-ico="save" aria-hidden="true"></span> Jetzt sichern</b> im
         Datenmen&uuml;.</p>
+        <h4>Die Ahnentafel</h4>
+        <p><b>Ahnen</b> im Umschalter unter der Tafel zeigt die Vorfahren einer Person, spiegelbildlich zur
+        Nachfahrentafel: die <b>Ausgangsperson</b> unten, dar&uuml;ber Eltern, Gro&szlig;eltern und so weiter, in denselben
+        K&auml;sten. Sie beginnt bei der Person, die im Stammbaum in der Mitte steht; eine andere w&auml;hlen Sie im
+        Suchfeld oder nach einem Tipp auf ihren Kasten mit <b>Als Ausgangsperson nehmen</b>. Jede Tafel merkt sich ihre
+        eigene Person.</p>
+        <ul>
+          <li>Die kleine Zahl &uuml;ber jedem Kasten ist die in der Ahnenforschung &uuml;bliche <b>Ahnennummer</b>: 1 f&uuml;r
+          die Ausgangsperson, 2 f&uuml;r den Vater, 3 f&uuml;r die Mutter, 4 bis 7 f&uuml;r die Gro&szlig;eltern. V&auml;ter haben gerade,
+          M&uuml;tter ungerade Nummern. Sie l&auml;sst sich ausschalten.</li>
+          <li>Unter der Tafel w&auml;hlen Sie <b>2 bis 10 Generationen</b>; die App beginnt mit 5. Ab 6 Generationen wird
+          die oberste Reihe sehr breit &ndash; daf&uuml;r ist A3 oder A2 quer das richtige Papier.</li>
+          <li><b>Leere K&auml;sten zum Ausf&uuml;llen</b> zeichnet auch f&uuml;r jeden unbekannten Vorfahren einen Kasten &ndash;
+          praktisch als Vordruck f&uuml;r die Recherche.</li>
+          <li>Kommt dieselbe Person zweimal vor, etwa nach einer Heirat unter Cousins, steht im zweiten Kasten nur
+          <b>siehe Nr. &hellip;</b>, und ihre Vorfahren werden nicht noch einmal gezeichnet.</li>
+          <li>Der Titel steht unten rechts &ndash; oben ist die breite Reihe der Ahnen. Text, Export und Projektdatei
+          funktionieren wie bei der Nachfahrentafel.</li>
+        </ul>
         <p class="muted">Die Tafel wird auch im dunklen Design auf wei&szlig;em Papier gezeigt, weil sie genau so
         gedruckt und exportiert wird.</p>
       </section>
@@ -3358,9 +3414,10 @@ window.I18N={
         au&szlig;erhalb der App</b>, und <b>Daten &rsaquo; <span data-ico="save" aria-hidden="true"></span> Jetzt sichern</b> legt sie mit einem Tipp an &ndash;
         auf dem Handy landet sie im Ordner Downloads. Ob das Handy sie wirklich abgelegt hat, kann die App nicht
         sehen &ndash; beim ersten Mal lohnt deshalb ein Blick in diesen Ordner. Darunter steht im Men&uuml;, wie viele &Auml;nderungen noch nicht
-        gesichert sind und wann zuletzt gesichert wurde. Solange es solche &Auml;nderungen gibt, sitzt eine kleine Zahl
-        am Knopf <b>Daten</b>. Nach zehn davon oder nach einer Woche erinnert eine Zeile unter der Kopfzeile daran;
-        <b>Sp&auml;ter</b> verschiebt das eine Weile.</p>
+        gesichert sind und wann zuletzt gesichert wurde. Von sich aus meldet sich die App erst, wenn eine Sicherung
+        f&auml;llig ist: nach zwanzig &Auml;nderungen, nach zwei Wochen mit ungesicherten &Auml;nderungen oder sofort bei einer in
+        der App zusammengef&uuml;hrten Datei. Dann sitzt ein kleiner Punkt am Knopf <b>Daten</b>, und eine Zeile unter der
+        Kopfzeile erinnert daran; <b>Sp&auml;ter</b> verschiebt das eine Weile.</p>
         <p>In der Browser-Fassung gibt es zus&auml;tzlich <b><span data-ico="copy" aria-hidden="true"></span> Als Text
         kopieren</b>. Manche Browser verweigern Downloads stillschweigend &ndash; etwa der eingebaute von Facebook oder
         WhatsApp auf dem iPhone. Den kopierten Text kann man in eine E-Mail an sich selbst, eine Notiz oder einen
@@ -3522,7 +3579,7 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='4.7';
+var APPVERSION='4.8';
 
 /* ====================================================================
    Welche Kodierung hat die Datei?
@@ -3955,7 +4012,7 @@ function pushGedLine(out, line){
 }
 /* Wo ein zu langer Wert geteilt wird. Bis 4.0 genau nach 200
    Zeichen - mitten in ein Emoji hinein (zwei Zeichen in JavaScript,
-   eines in UTF-8), das beim Schreiben der Datei dann zu „�" wurde, und
+   eines in UTF-8), das beim Schreiben der Datei dann zu „ " wurde, und
    gern auch neben einem Leerzeichen, das manche Programme am Zeilenende
    oder -anfang wegwerfen. Seit Notizen und Quellen in der App
    geschrieben werden, kommen lange Texte mit beidem viel haeufiger vor.
@@ -4960,7 +5017,7 @@ window.FP = {
   /* „Spaeter": erst nach zehn weiteren Aenderungen oder drei Tagen wieder */
   spaeterErinnern:function(){
     var e=curEntry(); if(!e) return;
-    e.remind=(e.unsaved||0)+10; e.remindAfter=Date.now()+3*864e5;
+    e.remind=(e.unsaved||0)+20; e.remindAfter=Date.now()+7*864e5;
     libSave(); sicherMelden();
   },
   onSicherung:function(cb){ sicherCbs.push(cb); },
@@ -5453,23 +5510,28 @@ function paintBackup(){
   var s=(FP.hasData() && FP.count()) ? FP.sicherung() : null;
   var info=$('miBackupInfo');
   info.textContent=s ? sicherText(s) : '';
-  info.classList.toggle('warn', !!(s && s.risky));
   $('miBackup').disabled=!s;
-  var b=$('dataBadge');
-  b.hidden=!(s && s.risky);
-  b.textContent=(s && s.unsaved) ? (s.unsaved>99 ? '99+' : String(s.unsaved)) : '!';
-  barArt=null;
+  /* Ruhiger seit 4.8: Bis eine Sicherung fällig ist, steht der Stand nur
+     hier im Menü. Fällig ist sie bei 20 Änderungen, nach 14 Tagen mit
+     ungesicherten Änderungen oder sofort bei einer in der App
+     zusammengeführten Datei (die gibt es nirgends sonst). Dann erst ein
+     Punkt am Knopf „Daten" und die Leiste - beim allerersten Mal mit der
+     Erklärung, warum. Bis 4.7 stand schon ab der ersten Änderung eine Zahl
+     am Knopf und die Erklärung als Leiste. */
+  var faellig=false;
   if(s && s.risky){
-    if(!hinweisGesehen()) barArt='first';
-    else {
-      var jetzt=Date.now(), seit=s.backup||s.since||jetzt, faellig;
-      if(s.remind!=null || s.remindAfter!=null)          /* nach „Später" */
-        faellig = s.unsaved>=(s.remind||1e9) || jetzt>=(s.remindAfter||1e15);
-      else
-        faellig = s.unsaved>=10 || jetzt-seit>=7*864e5 || (s.origin==='merge' && !s.backup);
-      if(faellig) barArt='remind';
-    }
+    var jetzt=Date.now(), seit=s.since||jetzt;
+    if(s.remind!=null || s.remindAfter!=null)          /* nach „Später" */
+      faellig = s.unsaved>=(s.remind||1e9) || jetzt>=(s.remindAfter||1e15);
+    else
+      faellig = s.unsaved>=20 || jetzt-seit>=14*864e5 || (s.origin==='merge' && !s.backup);
   }
+  info.classList.toggle('warn', faellig);
+  var b=$('dataBadge');
+  b.hidden=!faellig;
+  b.textContent='';
+  b.title=faellig ? L('Back up now') : '';
+  barArt = faellig ? (hinweisGesehen() ? 'remind' : 'first') : null;
   $('backupBar').hidden=!barArt;
   if(barArt==='first'){
     $('backupMsg').innerHTML=L('<b>Good to know:</b> Anceslio keeps every change – but only inside this app. If the phone is lost or the app is removed, it is gone. A real backup is a .ged file outside the app.');
@@ -5514,10 +5576,15 @@ $('miExport').hidden=!textWeg();
 $('miBackup').onclick=sichernJetzt;
 $('backupNow').onclick=sichernJetzt;
 $('backupLater').onclick=function(){
-  if(barArt==='first') hinweisMerken(); else FP.spaeterErinnern();
+  /* „Verstanden" nach der Erklärung zählt auch als „Später" - sonst stünde
+     gleich danach die Erinnerung da */
+  if(barArt==='first') hinweisMerken();
+  FP.spaeterErinnern();
   paintBackup();
 };
-FP.onSicherung(function(){ paintBackup(); });
+/* auch die Dateiliste im Menü: Bis 4.7 blieb dort „nicht gesichert“ stehen,
+   bis man die Datei wechselte */
+FP.onSicherung(function(){ paintBackup(); paintFileList(); });
 
 /* ---------------- settings: language and appearance ---------------- */
 function paintSettings(){
@@ -5557,7 +5624,7 @@ function sizeText(b){
 function fileLabel(f){
   return esc(f.name)+' <span class="mifiles-n">'+
     (f.count ? f.count+L(' people') : L('empty'))+
-    (f.risky ? ' \u00b7 <span class="warnt">'+L('not backed up')+'</span>' : '')+'</span>';
+    (f.risky ? ' \u00b7 '+L('not backed up') : '')+'</span>';
 }
 function paintFileList(){
   var list=FP.files(), box=$('fileList'), wrap=$('fileWrap');
@@ -5591,7 +5658,7 @@ function paintFileRows(){
        '<div class="filemeta muted">'+(list[i].count? list[i].count+L(' people') : L('empty'))+
        (list[i].bytes? ' \u00b7 '+sizeText(list[i].bytes) : '')+
        (list[i].current? ' \u00b7 '+L('open now') : '')+
-       (list[i].risky? ' \u00b7 <span class="warnt">'+L('not backed up')+'</span>' : '')+'</div></div>';
+       (list[i].risky? ' \u00b7 '+L('not backed up') : '')+'</div></div>';
   }
   box.innerHTML = h || '<p class="muted">'+L('No files stored yet.')+'</p>';
   var ren=box.querySelectorAll('[data-ren]'), i2;
@@ -5878,7 +5945,7 @@ document.addEventListener('visibilitychange', function(){
   if(document.visibilityState==='hidden') allesSchreiben(); });
 
 /* ---------------- shared interface for the tabs ---------------- */
-var treeFocusId=null, chartRootCb=null, treeGoCb=null, treeOpenCb=null, relGoCb=null;
+var treeFocusId=null, chartRootCb=null, ancRootCb=null, treeGoCb=null, treeOpenCb=null, relGoCb=null;
 window.SHELL = {
   showTab:showTab, currentTab:function(){ return current; },
   noteFocus:function(id){ treeFocusId=id; }, treeFocus:function(){ return treeFocusId; },
@@ -5891,6 +5958,8 @@ window.SHELL = {
   setFull:setFull, isFull:function(){ return FULLSCREEN; }, onFull:function(fn){ fullCbs.push(fn); },
   onChartRoot:function(fn){ chartRootCb=fn; },
   showInChart:function(id){ if(chartRootCb) chartRootCb(id); },
+  onAncestorRoot:function(fn){ ancRootCb=fn; },
+  showInAncestors:function(id){ if(ancRootCb) ancRootCb(id); },
   /* Dieselbe Bauart fuer die beiden anderen Reiter, damit die Liste sie
      ansteuern kann, ohne in ihren Innereien zu wuehlen. */
   onTreeGo:function(fn){ treeGoCb=fn; },
@@ -6948,6 +7017,7 @@ function openPanel(id){
      (trail.length?'<button class="btn small" id="pBack" data-ico="back">'+L('Back')+'</button>':'')+
      (id===FOCUS?'':'<button class="btn small" id="pFocus" data-ico="target">'+L('Centre on this person')+'</button>')+
      '<button class="btn small" id="pChart" data-ico="chart">'+L('Show in Descendants')+'</button>'+
+     '<button class="btn small" id="pAhnen" data-ico="chart">'+L('Show in the ancestor chart')+'</button>'+
      '<button class="btn small'+(FP.startPerson()===id?' on':'')+'" id="pStart" data-ico="flag">'+
        (FP.startPerson()===id ? L('Start person') : L('Make start person'))+'</button>'+
      '<button class="btn small danger" id="pDel" data-ico="trash">'+L('Delete person')+'</button></div>';
@@ -7154,6 +7224,7 @@ function ansicht(id){
      (trail.length?'<button class="btn small" id="pBack" data-ico="back">'+L('Back')+'</button>':'')+
      (id===FOCUS?'':'<button class="btn small" id="pFocus" data-ico="target">'+L('Centre on this person')+'</button>')+
      '<button class="btn small" id="pChart" data-ico="chart">'+L('Show in Descendants')+'</button>'+
+     '<button class="btn small" id="pAhnen" data-ico="chart">'+L('Show in the ancestor chart')+'</button>'+
      '<button class="btn small'+(FP.startPerson()===id?' on':'')+'" id="pStart" data-ico="flag">'+
        (FP.startPerson()===id ? L('Start person') : L('Make start person'))+'</button></div>';
 
@@ -7324,6 +7395,7 @@ function wirePanel(id, fams){
   };
   if($('pFocus')) $('pFocus').onclick=function(){ setFocus(id); };
   if($('pChart')) $('pChart').onclick=function(){ setDrawer(false); SHELL.showInChart(id); };
+  if($('pAhnen')) $('pAhnen').onclick=function(){ setDrawer(false); SHELL.showInAncestors(id); };
   /* Which person this file opens on next time. Pressing it again clears it. */
   if($('pStart')) $('pStart').onclick=function(){
     var on=FP.startPerson()===id;
@@ -7554,6 +7626,18 @@ var SHEET_TITLE='';
 var Z=1, CUR_W=0, CUR_H=0, needFit=false, dirty=false;
 /* how many generations of descendants are drawn; 0 means all of them */
 var GEN_LIMIT=0;
+/* Ahnentafel (4.8): derselbe Reiter zeigt wahlweise die Nachfahren oder die
+   Ahnen einer Person. Jede Tafel hat ihre eigene Ausgangsperson: die der
+   Nachfahrentafel steht oben in ihrer Linie, die der Ahnentafel ist meist
+   jemand von heute. */
+var MODE='nach', ROOT_N=null, ROOT_A=null;
+/* Solange niemand die Ausgangsperson der Ahnentafel selbst gewählt hat,
+   folgt sie beim Umschalten der Person, die im Stammbaum in der Mitte steht */
+var A_AUTO=true;
+function istAhnen(){ return MODE==='ahnen'; }
+function TT(en,de){ return I18N.lang()==='de' ? de : en; }
+function tKey(){ return istAhnen() ? 'titleA' : 'title'; }
+function setRoot(id){ ROOT=id; if(istAhnen()){ ROOT_A=id; A_AUTO=false; } else ROOT_N=id; }
 /* a box narrower than this on the actual screen cannot be read any more */
 var MIN_BOX_PX=58;
 
@@ -8065,12 +8149,14 @@ function autoGens(){
    the toolbar stays one row high. */
 function fuelleGenWahl(){
   var sel=$('genLimit'); if(!sel) return;
-  var soll=T('all generations')+'|';
-  for(var n=2;n<=8;n++) soll+=T('%1 generations').replace('%1',n)+'|';
+  /* Nachfahren: 2 bis 8 oder alle. Ahnen: 2 bis 10 - „alle" gibt es dort
+     nicht, jede Generation verdoppelt die Breite. */
+  var bis=istAhnen()?10:8, soll=MODE+'|'+(istAhnen()?'':T('all generations'))+'|';
+  for(var n=2;n<=bis;n++) soll+=T('%1 generations').replace('%1',n)+'|';
   if(sel.dataset.stand===soll) return;
   sel.dataset.stand=soll;
-  var html='<option value="0">'+T('all generations')+'</option>';
-  for(var k=2;k<=8;k++) html+='<option value="'+k+'">'+T('%1 generations').replace('%1',k)+'</option>';
+  var html=istAhnen()?'':'<option value="0">'+T('all generations')+'</option>';
+  for(var k=2;k<=bis;k++) html+='<option value="'+k+'">'+T('%1 generations').replace('%1',k)+'</option>';
   sel.innerHTML=html;
 }
 function zeigeGenWahl(){
@@ -8078,8 +8164,10 @@ function zeigeGenWahl(){
   var sel=$('genLimit'); if(sel) sel.value=String(GEN_LIMIT||0);
   var note=$('genNote'), txt=$('genNoteText'), voll=$('genFull');
   if(!note||!txt) return;
-  /* the bar belongs to the chart, so it is there whenever a chart is */
-  note.style.display = ROOT ? '' : 'none';
+  /* die Leiste trägt den Umschalter Nachfahren/Ahnen - sie ist da, sobald
+     es Personen gibt */
+  note.style.display = (FP.hasData() && FP.count()) ? '' : 'none';
+  if(istAhnen()){ txt.textContent=''; return; }
   if(GEN_LIMIT){
     txt.textContent=T('Shortened so the chart stays readable.');
     if(voll) voll.style.display='';
@@ -8087,7 +8175,7 @@ function zeigeGenWahl(){
 }
 function setzeGens(n){
   if(!ROOT) return;
-  settings(ROOT).gens = n;
+  settings(ROOT)[istAhnen()?'gensA':'gens'] = n;
   needFit=true; safeRender(); fitZoom();
 }
 function render(){
@@ -8099,9 +8187,11 @@ function render(){
     svg.style.width=svg.style.height=''; svg.style.margin='0';
     var sw=$('stageWrap'); if(sw){ sw.scrollLeft=0; sw.scrollTop=0; }
     if(hint) hint.style.display = Object.keys(DB.indi||{}).length ? 'block' : 'none';
+    zeigeGenWahl();
     return;
   }
   if(hint) hint.style.display='none';
+  if(istAhnen()){ renderAhnen(svg); return; }
   var sr=settings(ROOT);
   if(sr.gens==null) sr.gens=autoGens();
   GEN_LIMIT=sr.gens||0;
@@ -8127,16 +8217,182 @@ function render(){
   applyZoom();
 }
 
+/* ---------------- Ahnentafel (4.8) ----------------
+   Gespiegelt zur Nachfahrentafel: die Ausgangsperson unten, darüber die
+   Eltern, Großeltern und so weiter. Kästen, Linien und Schrift sind
+   dieselben. Über jedem Kasten steht seine Ahnennummer nach Kekulé
+   (1 Ausgangsperson, 2 Vater, 3 Mutter, 4-7 Großeltern ...).
+   Kommt dieselbe Person zweimal vor (Ahnenschwund, etwa bei einer Heirat
+   unter Cousins), steht sie beim zweiten Mal nur mit „siehe Nr. …“ da,
+   ohne ihre Vorfahren noch einmal. */
+var KEKULE=true, LEER=false, AHNEN_STD=5;
+function elternVon(id){
+  var fc=((DB.indi[id]||{}).famc)||[];
+  for(var i=0;i<fc.length;i++){
+    var f=DB.fam[fc[i]]; if(!f) continue;
+    var v=(f.husb && DB.indi[f.husb]) ? f.husb : null, m=(f.wife && DB.indi[f.wife]) ? f.wife : null;
+    if(v||m) return {v:v, m:m};
+  }
+  return {v:null, m:null};
+}
+var LEER_ZEILEN={surname:'', given:'', birth:'', death:''};
+function ahnenBauen(G){
+  var seen={};
+  function knoten(id, k, g){
+    var n={id:id, k:k, g:g, par:[null,null]};
+    if(id){
+      var s=settings(id);
+      n.lines=personLines(id, s.ovr);
+      if(seen[id]){
+        n.lines={surname:n.lines.surname, given:n.lines.given, birth:n.lines.birth, death:n.lines.death,
+                 code:TT('see no. ','siehe Nr. ')+seen[id]};
+        n.w=boxWidthFor(n.lines); n.doppelt=true;
+        return n;
+      }
+      seen[id]=k;
+      n.w=boxWidthFor(n.lines);
+    } else { n.lines=LEER_ZEILEN; n.w=Math.max(BOX_W, 96); n.leer=true; }
+    if(g<G-1){
+      var e=id ? elternVon(id) : {v:null, m:null};
+      if(e.v || LEER) n.par[0]=knoten(e.v, 2*k, g+1);
+      if(e.m || LEER) n.par[1]=knoten(e.m, 2*k+1, g+1);
+    }
+    return n;
+  }
+  return knoten(ROOT, 1, 0);
+}
+/* Breite jedes Teilbaums und Lage des eigenen Kastens darin. Vater links,
+   Mutter rechts; haben beide keine Eltern mehr, stehen ihre Kästen dicht
+   nebeneinander wie ein Paar in der Nachfahrentafel. */
+function ahnenLegen(n){
+  var ps=n.par.filter(Boolean), joint, span;
+  if(!ps.length){ n.tw=n.w; n.cx=n.w/2; return; }
+  ps.forEach(ahnenLegen);
+  if(ps.length===2){
+    var V=n.par[0], M=n.par[1];
+    var blatt=!V.par.filter(Boolean).length && !M.par.filter(Boolean).length;
+    V.off=0; M.off=V.tw+(blatt?0:SIB_GAP);
+    n.paarDicht=blatt;
+    var vR=V.off+V.cx+V.w/2, mL=M.off+M.cx-M.w/2;
+    joint=(vR+mL)/2; span=M.off+M.tw;
+  } else { ps[0].off=0; joint=ps[0].cx; span=ps[0].tw; }
+  var shift=Math.max(0, n.w/2-joint);
+  ps.forEach(function(q){ q.off+=shift; });
+  joint+=shift;
+  n.tw=Math.max(span+shift, joint+n.w/2);
+  n.cx=joint;
+}
+function ahnenSetzen(n, x0, alle){
+  n.x=x0+n.cx-n.w/2; alle.push(n);
+  n.par.forEach(function(q){ if(q) ahnenSetzen(q, x0+q.off, alle); });
+}
+function renderAhnen(svg){
+  var sr=settings(ROOT);
+  if(sr.gensA==null) sr.gensA=AHNEN_STD;
+  GEN_LIMIT=sr.gensA||AHNEN_STD;
+  zeigeGenWahl();
+  var wurzel=ahnenBauen(GEN_LIMIT), alle=[];
+  ahnenLegen(wurzel);
+  ahnenSetzen(wurzel, MARGIN, alle);
+  var gmax=0; alle.forEach(function(n){ if(n.g>gmax) gmax=n.g; });
+  var zeilen=gmax+1;
+  function yA(g){ return MARGIN + (zeilen-1-g)*(BOX_H+LEVEL_GAP); }
+  var W=MARGIN+wurzel.tw+MARGIN, H=zeilen*BOX_H+(zeilen-1)*LEVEL_GAP+2*MARGIN;
+  /* Der Titel steht unten rechts - oben ist die breite Reihe der Ahnen. */
+  var tl=(SHEET_TITLE||'').split('\n').filter(function(x){return x!=='';});
+  if(tl.length){
+    var rechts=MARGIN;
+    alle.forEach(function(n){ if(n.g<=1) rechts=Math.max(rechts, n.x+n.w); });
+    W=Math.max(W, rechts+45+titleWidthPx()+MARGIN);
+    H=Math.max(H, MARGIN+tl.length*TITLE_LH+MARGIN);
+  }
+  CUR_W=W; CUR_H=H;
+  svg.setAttribute('width',W); svg.setAttribute('height',H);
+  svg.setAttribute('viewBox','0 0 '+W+' '+H);
+  var gLines=el('g',{},svg);
+  function linie(x1,y1,x2,y2){ el('line',{x1:x1,y1:y1,x2:x2,y2:y2,stroke:'#000','stroke-width':0.7},gLines); }
+  alle.forEach(function(n){
+    var ps=n.par.filter(Boolean); if(!ps.length) return;
+    var kindOben=yA(n.g), mitte=n.x+n.w/2, oben=yA(n.g+1);
+    if(ps.length===2){
+      var V=n.par[0], M=n.par[1];
+      if(n.paarDicht) linie(mitte, oben+BOX_H, mitte, kindOben);
+      else {
+        var ym=oben+BOX_H/2;
+        linie(V.x+V.w, ym, M.x, ym);
+        linie(mitte, ym, mitte, kindOben);
+      }
+    } else linie(ps[0].x+ps[0].w/2, oben+BOX_H, mitte, kindOben);
+  });
+  alle.forEach(function(n){
+    var yt=yA(n.g);
+    var g=el('g',{'class':(n.id?'unit selectable':'unit leer')+(n.id && n.id===SELECTED?' sel':'')},svg);
+    if(n.id) g.dataset.id=n.id;
+    drawPersonBox(g, n.x, yt, n.lines, n.w);
+    /* links über dem Kasten - in der Mitte kommt die Linie von den Eltern an */
+    if(KEKULE) txt(n.x+1, yt-3, String(n.k), FONT_SZ*0.93, g, {fill:'#555'});
+    if(n.id){
+      el('rect',{x:n.x,y:yt,width:n.w,height:BOX_H,fill:'transparent','class':'unit-hit'},g);
+      g.addEventListener('click',function(){ if(SELECTED===n.id && $('side').classList.contains('open')) deselectNode(); else selectNode(n.id); });
+    }
+  });
+  if(tl.length){
+    var y0=H-MARGIN-(tl.length-1)*TITLE_LH;
+    tl.forEach(function(ln,i){ txt(W-MARGIN, y0+i*TITLE_LH, ln, TITLE_FS, svg, {'text-anchor':'end','font-weight':'bold'}); });
+  }
+  applyZoom();
+}
+/* Umschalten zwischen den beiden Tafeln */
+function paintMode(){
+  var ah=istAhnen();
+  $('panelChart').classList.toggle('ahnen', ah);
+  $('artNach').classList.toggle('on', !ah); $('artNach').setAttribute('aria-pressed', String(!ah));
+  $('artAhnen').classList.toggle('on', ah); $('artAhnen').setAttribute('aria-pressed', String(ah));
+  $('rootHead').textContent = ah ? TT('Starting person','Ausgangsperson') : T('Root person');
+  $('zoomRoot').textContent = ah ? TT('Go to starting person','Zur Ausgangsperson') : T('Go to root');
+  var gl=$('genLimit'), gt=ah ? TT('How many generations of ancestors to show','Wie viele Generationen der Ahnen gezeigt werden')
+                              : T('How many generations of descendants to show');
+  gl.setAttribute('title', gt); gl.setAttribute('aria-label', gt);
+}
+function setMode(m){
+  if(m!=='ahnen') m='nach';
+  if(m===MODE){ paintMode(); return; }
+  if(ROOT) settings(ROOT)[tKey()]=SHEET_TITLE||'';
+  MODE=m;
+  ROOT = istAhnen() ? ROOT_A : ROOT_N;
+  /* Die Ahnentafel beginnt bei der Person, die im Stammbaum in der Mitte steht */
+  var f=SHELL.treeFocus();
+  if(istAhnen() && (A_AUTO || !(ROOT && DB.indi[ROOT])) && f && DB.indi[f]){ ROOT=f; ROOT_A=f; }
+  if(ROOT && !DB.indi[ROOT]) ROOT=null;
+  SELECTED=null; dropHi=-1;
+  SHEET_TITLE=ROOT ? (settings(ROOT)[tKey()]||'') : '';
+  $('sheetTitle').value=SHEET_TITLE;
+  $('rootSearch').value=ROOT ? personLabel(ROOT) : '';
+  toggleRootClear();
+  $('genLimit').dataset.stand='';
+  setDrawer(false); showDefaultPanel(); paintMode();
+  safeRender(); showRoot();
+}
+$('artNach').onclick=function(){ setMode('nach'); };
+$('artAhnen').onclick=function(){ setMode('ahnen'); };
+$('optKekule').onchange=function(e){ KEKULE=e.target.checked; safeRender(); };
+$('optLeer').onchange=function(e){ LEER=e.target.checked; safeRender(); fitZoom(); };
+I18N.onLang(function(){ paintMode(); if(istAhnen()){ $('genLimit').dataset.stand=''; safeRender(); } });
+
 /* ---------------- zoom ---------------- */
 function applyZoom(){
   var svg=$('stage');
   if(!CUR_W) return;
   svg.style.width=(CUR_W*Z)+'px'; svg.style.height=(CUR_H*Z)+'px';
   var wrap=$('stageWrap');
-  var mx=Math.max(0,(wrap.clientWidth - CUR_W*Z)/2), my=Math.max(0,(wrap.clientHeight - CUR_H*Z)/2);
+  /* In der Ahnentafel ist die oberste Reihe die breiteste; auf dem Handy
+     lägen Menü- und Vollbildknopf darüber. Dort bleibt oben Platz. */
+  var oben=knopfPlatz();
+  var mx=Math.max(0,(wrap.clientWidth - CUR_W*Z)/2), my=Math.max(oben,(wrap.clientHeight - CUR_H*Z)/2);
   svg.style.marginLeft=mx+'px'; svg.style.marginTop=my+'px';
   $('zoomLbl').textContent=Math.round(Z*100)+' %';
 }
+function knopfPlatz(){ var b=$('btnMenu'); return (istAhnen() && b && b.offsetParent) ? Math.round(b.getBoundingClientRect().height+16) : 0; }
 function setZoom(z){ Z=Math.min(3,Math.max(0.1,z)); applyZoom(); }
 /* The chart opens at the root, not zoomed out to the whole sheet: a wide family
    shrinks to unreadable specks, and the top of the line is what people look for
@@ -8145,7 +8401,7 @@ function showRoot(){
   if(!ROOT || !CUR_W) return;
   var wrap=$('stageWrap');
   if(wrap.clientWidth<60){ needFit=true; return; }
-  var k=Math.min((wrap.clientWidth-24)/CUR_W, (wrap.clientHeight-24)/CUR_H);
+  var k=Math.min((wrap.clientWidth-24)/CUR_W, (wrap.clientHeight-24-knopfPlatz())/CUR_H);
   /* With the generations limited, the whole point is to see the limited chart
      at once, so it opens fitted rather than at the root. */
   setZoom(GEN_LIMIT ? (k>0 ? Math.min(k,1) : 1) : (k>=0.85 ? Math.min(k,1) : 1));
@@ -8155,7 +8411,7 @@ function fitZoom(){
   if(!CUR_W) return;
   var wrap=$('stageWrap');
   if(wrap.clientWidth<60){ needFit=true; return; }
-  var k=Math.min((wrap.clientWidth-24)/CUR_W, (wrap.clientHeight-24)/CUR_H);
+  var k=Math.min((wrap.clientWidth-24)/CUR_W, (wrap.clientHeight-24-knopfPlatz())/CUR_H);
   setZoom(k>0?k:1);
 }
 $('zoomIn').onclick =function(){ setZoom(Z*1.25); };
@@ -8246,6 +8502,25 @@ function openPanel(id){
     '" value="'+String(val||'').replace(/"/g,'&quot;')+'"></div>'; }
   function pname(pid){ var q=DB.indi[pid]||{}; return ((q.given||'')+' '+(q.surname||'')).trim()||('#'+pid); }
   var html=noteLine()+'<h3>'+(nm||T('(no name)'))+' <span class="muted">#'+id+'</span></h3>';
+  if(istAhnen()){
+    var LA=personLines(id,s.ovr);
+    var inpA=function(lbl,val,oid){ return '<div class="field"><label>'+lbl+'</label><input type="text" id="'+oid+
+      '" value="'+String(val||'').replace(/"/g,'&quot;')+'"></div>'; };
+    html+=(id!==ROOT ? '<div class="row" style="margin:0 0 10px"><button class="btn small" id="ahnenAus">'+
+            TT('Use as starting person','Als Ausgangsperson nehmen')+'</button></div>' : '')+
+      '<div class="card"><b>'+T('Text – ')+FP.esc((p.given||'')+' '+(p.surname||''))+'</b>'+
+      inpA(T('Surname line'), LA.surname,'ovSurname')+
+      inpA(T('Given-name line (e.g. &bdquo;John 3rd&ldquo;)'), s.ovr.given!=null?s.ovr.given:'','ovGiven')+
+      inpA(T('Birth (*)'), s.ovr.birth!=null?s.ovr.birth:'','ovBirth')+
+      inpA(T('Death (+)'), s.ovr.death!=null?s.ovr.death:'','ovDeath')+
+      inpA(T('Note / code line (e.g. &bdquo;XIV 35&ldquo;)'), s.ovr.code||'','ovCode')+
+      '<div class="hint">'+T('Empty = the value from the family data.')+'</div></div>';
+    side.innerHTML=html;
+    var aus=$('ahnenAus'); if(aus) aus.onclick=function(){ chooseRoot(id); };
+    [['ovSurname','surname'],['ovGiven','given'],['ovBirth','birth'],['ovDeath','death'],['ovCode','code']].forEach(function(b){
+      var e=$(b[0]); if(e) e.oninput=function(){ s.ovr[b[1]]=e.value; safeRender(); }; });
+    return;
+  }
   if(p.stamm) html+='<div class="hint" style="margin-bottom:8px">'+T('Lineage from the data:')+' <b>'+p.stamm+'</b></div>';
 
   if(allFams.length>1){
@@ -8336,7 +8611,7 @@ function openPanel(id){
     bind('sp'+fi+'Death',so,'death'); bind('sp'+fi+'Code',so,'code'); });
 }
 $('sheetTitle').oninput=function(e){ SHEET_TITLE=e.target.value;
-  if(ROOT) settings(ROOT).title=SHEET_TITLE; safeRender(); };
+  if(ROOT) settings(ROOT)[tKey()]=SHEET_TITLE; safeRender(); };
 
 /* ---------------- root person search ---------------- */
 function personLabel(id){
@@ -8387,9 +8662,9 @@ function chooseRoot(id){
   /* The title belongs to the chart of one person. Picking a new root person
      therefore starts with an empty title, and coming back to a person brings
      their own title back. */
-  if(ROOT && ROOT!==id) settings(ROOT).title=SHEET_TITLE||'';
-  ROOT=id; SELECTED=null; dropHi=-1; dirty=false;
-  SHEET_TITLE=settings(id).title||'';
+  if(ROOT && ROOT!==id) settings(ROOT)[tKey()]=SHEET_TITLE||'';
+  setRoot(id); SELECTED=null; dropHi=-1; dirty=false;
+  SHEET_TITLE=settings(id)[tKey()]||'';
   $('sheetTitle').value=SHEET_TITLE;
   $('rootSearch').value=personLabel(id);
   toggleRootClear();
@@ -8402,7 +8677,7 @@ function chooseRoot(id){
 function slugify(s){ return String(s||'').trim().replace(/\s+/g,'_').replace(/[^0-9A-Za-zÄÖÜäöüß._-]/g,'').slice(0,40); }
 function baseName(){
   /* the exported file carries the name of the tab in the language in use */
-  var wort=slugify(T('Descendants'))||'Descendants';
+  var wort=istAhnen() ? (slugify(TT('Ancestor chart','Ahnentafel'))||'Ancestors') : (slugify(T('Descendants'))||'Descendants');
   if(!ROOT || !DB.indi[ROOT]) return wort;
   var p=DB.indi[ROOT];
   var g=(p.given||'').split(/\s+/)[0], sn=(p.surname||'');
@@ -8412,7 +8687,7 @@ function baseName(){
 var rs=$('rootSearch');
 function toggleRootClear(){ $('rootClear').classList.toggle('show', !rs.disabled && !!rs.value); }
 $('rootClear').onclick=function(){
-  rs.value=''; ROOT=null; SELECTED=null; dropHi=-1;
+  rs.value=''; setRoot(null); SELECTED=null; dropHi=-1;
   toggleRootClear(); showDefaultPanel(); safeRender();
   if(!rs.disabled){ rs.focus(); renderDrop(''); }
 };
@@ -8607,7 +8882,9 @@ function rememberChart(){
   if(!uiReady || uiTimer) return;
   uiTimer=setTimeout(function(){
     uiTimer=null;
-    SHELL.uiSet('chart', { root:ROOT, settings:SET, title:SHEET_TITLE,
+    if(istAhnen()) ROOT_A=ROOT; else ROOT_N=ROOT;
+    SHELL.uiSet('chart', { root:ROOT_N, rootA:ROOT_A, aWahl:!A_AUTO, mode:MODE, kekule:KEKULE, leer:LEER,
+      settings:SET, title:(ROOT_N && SET[ROOT_N] && SET[ROOT_N].title) || (istAhnen()?'':SHEET_TITLE),
       firstName:$('optFirstName').checked, ageSort:$('optAgeSort').checked,
       pdfFormat:$('pdfFormat').value, boxWidth:BOX_W, autoWidth:AUTO_W, fontSize:FONT_SZ });
   }, 250);
@@ -8624,14 +8901,20 @@ function restoreChart(){
   AUTO_W = v.autoWidth!==false;
   $('boxWidth').value = AUTO_W ? 'auto' : String(BOX_W);
   if(v.fontSize){ FONT_SZ=+v.fontSize; applyMetrics(); $('fontSize').value=String(FONT_SZ); }
-  if(v.root && DB.indi[v.root]){ ROOT=v.root; return true; }
-  return false;
+  MODE = v.mode==='ahnen' ? 'ahnen' : 'nach';
+  KEKULE = v.kekule!==false; LEER = !!v.leer;
+  $('optKekule').checked=KEKULE; $('optLeer').checked=LEER;
+  ROOT_N = (v.root && DB.indi[v.root]) ? v.root : null;
+  ROOT_A = (v.rootA && DB.indi[v.rootA]) ? v.rootA : null;
+  A_AUTO = !(ROOT_A && v.aWahl);
+  return !!(ROOT_N || ROOT_A);
 }
 
 /* ---------------- project file (chart settings) ---------------- */
 $('btnSave').onclick=function(){
   if(!FP.hasData()){ SHELL.ask(T('Notice'),T('No data has been loaded yet.'),null,'OK'); return; }
-  var proj={ ged:FP.serialize(), root:ROOT, settings:SET,
+  if(istAhnen()) ROOT_A=ROOT; else ROOT_N=ROOT;
+  var proj={ ged:FP.serialize(), root:ROOT_N, rootA:ROOT_A, mode:MODE, kekule:KEKULE, leer:LEER, settings:SET,
     firstName:$('optFirstName').checked, ageSort:$('optAgeSort').checked,
     pdfFormat:$('pdfFormat').value, boxWidth:BOX_W, autoWidth:AUTO_W, fontSize:FONT_SZ, title:SHEET_TITLE };
   SHELL.download(new Blob([JSON.stringify(proj)],{type:'application/json'}), baseName()+'.json');
@@ -8654,7 +8937,12 @@ $('projFile').addEventListener('change', function(e){
       AUTO_W = proj.autoWidth!==false;
       $('boxWidth').value = AUTO_W? 'auto' : String(BOX_W);
       if(proj.fontSize){ FONT_SZ=+proj.fontSize; applyMetrics(); $('fontSize').value=String(FONT_SZ); }
-      ROOT=proj.root||null;
+      ROOT_N=proj.root||null; ROOT_A=proj.rootA||null;
+      MODE=proj.mode==='ahnen'?'ahnen':'nach';
+      KEKULE=proj.kekule!==false; LEER=!!proj.leer;
+      $('optKekule').checked=KEKULE; $('optLeer').checked=LEER;
+      ROOT=istAhnen()?ROOT_A:ROOT_N;
+      $('genLimit').dataset.stand=''; paintMode();
       if(ROOT && DB.indi[ROOT]) $('rootSearch').value=personLabel(ROOT);
       toggleRootClear();
       SHELL.showTab('chart');
@@ -8673,15 +8961,20 @@ FP.on(function(type, restored){
   syncDB();
   var rsEl=$('rootSearch');
   if(type==='load'){
-    SET={}; SELECTED=null; ROOT=null;
+    SET={}; SELECTED=null; ROOT=null; ROOT_N=null; ROOT_A=null; A_AUTO=true;
     rsEl.disabled=false; rsEl.value='';
     /* the same file as last time – put the chart back the way it was left */
-    if(restored ? !restoreChart() : (SHEET_TITLE='', $('sheetTitle').value='', true)){
-      /* start with a chart instead of an empty screen: take the person the tree
-         centres on and climb to the top of their line */
-      var start=topOfLine(SHELL.treeFocus());
-      if(start && DB.indi[start]) ROOT=start;
-    }
+    if(!(restored && restoreChart())){ SHEET_TITLE=''; $('sheetTitle').value=''; if(!restored) MODE='nach'; }
+    /* start with a chart instead of an empty screen: the descendant chart
+       climbs from the person the tree centres on to the top of their line,
+       the ancestor chart starts at that person */
+    var fokus=SHELL.treeFocus();
+    if(!ROOT_N){ var start=topOfLine(fokus); if(start && DB.indi[start]) ROOT_N=start; }
+    if(!ROOT_A && fokus && DB.indi[fokus]) ROOT_A=fokus;
+    ROOT = istAhnen() ? ROOT_A : ROOT_N;
+    if(ROOT){ SHEET_TITLE=settings(ROOT)[tKey()]||''; $('sheetTitle').value=SHEET_TITLE; }
+    $('genLimit').dataset.stand='';
+    paintMode();
     if(ROOT && DB.indi[ROOT]) rsEl.value=personLabel(ROOT);
     toggleRootClear();
     uiReady=true;
@@ -8691,11 +8984,13 @@ FP.on(function(type, restored){
     else { safeRender(); if(ROOT) requestAnimationFrame(function(){ showRoot(); }); }
   } else if(type==='clear'){
     uiReady=false;
-    SET={}; SELECTED=null; ROOT=null; rsEl.disabled=true; rsEl.value='';
+    SET={}; SELECTED=null; ROOT=null; ROOT_N=null; ROOT_A=null; rsEl.disabled=true; rsEl.value='';
     toggleRootClear();
     showDefaultPanel(); safeRender();
   } else {
     if(ROOT && !DB.indi[ROOT]) ROOT=null;
+    if(ROOT_N && !DB.indi[ROOT_N]) ROOT_N=null;
+    if(ROOT_A && !DB.indi[ROOT_A]) ROOT_A=null;
     if(SELECTED && !DB.indi[SELECTED]) SELECTED=null;
     /* A large chart is thousands of boxes. Redrawing it for every keystroke in
        the tree tab is work nobody sees – note that it is out of date instead
@@ -8708,6 +9003,13 @@ FP.on(function(type, restored){
 SHELL.onChartRoot(function(id){
   if(!DB.indi[id]){ SHELL.toast(T('That person is not in the file.')); return; }
   SHELL.showTab('chart');
+  if(istAhnen()) setMode('nach');
+  chooseRoot(id);
+});
+SHELL.onAncestorRoot(function(id){
+  if(!DB.indi[id]){ SHELL.toast(T('That person is not in the file.')); return; }
+  SHELL.showTab('chart');
+  if(!istAhnen()) setMode('ahnen');
   chooseRoot(id);
 });
 SHELL.onTab(function(name){
@@ -8721,7 +9023,11 @@ if(FP.hasData()){ $('rootSearch').disabled=false; }
 toggleRootClear();
 SHEET_TITLE=$('sheetTitle').value||'';   /* the browser restores form fields on reload */
 showDefaultPanel();
+paintMode();
 safeRender();
+window.TAFEL={modus:function(){ return MODE; }, setzeModus:setMode, wurzel:function(){ return ROOT; },
+  _ahnen:function(){ if(!istAhnen()||!ROOT) return null; var w=ahnenBauen(GEN_LIMIT), a=[]; ahnenLegen(w); ahnenSetzen(w,MARGIN,a);
+    return a.map(function(n){ return {k:n.k, id:n.id, g:n.g, doppelt:!!n.doppelt, leer:!!n.leer}; }); }};
 })();
 </script>
 <script>
