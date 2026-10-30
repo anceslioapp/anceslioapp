@@ -394,11 +394,14 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
   #mdKarte .modalbox h3{padding:12px 14px 8px}
 }
 #mdKarte .modalbody{padding:0; display:flex; flex-direction:column; flex:1 1 auto; overflow:hidden; min-height:0}
-.kfilter{display:flex; flex-wrap:nowrap; gap:6px; padding:0 12px 9px; align-items:center;
-  overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none}
-/* eine Zeile zum Wischen statt drei Zeilen: die Karte behält ihren Platz */
-.kfilter::-webkit-scrollbar{display:none}
-.kfilter > *{flex:0 0 auto}
+.kfilter{display:flex; flex-wrap:wrap; gap:6px; padding:0 12px 9px; align-items:center}
+/* schmal: eine Zeile zum Wischen statt drei Zeilen, die Karte behält ihren Platz */
+@media(max-width:760px){
+  .kfilter{flex-wrap:nowrap; overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:none}
+  .kfilter::-webkit-scrollbar{display:none}
+  .kfilter > *{flex:0 0 auto}
+}
+.kchip.kname{max-width:15em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:inline-block; line-height:34px}
 .kchip{display:inline-flex; align-items:center; gap:6px; min-height:36px; padding:0 11px; border:1px solid var(--line);
   border-radius:18px; background:var(--field); color:var(--ink); font:inherit; font-size:13.5px; cursor:pointer; max-width:100%}
 .kchip.on{border-color:var(--accent); background:var(--hl)}
@@ -2768,11 +2771,13 @@ window.I18N={
         The ring shows the shares: green for birth, orange for marriage, purple for death. Tap a combined dot to zoom
         in, tap a place to see who was born, married or died there; a name takes you to that person in the tree.
         A church wedding counts as a marriage.</p>
-        <p>The row at the top narrows the map down: by kind of event, lineage, period, and to one person with their
-        ancestors or descendants.</p>
+        <p>The row at the top narrows the map down: by kind of event, lineage, period, and to one person with all
+        their ancestors or descendants, however many generations back or forward; below the map you see how many
+        people that is. The cross next to the name shows everybody again.</p>
         <p>Where a place is comes from the GEDCOM file, as coordinates below the place (Gramps and other programs
         write them). A place name without coordinates takes those of a place with the same name. If there are none at
-        all, the place is listed under <b>places without position</b>, and you can set it there: tap it on the map,
+        all, the button <b>places without position</b> appears below the map (it always counts the whole file, not
+        only what the filter shows), and you can set the position there: tap it on the map,
         paste coordinates copied from a map app (such as &ldquo;51.96, 7.63&rdquo;), or &ndash; for a similar
         spelling &ndash; choose &ldquo;Same place as &hellip;&rdquo;. <b>Search in browser</b> opens OpenStreetMap
         with the place name; the app itself stays offline. The coordinates are saved with every entry that has this
@@ -3249,11 +3254,13 @@ window.I18N={
         auf einen zusammengefassten Punkt zoomt hinein, ein Tipp auf einen Ort zeigt, wer dort geboren wurde,
         geheiratet hat oder gestorben ist; ein Name f&uuml;hrt zur Person im Stammbaum. Eine kirchliche Trauung
         z&auml;hlt als Heirat.</p>
-        <p>Die Zeile oben grenzt die Karte ein: nach Ereignisart, Stamm, Zeitraum und auf eine Person mit ihren
-        Vorfahren oder Nachfahren.</p>
+        <p>Die Zeile oben grenzt die Karte ein: nach Ereignisart, Stamm, Zeitraum und auf eine Person mit allen
+        ihren Vorfahren oder Nachfahren, &uuml;ber alle Generationen; unter der Karte steht, wie viele Personen das
+        sind. Das Kreuz neben dem Namen zeigt wieder alle.</p>
         <p>Wo ein Ort liegt, steht in der GEDCOM-Datei als Koordinate unter dem Ort (Gramps und andere Programme
         schreiben sie mit). Ein Ortsname ohne Koordinate &uuml;bernimmt die eines gleichnamigen Orts. Fehlt sie ganz,
-        steht der Ort unter <b>Orte ohne Position</b>, und dort l&auml;sst sie sich setzen: auf der Karte antippen,
+        erscheint unter der Karte der Knopf <b>Orte ohne Position</b> (er z&auml;hlt immer die ganze Datei, nicht nur
+        das Gefilterte), und dort l&auml;sst sie sich setzen: auf der Karte antippen,
         Koordinaten aus einer Karten-App einf&uuml;gen (etwa &bdquo;51.96, 7.63&ldquo;) oder &ndash; bei
         &auml;hnlicher Schreibweise &ndash; &bdquo;Gleicher Ort wie &hellip;&ldquo; w&auml;hlen. <b>Im Browser
         suchen</b> &ouml;ffnet OpenStreetMap mit dem Ortsnamen; die App selbst bleibt offline. Gespeichert wird die
@@ -4902,7 +4909,15 @@ window.FP = {
   },
   removeFile:function(id){
     var e=entryOf(id); if(!e) return false;
-    if(id===LIB.current){ dropFile(id); libSave(); D={indi:{},fam:{},order:{indi:[],fam:[]}};
+    if(id===LIB.current){
+      dropFile(id); libSave();
+      /* Bleiben andere Dateien, öffnet sich die zuletzt benutzte. Bis 4.6
+         stand die App danach leer da, und weil das Datenmenü die
+         Dateiliste erst ab zwei Dateien zeigt, kam man an eine einzelne
+         übrige Datei gar nicht mehr heran. */
+      var rest=LIB.files.slice().sort(function(a,b){ return (b.opened||0)-(a.opened||0); });
+      if(rest.length && this.openFile(rest[0].id)) return true;
+      D={indi:{},fam:{},order:{indi:[],fam:[]}};
       hasData=false; INDEX=[]; emit('clear'); return true; }
     dropFile(id); libSave(); return true;
   },
@@ -5594,7 +5609,8 @@ function paintFileRows(){
       ask(L('Remove this file?'), esc(f?f.name:'')+'<br><br>'+
           (f && f.risky ? '<b class="warnt">'+L('This file has changes that are not backed up.')+'</b><br><br>' : '')+
           L('It is removed from this browser only. An exported GEDCOM file on your device is not touched.'),
-          function(){ FP.removeFile(id); paintFileList(); paintFileRows(); toast(L('File removed')); },
+          function(){ var war=FP.currentFile(); FP.removeFile(id); paintFileList(); paintFileRows();
+            toast(war===id && FP.currentFile() ? L('File removed')+' · '+L('Switched to ')+FP.fileName() : L('File removed')); },
           L('Yes, remove'));
     };
   }
@@ -12688,6 +12704,7 @@ function verwandte(id, richtung){
 function filtern(alle){
   var I=FP.indi(), menge=null;
   if(F.person && I[F.person]) menge=verwandte(F.person, F.richtung); else F.person=null;
+  MENGE=menge ? Object.keys(menge).length : 0;
   return alle.filter(function(e){
     if(!F[e.art]) return false;
     if(F.von!=null || F.bis!=null){
@@ -12702,13 +12719,18 @@ function filtern(alle){
 }
 
 /* ---------- Zustand ---------- */
-var ALLE=[], ZEIG=[], ORTE=[], FEHLT=[], V={k:0, tx:0, ty:0}, ERST=true, SETZ=null, OFFEN=null;
+var MENGE=0, ALLE=[], ZEIG=[], ORTE=[], FEHLT=[], V={k:0, tx:0, ty:0}, ERST=true, SETZ=null, OFFEN=null;
 function neuRechnen(){
   ALLE=sammeln();
   ZEIG=filtern(ALLE);
   var g={}; ORTE=[]; var fehlt={};
+  /* Orte ohne Position gelten für die ganze Datei, nicht nur für den
+     Filter - sonst verschwände der Knopf, sobald man filtert. */
+  ALLE.forEach(function(e){
+    if(e.lat==null){ var f=fehlt[e.k]||(fehlt[e.k]={text:e.ort, k:e.k, n:0}); f.n++; }
+  });
   ZEIG.forEach(function(e){
-    if(e.lat==null){ var f=fehlt[e.k]||(fehlt[e.k]={text:e.ort, k:e.k, n:0}); f.n++; return; }
+    if(e.lat==null) return;
     var key=e.lat.toFixed(4)+','+e.lon.toFixed(4);
     var o=g[key]; if(!o){ var w=weltXY(e.lat,e.lon); o=g[key]={key:key, lat:e.lat, lon:e.lon, x:w.x, y:w.y, ev:[], namen:{}}; ORTE.push(o); }
     o.ev.push(e); o.namen[e.ort]=(o.namen[e.ort]||0)+1;
@@ -12735,9 +12757,9 @@ function einpassen(orte){
     V.k=Math.min(g.w/360, g.h/(2*merc(72))); V.tx=g.w/2; V.ty=g.h/2+merc(20)*V.k; begrenzen(); return; }
   var x0=Infinity, x1=-Infinity, y0=Infinity, y1=-Infinity;
   orte.forEach(function(o){ x0=Math.min(x0,o.x); x1=Math.max(x1,o.x); y0=Math.min(y0,o.y); y1=Math.max(y1,o.y); });
-  var bw=Math.max(x1-x0, 0.5), bh=Math.max(y1-y0, 0.5);
-  V.k=Math.min((g.w-2*pad)/bw, (g.h-2*pad)/bh, 40);
-  V.tx=g.w/2-(x0+x1)/2*V.k; V.ty=g.h/2-(y0+y1)/2*V.k;
+  var bw=Math.max(x1-x0, 0.5), bh=Math.max(y1-y0, 0.5), rechts=70; /* rechts liegen die Zoomknöpfe */
+  V.k=Math.min((g.w-pad-rechts)/bw, (g.h-2*pad)/bh, 40);
+  V.tx=(g.w+pad-rechts)/2-(x0+x1)/2*V.k; V.ty=g.h/2-(y0+y1)/2*V.k;
   begrenzen();
 }
 function zoomUm(f, sx, sy){
@@ -12824,7 +12846,18 @@ function filterZeile(){
   for(var id in I){ var s=String(I[id].stamm||'').trim(); if(s) st[s]=1; }
   var staemme=Object.keys(st).sort(function(a,b){ return a.localeCompare(b, de()?'de':'en'); });
   if(F.stamm && !st[F.stamm]) F.stamm='';
-  var h='';
+  var h='', person='';
+  /* Ist eine Person gewählt, steht sie ganz vorn - mit ✕ zum Entfernen,
+     sonst läge beides auf dem Handy außerhalb der Zeile. */
+  if(F.person && I[F.person]){
+    person='<span class="kperson"><button class="kchip on kname" id="kPerson" title="'+esc(T('Choose another person','Andere Person wählen'))+'">'+esc(FP.fullName(I[F.person]))+'</button>'+
+       '<button class="kchip kx" id="kPersonWeg" title="'+esc(T('Show everybody again','Wieder alle zeigen'))+'" aria-label="'+esc(T('Show everybody again','Wieder alle zeigen'))+'">✕</button>'+
+       '<select id="kRichtung" aria-label="'+esc(T('Which relatives','Welche Verwandten'))+'">'+
+       [['v',T('with all ancestors','mit allen Vorfahren')],['n',T('with all descendants','mit allen Nachfahren')],['b',T('with all ancestors and descendants','mit allen Vor- und Nachfahren')]].map(function(r){
+         return '<option value="'+r[0]+'"'+(F.richtung===r[0]?' selected':'')+'>'+esc(r[1])+'</option>'; }).join('')+
+       '</select></span>';
+  }
+  h+=person;
   [['B',T('Birth','Geburt')],['M',T('Marriage','Heirat')],['D',T('Death','Tod')]].forEach(function(a){
     h+='<button class="kchip'+(F[a[0]]?' on':'')+'" data-art="'+a[0]+'" aria-pressed="'+(F[a[0]]?'true':'false')+'"><i class="k-'+a[0].toLowerCase()+'"></i>'+esc(a[1])+'</button>';
   });
@@ -12834,20 +12867,14 @@ function filterZeile(){
   }
   h+='<span class="kjahre"><input id="kVon" type="number" inputmode="numeric" placeholder="'+esc(T('from','von'))+'" aria-label="'+esc(T('From year','Von Jahr'))+'" value="'+(F.von!=null?F.von:'')+'">'+
      '<span aria-hidden="true">–</span><input id="kBis" type="number" inputmode="numeric" placeholder="'+esc(T('to','bis'))+'" aria-label="'+esc(T('To year','Bis Jahr'))+'" value="'+(F.bis!=null?F.bis:'')+'"></span>';
-  if(F.person && I[F.person]){
-    h+='<span class="kperson"><button class="kchip on" id="kPerson" title="'+esc(T('Choose another person','Andere Person wählen'))+'">'+esc(FP.fullName(I[F.person]))+'</button>'+
-       '<select id="kRichtung" aria-label="'+esc(T('Which relatives','Welche Verwandten'))+'">'+
-       [['v',T('and ancestors','mit Vorfahren')],['n',T('and descendants','mit Nachfahren')],['b',T('ancestors and descendants','Vor- und Nachfahren')]].map(function(r){
-         return '<option value="'+r[0]+'"'+(F.richtung===r[0]?' selected':'')+'>'+esc(r[1])+'</option>'; }).join('')+
-       '</select><button class="kchip kx" id="kPersonWeg" aria-label="'+esc(T('Show everybody again','Wieder alle zeigen'))+'">✕</button></span>';
-  } else {
-    h+='<button class="kchip" id="kPerson">'+esc(T('Person …','Person …'))+'</button>';
-  }
+  if(!person) h+='<button class="kchip" id="kPerson">'+esc(T('Person …','Person …'))+'</button>';
   $('kFilter').innerHTML=h;
+  $('kFilter').scrollLeft=0;
 }
 function infoZeile(){
   var nOrte=ORTE.length, nEv=0; ORTE.forEach(function(o){ nEv+=o.ev.length; });
-  var h='<span>'+esc(zahl(nEv)+' '+T(nEv===1?'event':'events', nEv===1?'Ereignis':'Ereignisse')+' '+T('at','an')+' '+zahl(nOrte)+' '+T(nOrte===1?'place':'places', nOrte===1?'Ort':'Orten'))+'</span>';
+  var h='<span>'+esc(zahl(nEv)+' '+T(nEv===1?'event':'events', nEv===1?'Ereignis':'Ereignisse')+' '+T('at','an')+' '+zahl(nOrte)+' '+T(nOrte===1?'place':'places', nOrte===1?'Ort':'Orten')+
+    (F.person && MENGE ? ' · '+zahl(MENGE)+' '+T(MENGE===1?'person selected':'people selected', MENGE===1?'Person ausgewählt':'Personen ausgewählt') : ''))+'</span>';
   if(FEHLT.length){
     var n=0; FEHLT.forEach(function(f){ n+=f.n; });
     h+='<button class="btn small" id="kFehlt">'+esc(FEHLT.length===1
