@@ -423,6 +423,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 .kmk{cursor:pointer}
 .kmk:focus{outline:none} .kmk:focus-visible .kmk-bg,.kmk:focus-visible .kmk-dot{stroke:var(--focus); stroke-width:3}
 .kmk-hit{fill:transparent}
+.kmk-sel{fill:none; stroke:var(--accent); stroke-width:3}
 .kmk-bg{fill:var(--panel); stroke:var(--line); stroke-width:1}
 .kmk-dot{stroke:var(--panel); stroke-width:2}
 .kmk-dot.k-b{fill:var(--kb)} .kmk-dot.k-m{fill:var(--km)} .kmk-dot.k-d{fill:var(--kd)}
@@ -5647,47 +5648,50 @@ $('miEmpty').onclick=function(){ closeDataMenu(); startNewFamily(false); };
 /* ---------------- sample family (fictional) ---------------- */
 var SAMPLE = [
 '0 HEAD','1 SOUR Anceslio','1 GEDC','2 VERS 5.5.1','1 CHAR UTF-8',
-'0 @I17@ INDI','1 NAME Edward /Hayes/','1 SEX M','1 BIRT','2 DATE 3 MAR 1875','2 PLAC Ashford',
-'1 DEAT','2 DATE 14 NOV 1940','1 OCCU Miller','1 FACT Northern branch','2 TYPE Lineage','1 FAMS @F7@',
-'0 @I18@ INDI','1 NAME Alice /Foster/','1 SEX F','1 BIRT','2 DATE 21 JUN 1880','2 PLAC Bexley',
-'1 DEAT','2 DATE 2 FEB 1961','1 FAMS @F7@',
-'0 @I1@ INDI','1 NAME William Edward /Hayes/','1 SEX M','1 BIRT','2 DATE 9 APR 1902','2 PLAC Ashford',
-'1 DEAT','2 DATE 17 DEC 1978','1 OCCU Schoolmaster','1 FACT Northern branch','2 TYPE Lineage',
+'0 @I17@ INDI','1 NAME Edward /Hayes/','1 SEX M','1 BIRT','2 DATE 3 MAR 1875','2 PLAC Ashford','3 MAP','4 LATI N51.146500','4 LONG E0.875000',
+'1 DEAT','2 DATE 14 NOV 1940','2 PLAC Ashford','3 MAP','4 LATI N51.146500','4 LONG E0.875000','1 OCCU Miller','1 FACT Northern branch','2 TYPE Lineage','1 FAMS @F7@',
+'0 @I18@ INDI','1 NAME Alice /Foster/','1 SEX F','1 BIRT','2 DATE 21 JUN 1880','2 PLAC Bexley','3 MAP','4 LATI N51.441700','4 LONG E0.148600',
+'1 DEAT','2 DATE 2 FEB 1961','2 PLAC Ashford','3 MAP','4 LATI N51.146500','4 LONG E0.875000','1 FAMS @F7@',
+'0 @I1@ INDI','1 NAME William Edward /Hayes/','1 SEX M','1 BIRT','2 DATE 9 APR 1902','2 PLAC Ashford','3 MAP','4 LATI N51.146500','4 LONG E0.875000',
+'1 DEAT','2 DATE 17 DEC 1978','2 PLAC Leeds','3 MAP','4 LATI N53.800800','4 LONG W1.549100','1 OCCU Schoolmaster','1 FACT Northern branch','2 TYPE Lineage',
 '1 FAMC @F7@','1 FAMS @F1@','1 FAMS @F2@',
-'0 @I2@ INDI','1 NAME Margaret /Ellis/','1 SEX F','1 BIRT','2 DATE 12 MAY 1906','2 PLAC Redhill',
-'1 DEAT','2 DATE 30 JAN 1985','1 FAMS @F1@',
-'0 @I5@ INDI','1 NAME Dorothy /Pike/','1 SEX F','1 BIRT','2 DATE 8 AUG 1915','2 PLAC Leeds',
-'1 DEAT','2 DATE 5 MAY 1999','1 FAMS @F2@',
-'0 @I3@ INDI','1 NAME Arthur James /Hayes/','1 SEX M','1 BIRT','2 DATE 2 OCT 1930','2 PLAC Ashford',
-'1 DEAT','2 DATE 19 JUN 2011','1 OCCU Surveyor','1 FAMC @F1@','1 FAMS @F3@',
-'0 @I4@ INDI','1 NAME Ruth Mary /Hayes/','1 SEX F','1 BIRT','2 DATE 24 MAR 1933','2 PLAC Ashford',
-'1 DEAT','2 DATE 7 FEB 2018','1 FAMC @F1@','1 FAMS @F4@',
-'0 @I6@ INDI','1 NAME Alan /Hayes/','1 SEX M','1 BIRT','2 DATE 30 SEP 1947','2 PLAC Leeds',
+'0 @I2@ INDI','1 NAME Margaret /Ellis/','1 SEX F','1 BIRT','2 DATE 12 MAY 1906','2 PLAC Redhill','3 MAP','4 LATI N51.240000','4 LONG W0.170000',
+'1 DEAT','2 DATE 30 JAN 1985','2 PLAC Redhill','3 MAP','4 LATI N51.240000','4 LONG W0.170000','1 FAMS @F1@',
+'0 @I5@ INDI','1 NAME Dorothy /Pike/','1 SEX F','1 BIRT','2 DATE 8 AUG 1915','2 PLAC Leeds','3 MAP','4 LATI N53.800800','4 LONG W1.549100',
+'1 DEAT','2 DATE 5 MAY 1999','2 PLAC Leeds','3 MAP','4 LATI N53.800800','4 LONG W1.549100','1 FAMS @F2@',
+'0 @I3@ INDI','1 NAME Arthur James /Hayes/','1 SEX M','1 BIRT','2 DATE 2 OCT 1930','2 PLAC Ashford','3 MAP','4 LATI N51.146500','4 LONG E0.875000',
+'1 DEAT','2 DATE 19 JUN 2011','2 PLAC Norwich','3 MAP','4 LATI N52.630900','4 LONG E1.297400','1 OCCU Surveyor','1 FAMC @F1@','1 FAMS @F3@',
+'0 @I4@ INDI','1 NAME Ruth Mary /Hayes/','1 SEX F','1 BIRT','2 DATE 24 MAR 1933','2 PLAC Ashford','3 MAP','4 LATI N51.146500','4 LONG E0.875000',
+'1 DEAT','2 DATE 7 FEB 2018','2 PLAC Canterbury','3 MAP','4 LATI N51.280200','4 LONG E1.078900','1 FAMC @F1@','1 FAMS @F4@',
+'0 @I6@ INDI','1 NAME Alan /Hayes/','1 SEX M','1 BIRT','2 DATE 30 SEP 1947','2 PLAC Leeds','3 MAP','4 LATI N53.800800','4 LONG W1.549100',
 '1 OCCU Forester','1 FACT Western branch','2 TYPE Lineage','1 FAMC @F2@','1 FAMS @F6@',
-'0 @I7@ INDI','1 NAME Helen /Carter/','1 SEX F','1 BIRT','2 DATE 15 JUL 1934','1 DEAT','2 DATE 3 MAR 2016','1 FAMS @F3@',
-'0 @I10@ INDI','1 NAME George /Newton/','1 SEX M','1 BIRT','2 DATE 6 JAN 1928','1 DEAT','2 DATE 22 APR 2004','1 FAMS @F4@',
-'0 @I15@ INDI','1 NAME Judith /Marsh/','1 SEX F','1 BIRT','2 DATE 11 NOV 1950','1 FAMS @F6@',
-'0 @I8@ INDI','1 NAME Peter Arthur /Hayes/','1 SEX M','1 BIRT','2 DATE 4 FEB 1958','2 PLAC Norwich',
+'0 @I7@ INDI','1 NAME Helen /Carter/','1 SEX F','1 BIRT','2 DATE 15 JUL 1934','2 PLAC Cambridge','3 MAP','4 LATI N52.205300','4 LONG E0.121800','1 DEAT','2 DATE 3 MAR 2016','2 PLAC Norwich','3 MAP','4 LATI N52.630900','4 LONG E1.297400','1 FAMS @F3@',
+'0 @I10@ INDI','1 NAME George /Newton/','1 SEX M','1 BIRT','2 DATE 6 JAN 1928','2 PLAC Canterbury','3 MAP','4 LATI N51.280200','4 LONG E1.078900','1 DEAT','2 DATE 22 APR 2004','2 PLAC Canterbury','3 MAP','4 LATI N51.280200','4 LONG E1.078900','1 FAMS @F4@',
+'0 @I15@ INDI','1 NAME Judith /Marsh/','1 SEX F','1 BIRT','2 DATE 11 NOV 1950','2 PLAC Victoria, British Columbia','3 MAP','4 LATI N48.428400','4 LONG W123.365600','1 FAMS @F6@',
+'0 @I8@ INDI','1 NAME Peter Arthur /Hayes/','1 SEX M','1 BIRT','2 DATE 4 FEB 1958','2 PLAC Norwich','3 MAP','4 LATI N52.630900','4 LONG E1.297400',
 '1 OCCU Engineer','1 FAMC @F3@','1 FAMS @F5@',
-'0 @I9@ INDI','1 NAME Susan /Hayes/','1 SEX F','1 BIRT','2 DATE 28 AUG 1961','2 PLAC Norwich','1 FAMC @F3@',
-'0 @I11@ INDI','1 NAME Clara /Newton/','1 SEX F','1 BIRT','2 DATE 19 DEC 1955','1 FAMC @F4@',
-'0 @I16@ INDI','1 NAME Owen /Hayes/','1 SEX M','1 BIRT','2 DATE 27 MAY 1975','1 FAMC @F6@',
-'0 @I12@ INDI','1 NAME Anne /Whitfield/','1 SEX F','1 BIRT','2 DATE 3 SEP 1960','1 FAMS @F5@',
-'0 @I13@ INDI','1 NAME Thomas /Hayes/','1 SEX M','1 BIRT','2 DATE 16 MAR 1986','2 PLAC Norwich',
+'0 @I9@ INDI','1 NAME Susan /Hayes/','1 SEX F','1 BIRT','2 DATE 28 AUG 1961','2 PLAC Norwich','3 MAP','4 LATI N52.630900','4 LONG E1.297400','1 FAMC @F3@',
+'0 @I11@ INDI','1 NAME Clara /Newton/','1 SEX F','1 BIRT','2 DATE 19 DEC 1955','2 PLAC Canterbury','3 MAP','4 LATI N51.280200','4 LONG E1.078900','1 FAMC @F4@',
+'0 @I16@ INDI','1 NAME Owen /Hayes/','1 SEX M','1 BIRT','2 DATE 27 MAY 1975','2 PLAC Vancouver','3 MAP','4 LATI N49.282700','4 LONG W123.120700','1 FAMC @F6@',
+'0 @I12@ INDI','1 NAME Anne /Whitfield/','1 SEX F','1 BIRT','2 DATE 3 SEP 1960','2 PLAC York','3 MAP','4 LATI N53.960000','4 LONG W1.087300','1 FAMS @F5@',
+'0 @I13@ INDI','1 NAME Thomas /Hayes/','1 SEX M','1 BIRT','2 DATE 16 MAR 1986','2 PLAC Norwich','3 MAP','4 LATI N52.630900','4 LONG E1.297400',
 '1 FAMC @F5@','1 FAMS @F8@',
-'0 @I14@ INDI','1 NAME Grace Eleanor /Hayes/','1 SEX F','1 BIRT','2 DATE 9 JAN 1989','2 PLAC Norwich','1 FAMC @F5@',
-'0 @I21@ INDI','1 NAME Laura /Bennett/','1 SEX F','1 BIRT','2 DATE 2 JUL 1988','1 FAMS @F8@',
-'0 @I22@ INDI','1 NAME Emily /Hayes/','1 SEX F','1 BIRT','2 DATE 5 MAY 2019','1 FAMC @F8@',
-'0 @F7@ FAM','1 HUSB @I17@','1 WIFE @I18@','1 MARR','2 DATE 4 MAY 1899','2 PLAC Ashford','1 CHIL @I1@',
-'0 @F1@ FAM','1 HUSB @I1@','1 WIFE @I2@','1 MARR','2 DATE 22 SEP 1928','2 PLAC Redhill','1 CHIL @I3@','1 CHIL @I4@',
-'0 @F2@ FAM','1 HUSB @I1@','1 WIFE @I5@','1 MARR','2 DATE 7 FEB 1946','2 PLAC Leeds','1 CHIL @I6@',
-'0 @F3@ FAM','1 HUSB @I3@','1 WIFE @I7@','1 MARR','2 DATE 14 AUG 1956','1 CHIL @I8@','1 CHIL @I9@',
-'0 @F4@ FAM','1 HUSB @I10@','1 WIFE @I4@','1 MARR','2 DATE 3 MAY 1954','1 CHIL @I11@',
-'0 @F5@ FAM','1 HUSB @I8@','1 WIFE @I12@','1 MARR','2 DATE 19 JUN 1985','1 CHIL @I13@','1 CHIL @I14@',
-'0 @F6@ FAM','1 HUSB @I6@','1 WIFE @I15@','1 MARR','2 DATE 2 OCT 1973','1 CHIL @I16@',
-'0 @F8@ FAM','1 HUSB @I13@','1 WIFE @I21@','1 MARR','2 DATE 10 JUL 2018','1 CHIL @I22@',
+'0 @I14@ INDI','1 NAME Grace Eleanor /Hayes/','1 SEX F','1 BIRT','2 DATE 9 JAN 1989','2 PLAC Norwich','3 MAP','4 LATI N52.630900','4 LONG E1.297400','1 FAMC @F5@',
+'0 @I21@ INDI','1 NAME Laura /Bennett/','1 SEX F','1 BIRT','2 DATE 2 JUL 1988','2 PLAC Edinburgh','3 MAP','4 LATI N55.953300','4 LONG W3.188300','1 FAMS @F8@',
+'0 @I22@ INDI','1 NAME Emily /Hayes/','1 SEX F','1 BIRT','2 DATE 5 MAY 2019','2 PLAC London','3 MAP','4 LATI N51.507400','4 LONG W0.127800','1 FAMC @F8@',
+'0 @F7@ FAM','1 HUSB @I17@','1 WIFE @I18@','1 MARR','2 DATE 4 MAY 1899','2 PLAC Ashford','3 MAP','4 LATI N51.146500','4 LONG E0.875000','1 CHIL @I1@',
+'0 @F1@ FAM','1 HUSB @I1@','1 WIFE @I2@','1 MARR','2 DATE 22 SEP 1928','2 PLAC Redhill','3 MAP','4 LATI N51.240000','4 LONG W0.170000','1 CHIL @I3@','1 CHIL @I4@',
+'0 @F2@ FAM','1 HUSB @I1@','1 WIFE @I5@','1 MARR','2 DATE 7 FEB 1946','2 PLAC Leeds','3 MAP','4 LATI N53.800800','4 LONG W1.549100','1 CHIL @I6@',
+'0 @F3@ FAM','1 HUSB @I3@','1 WIFE @I7@','1 MARR','2 DATE 14 AUG 1956','2 PLAC Norwich','3 MAP','4 LATI N52.630900','4 LONG E1.297400','1 CHIL @I8@','1 CHIL @I9@',
+'0 @F4@ FAM','1 HUSB @I10@','1 WIFE @I4@','1 MARR','2 DATE 3 MAY 1954','2 PLAC Canterbury','3 MAP','4 LATI N51.280200','4 LONG E1.078900','1 CHIL @I11@',
+'0 @F5@ FAM','1 HUSB @I8@','1 WIFE @I12@','1 MARR','2 DATE 19 JUN 1985','2 PLAC Norwich','3 MAP','4 LATI N52.630900','4 LONG E1.297400','1 CHIL @I13@','1 CHIL @I14@',
+'0 @F6@ FAM','1 HUSB @I6@','1 WIFE @I15@','1 MARR','2 DATE 2 OCT 1973','2 PLAC Vancouver','3 MAP','4 LATI N49.282700','4 LONG W123.120700','1 CHIL @I16@',
+'0 @F8@ FAM','1 HUSB @I13@','1 WIFE @I21@','1 MARR','2 DATE 10 JUL 2018','2 PLAC Edinburgh','3 MAP','4 LATI N55.953300','4 LONG W3.188300','1 CHIL @I22@',
 '0 TRLR'].join('\r\n');
 
+/* Seit 4.7 hat jedes Ereignis der Beispielfamilie einen Ort mit Koordinate
+   (3 MAP / 4 LATI / 4 LONG), damit sie auf der Familienkarte vollständig
+   erscheint: England, dazu ein nach Kanada ausgewanderter Zweig. */
 /* The sample no longer pushes anything aside – it opens as a file of its own,
    next to whatever was already there. */
 /* Im deutschen Beispiel stehen auch die Daten auf Deutsch. Ortsnamen
@@ -12816,8 +12820,9 @@ function punkte(){
     var r=radius(b.n);
     var namen=b.orte.map(function(o){ return hauptName(o); }).join(', ');
     var label=namen+': '+zahl(b.n)+' '+T(b.n===1?'event':'events', b.n===1?'Ereignis':'Ereignisse');
-    h+='<g class="kmk" data-b="'+i+'" transform="translate('+sx.toFixed(1)+','+sy.toFixed(1)+')" role="button" tabindex="0" aria-label="'+esc(label)+'">'+
-       '<circle class="kmk-hit" r="'+Math.max(r,16)+'"/>';
+    var gewaehlt=OFFEN && b.orte.some(function(o){ return OFFEN.keys.indexOf(o.key)>=0; });
+    h+='<g class="kmk'+(gewaehlt?' sel':'')+'" data-b="'+i+'" transform="translate('+sx.toFixed(1)+','+sy.toFixed(1)+')" role="button" tabindex="0" aria-label="'+esc(label)+'">'+
+       '<circle class="kmk-hit" r="'+Math.max(r,16)+'"/>'+(gewaehlt?'<circle class="kmk-sel" r="'+(r+5)+'"/>':'');
     if(b.n===1){
       h+='<circle class="kmk-dot k-'+(b.B?'b':b.M?'m':'d')+'" r="'+r+'"/>';
     } else {
@@ -12921,7 +12926,7 @@ function ortListe(keys){
   blattAuf(h, 'ort');
 }
 function blattAuf(h, was){ var b=$('kSheet'); b.innerHTML=h; b.hidden=false; b.setAttribute('data-was', was); b.scrollTop=0; }
-function blattZu(){ var b=$('kSheet'); b.hidden=true; b.innerHTML=''; b.removeAttribute('data-was'); OFFEN=null; }
+function blattZu(){ var b=$('kSheet'), war=!!OFFEN; b.hidden=true; b.innerHTML=''; b.removeAttribute('data-was'); OFFEN=null; if(war) malen(); }
 
 /* ---------- Orte ohne Position ---------- */
 function falten(t){
@@ -13090,18 +13095,25 @@ function tipp(p, ziel){
   if(mk){ buendelTipp(+mk.getAttribute('data-b')); return; }
   if(!$('kSheet').hidden) blattZu();
 }
+/* Automatisch hineinzoomen nur bis hierhin (Bildpunkte je Grad): Weiter
+   ist die eingebaute Karte zu grob, und zwei Dörfer 20 km auseinander
+   stehen besser gemeinsam in einer Liste. Von Hand geht es weiter. */
+var KAUTO=110;
 function buendelTipp(i){
   var b=BUENDEL[i]; if(!b) return;
+  var g=groesse();
   /* Mehrere Orte in einem Bündel: erst hineinzoomen, bis sie sich trennen */
-  if(b.orte.length>1 && V.k<KMAX/2){
-    var g=groesse(), x0=Infinity, x1=-Infinity, y0=Infinity, y1=-Infinity;
+  if(b.orte.length>1 && V.k<KAUTO*0.95){
+    var x0=Infinity, x1=-Infinity, y0=Infinity, y1=-Infinity;
     b.orte.forEach(function(o){ x0=Math.min(x0,o.x); x1=Math.max(x1,o.x); y0=Math.min(y0,o.y); y1=Math.max(y1,o.y); });
     var k=Math.min((g.w-120)/Math.max(x1-x0,1e-4), (g.h-120)/Math.max(y1-y0,1e-4));
-    k=Math.min(KMAX, Math.max(V.k*2, k));
+    k=Math.min(KAUTO, Math.max(V.k*2, k));
     V.k=k; V.tx=g.w/2-(x0+x1)/2*k; V.ty=g.h/2-(y0+y1)/2*k; begrenzen(); malen();
     return;
   }
   ortListe(b.orte.map(function(o){ return o.key; }));
+  /* den Punkt über die Liste schieben, die von unten hereinkommt */
+  V.tx=g.w/2-b.x*V.k; V.ty=g.h*0.2-b.y*V.k; begrenzen(); malen();
 }
 
 /* ---------- Öffnen und Bedienen ---------- */
