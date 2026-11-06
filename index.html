@@ -327,6 +327,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline-offset:1
 [data-ico="map"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 4.2 3.5 6.4v13.4L9 17.6l6 2.2 5.5-2.2V4.2L15 6.4z'/%3E%3Cpath d='M9 4.2v13.4M15 6.4v13.4'/%3E%3C/svg%3E")}
 [data-ico="tree"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='9' y='2.4' width='6' height='4.4' rx='1.1'/%3E%3Crect x='2.3' y='17.2' width='6' height='4.4' rx='1.1'/%3E%3Crect x='15.7' y='17.2' width='6' height='4.4' rx='1.1'/%3E%3Cpath d='M12 6.8v6.6M5.3 13.4h13.4M5.3 13.4v3.8M18.7 13.4v3.8'/%3E%3C/svg%3E")}
 [data-ico="shield"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z'/%3E%3Cpath d='M9 12l2 2 4-4'/%3E%3C/svg%3E")}
+[data-ico="calendar"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='5' width='17' height='15.5' rx='2.4'/%3E%3Cpath d='M3.5 10h17M8 3v4M16 3v4'/%3E%3Ccircle cx='12' cy='15' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E")}
 [data-ico="stats"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h16'/%3E%3Cpath d='M7 16.5v-5M12 16.5V6.5M17 16.5v-8'/%3E%3C/svg%3E")}
 [data-ico="chart"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4.6' y='3' width='14.8' height='18' rx='2.1'/%3E%3Cpath d='M8 8h8M10 12.2h6M12 16.4h4'/%3E%3C/svg%3E")}
 [data-ico="printer"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7.2 9V3.8h9.6V9'/%3E%3Crect x='3.8' y='9' width='16.4' height='7.6' rx='1.6'/%3E%3Cpath d='M7.2 14h9.6v6.2H7.2z'/%3E%3C/svg%3E")}
@@ -1746,6 +1747,34 @@ body.tastatur #tabbar{display:none !important}
 /* 4.9h: das Logo an festen Stellen - immer dasselbe Zeichen */
 svg.logo{display:inline-block; flex:0 0 auto; vertical-align:middle}
 .mehrver{display:flex; align-items:center; justify-content:center; gap:8px}
+/* 4.10 Gedenktage: Hinweis in den Karten und Eintraege der Seite */
+.ghinweis{display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--hl); border-radius:20px; padding:12px 12px 12px 14px; margin:0 0 2px}
+.ghinweis .gic{flex:0 0 40px; width:40px; height:40px; border-radius:20px; background:var(--bg); color:var(--accent);
+  display:flex; align-items:center; justify-content:center}
+.ghinweis .gic::before{width:20px; height:20px; margin:0}
+.ghinweis .gtx{flex:1 1 220px; min-width:0; font-size:15px; line-height:1.4; color:var(--ink)}
+.ghinweis .gtx small{color:var(--muted); font-size:13.5px; white-space:nowrap}
+.ghinweis .gknoepfe{display:flex; align-items:center; gap:4px; margin-left:auto}
+.ghinweis .btn{min-height:40px; border-radius:20px; padding:0 14px; font-weight:700; background:var(--bg); border-color:transparent; color:var(--accent)}
+.ghinweis .gweg{width:40px; height:40px; border:none; border-radius:20px; background:none; color:var(--muted); cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; padding:0}
+.ghinweis .gweg::before{margin:0; width:18px; height:18px}
+.ghinweis .gweg:hover{background:var(--bg)}
+#tageBody .gtag{gap:14px}
+#tageBody .gdat{flex:0 0 58px; text-align:center; font-weight:700; font-size:14px; color:var(--accent); line-height:1.15}
+#tageBody .gtx{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px}
+#tageBody .gtx b{overflow-wrap:anywhere}
+#tageBody .gtx small{font-size:14px; color:var(--muted)}
+#tageBody .ksec{margin:18px 0 0}
+#tageBody .ksec:first-of-type{margin-top:4px}
+#tageBody .wruhe{margin-top:16px}
+#tageBody .tfilter{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:0 0 16px}
+#tageBody .tfilter .segw button{min-height:38px; padding:0 14px}
+#tageBody .tfilter .kchip{min-height:38px; border-radius:19px; padding:0 14px; font-weight:700; font-size:14px; background:var(--bg); color:var(--ink); cursor:pointer}
+#tageBody .tfilter .kchip.on{background:var(--hl); border-color:var(--accent); color:var(--accent)}
+#tageBody .tfilter select{min-height:38px; border-radius:19px; padding:0 12px; border:1px solid var(--line); background:var(--field); color:var(--ink); font:inherit; font-size:14px; max-width:100%}
+#tageBody .tschalter{margin:20px 0 0}
+#tageAlle{margin-top:10px; min-height:44px; border-radius:22px; padding:0 18px; font-weight:700}
 .mehrver .logo{width:22px; height:22px}
 #welcomeInner h2.mitlogo{display:flex; align-items:center; gap:12px; color:var(--ink)}
 #welcomeInner h2.mitlogo .logo{width:44px; height:44px}
@@ -2113,6 +2142,7 @@ svg.logo{display:inline-block; flex:0 0 auto; vertical-align:middle}
     <div class="navkopf nurPc" data-i18n="Tools">Tools</div>
     <button class="tab nurPc wz" data-tab="werkzeug" data-mi="miList" data-seite="mdList"><span class="ico" data-ico="list"></span> <span data-i18n="People and families">People and families</span></button>
     <button class="tab nurPc wz" data-tab="werkzeug" data-mi="miStat" data-seite="mdStat"><span class="ico" data-ico="stats"></span> <span data-i18n="Statistics">Statistics</span></button>
+    <button class="tab nurPc wz" data-tab="werkzeug" data-mi="miTage" data-seite="mdTage"><span class="ico" data-ico="calendar"></span> <span data-i18n="Anniversaries">Anniversaries</span></button>
     <button class="tab nurPc wz" data-tab="werkzeug" data-mi="miPruef" data-seite="mdPruef"><span class="ico" data-ico="check"></span> <span data-i18n="Check the data">Check the data</span></button>
     <button class="tab" data-tab="mehr" id="tabMehr"><span class="ico"><svg class="icmenu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="icordner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 7.2A1.6 1.6 0 0 1 5.1 5.6h4l2 2.1h7.8a1.6 1.6 0 0 1 1.6 1.6v8.6a1.6 1.6 0 0 1-1.6 1.6H5.1a1.6 1.6 0 0 1-1.6-1.6z"/></svg><span id="dataBadge" hidden></span></span> <span class="lang" data-i18n="Data and files">Data and files</span><span class="kurz" data-i18n="More">More</span></button>
   </nav>
@@ -2163,6 +2193,7 @@ svg.logo{display:inline-block; flex:0 0 auto; vertical-align:middle}
         <div class="mwz">
           <button id="miList"><b data-ico="list" data-i18n="People and families">People and families</b><small data-i18n="Search, filter, jump to a person">Search, filter, jump to a person</small></button>
           <button id="miStat"><b data-ico="stats" data-i18n="Statistics">Statistics</b><small data-i18n="The family in figures">The family in figures</small></button>
+          <button id="miTage"><b data-ico="calendar" data-i18n="Anniversaries">Anniversaries</b><small data-i18n="Who has an anniversary today">Who has an anniversary today</small></button>
           <button id="miKarte"><b data-ico="map" data-i18n="Family map">Family map</b><small data-i18n="Where the family lived">Where the family lived</small></button>
           <button id="miDupe"><b data-ico="dupes" data-i18n="Check for duplicates">Check for duplicates</b><small data-i18n="Find people entered twice">Find people entered twice</small></button>
           <button id="miPruef"><b data-ico="check" data-i18n="Check the data">Check the data</b><small data-i18n="25 rules for what cannot fit">25 rules for what cannot fit</small></button>
@@ -2725,6 +2756,17 @@ svg.logo{display:inline-block; flex:0 0 auto; vertical-align:middle}
     <div class="modalbody" id="statBody"></div>
     <div class="modalfoot">
       <button class="btn" id="statClose" data-i18n="Close">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Gedenktage (4.10) ===================== -->
+<div class="modal seite" id="mdTage">
+  <div class="modalbox">
+    <h3><span data-lang="en">Anniversaries</span><span data-lang="de">Gedenktage</span></h3>
+    <div class="modalbody" id="tageBody"></div>
+    <div class="modalfoot">
+      <button class="btn" id="tageClose" data-i18n="Close">Close</button>
     </div>
   </div>
 </div>
@@ -3359,7 +3401,7 @@ var DE = {
 'Language, light or dark':'Sprache, hell oder dunkel',
 /* 4.9: Stammbaum als Karten und als Leiter */
 'How to show the family':'Wie die Familie gezeigt wird', 'Cards':'Karten',
-'Children':'Kinder', 'Partners':'Partner', ' from this marriage':' aus dieser Ehe', 'No children recorded':'Keine Kinder eingetragen', 'Born on':'Geboren am', 'Died on':'Gestorben am', 'in':'in', 'With ':'Mit ', 'Partner not recorded':'Partner nicht eingetragen',
+'Children':'Kinder', 'Partners':'Partner', 'Anniversaries':'Gedenktage', 'Who has an anniversary today':'Wer heute Jahrestag hat', ' from this marriage':' aus dieser Ehe', 'No children recorded':'Keine Kinder eingetragen', 'Born on':'Geboren am', 'Died on':'Gestorben am', 'in':'in', 'With ':'Mit ', 'Partner not recorded':'Partner nicht eingetragen',
 'Half-brother':'Halbbruder', 'Half-sister':'Halbschwester', 'Half-sibling':'Halbgeschwister',
 '1 child':'1 Kind', ' children':' Kinder', '1 grandchild':'1 Enkel', ' grandchildren':' Enkel', 'b. ':'geb. ',
 'Parents not recorded':'Eltern nicht erfasst',
@@ -3720,7 +3762,8 @@ window.I18N={
         which is why birth and death are searched among the people and the wedding among the families.</p>
         <p>Tapping a person opens the <b>same person view</b> as in the Tree tab, with the same buttons: <b>Edit</b>,
         <b>Tree</b> (put them at the centre), <b>Chart</b>, <b>Kinship</b> and
-        <b>Make start person</b>. A family row opens with its own buttons. A family row is set in two columns, the couple on the left and the
+        <b>Make start person</b>. On a phone the person covers the list; the arrow or the back button takes you back
+        to the list, with the same search at the same place. A family row opens with its own buttons. A family row is set in two columns, the couple on the left and the
         children on the right, the way a printed family book sets them &ndash; the children in the order they
         were born, the eldest first.</p>
         <p>In a large file not everything is drawn at once &ndash; the list would take a second to appear on a
@@ -3736,6 +3779,25 @@ window.I18N={
         <p>Counted as living is anyone without a death entry who was born within the last 110 years. Whoever is
         older and has no death entry is counted as <b>not known</b> &ndash; an ancestor born in 1748 is not alive,
         even if the file does not say when he died.</p>
+      </section>
+      <section class="sec" id="h8t" data-nav="Anniversaries">
+        <h4>Anniversaries</h4>
+        <p><b>More &rsaquo; Anniversaries</b> (on a computer in the sidebar) shows who has an anniversary today and in the next
+        30 days: birthdays and wedding anniversaries of the living, and the days on which the deceased were born, married or
+        died &ndash; &bdquo;151 years ago&ldquo;. Round anniversaries are marked. Tapping an entry opens the person in the
+        Tree tab; on a phone the arrow takes you back to the anniversaries.</p>
+        <p>Filters above the list narrow it down: the period (today, 7 or 30 days), <b>The living</b> or
+        <b>The deceased</b>, <b>Round only</b> (10th, 25th, 50th, 100th &hellip;) and a lineage. The app remembers them.</p>
+        <p>The switch <b>Note in the tree</b> (off at first) puts a short note at the top of the cards on a day with an
+        anniversary that matches these filters. <b>&times;</b> hides it for the rest of the day.</p>
+        <p>Only exact dates with day, month and year count. Many programs write 1 January when only the year is known.
+        So the app counts, as in <b>Check data</b>: if a day appears in your file far more often than chance allows,
+        it counts as a bare year and is left out. In a file without such a pile-up, 1 January counts like any other day.
+        The note below the list says which applies to the open file.</p>
+        <p>As in the statistics, anyone without a death entry born within the last 110 years counts as living; everyone
+        else falls under <b>The deceased</b> &ndash; including people born long ago whose death is not recorded. This
+        filter is not about one person&rsquo;s line (that is what the <b>Person</b> filter of the family map does).
+        Someone born on 29 February appears on the 28th in other years.</p>
       </section>
       <section class="sec" id="h8k" data-nav="Family map">
         <h4>Family map</h4>
@@ -4230,7 +4292,8 @@ window.I18N={
         der Reihenfolge ihrer Geburt, das &auml;lteste zuerst.</p>
         <p>Eine Person antippen &ouml;ffnet <b>dieselbe Personenansicht</b> wie im Stammbaum, mit denselben
         Kn&ouml;pfen: <b>Bearbeiten</b>, <b>Stammbaum</b> (in die Mitte holen), <b>Tafel</b>,
-        <b>Verwandtschaft</b> und <b>Als Startperson merken</b>. Eine Familienzeile klappt mit
+        <b>Verwandtschaft</b> und <b>Als Startperson merken</b>. Auf dem Handy liegt die Person &uuml;ber der Liste; der
+        Pfeil oder die Zur&uuml;ck-Taste f&uuml;hrt wieder in die Liste, mit derselben Suche an derselben Stelle. Eine Familienzeile klappt mit
         eigenen Kn&ouml;pfen auf. Eine Familienzeile steht in zwei Spalten, links das Paar, rechts die
         Kinder, so wie ein gedrucktes Familienbuch sie setzt.</p>
         <p>Bei einer gro&szlig;en Datei wird nicht alles auf einmal gezeichnet &ndash; die Liste br&auml;uchte auf
@@ -4247,6 +4310,27 @@ window.I18N={
         <p>Als lebend z&auml;hlt, wer ohne Sterbeangabe in den letzten 110 Jahren geboren ist. Wer &auml;lter ist und
         keine Sterbeangabe hat, steht unter <b>unbekannt</b> &ndash; ein Vorfahr von 1748 lebt nicht mehr, auch
         wenn die Datei nicht sagt, wann er gestorben ist.</p>
+      </section>
+      <section class="sec" id="d8t" data-nav="Gedenktage">
+        <h4>Gedenktage</h4>
+        <p><b>Mehr &rsaquo; Gedenktage</b> (am Rechner in der Seitenleiste) zeigt, wer heute und in den n&auml;chsten 30 Tagen
+        Jahrestag hat: Geburtstage und Hochzeitstage der Lebenden, dazu die Tage, an denen Verstorbene geboren wurden,
+        geheiratet haben oder gestorben sind &ndash; &bdquo;vor 151 Jahren&ldquo;. Runde Jahrestage sind hervorgehoben. Ein
+        Tipp auf einen Eintrag &ouml;ffnet die Person im Stammbaum; auf dem Handy f&uuml;hrt der Pfeil zur&uuml;ck wieder zu
+        den Gedenktagen.</p>
+        <p>Filter &uuml;ber der Liste grenzen ein: der Zeitraum (heute, 7 oder 30 Tage), <b>Lebende</b> oder
+        <b>Verstorbene</b>, <b>Nur runde</b> (10., 25., 50., 100. &hellip;) und ein Stamm. Die App merkt sich die Wahl.</p>
+        <p>Der Schalter <b>Hinweis im Stammbaum</b> (anfangs aus) l&auml;sst an einem Tag mit einem passenden Gedenktag oben
+        in den Karten einen kurzen Hinweis erscheinen. Mit <b>&times;</b> verschwindet er f&uuml;r den Rest des Tages.</p>
+        <p>Es z&auml;hlen nur genaue Daten mit Tag, Monat und Jahr. Viele Programme tragen den 1. Januar ein, wenn nur das
+        Jahr bekannt ist. Darum z&auml;hlt die App wie bei <b>Daten pr&uuml;fen</b>: Steht ein Tag in Ihrer Datei weit
+        h&auml;ufiger, als der Zufall zul&auml;sst, gilt er als blo&szlig;e Jahresangabe und f&auml;llt weg. In einer Datei
+        ohne diese H&auml;ufung z&auml;hlt der 1. Januar wie jeder andere Tag. Der Satz unter der Liste sagt, was f&uuml;r
+        die offene Datei gilt.</p>
+        <p>Als lebend gilt wie in der Statistik, wer ohne Sterbeangabe in den letzten 110 Jahren geboren ist; alle anderen
+        z&auml;hlen zu <b>Verstorbene</b> &ndash; auch l&auml;ngst Geborene, bei denen der Tod nicht eingetragen ist. Der
+        Filter meint nicht die Linie einer bestimmten Person (das kann der Filter <b>Person</b> der Familienkarte).
+        Wer am 29. Februar geboren ist, erscheint in anderen Jahren am 28.</p>
       </section>
       <section class="sec" id="d8k" data-nav="Familienkarte">
         <h4>Familienkarte</h4>
@@ -4546,7 +4630,7 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='4.9';
+var APPVERSION='4.10';
 
 /* ====================================================================
    Welche Kodierung hat die Datei?
@@ -6263,7 +6347,7 @@ document.querySelectorAll('.modal.seite').forEach(function(m){
      bewusst, die Seite hat ihren eigenen Kopf mit dem Pfeil zurueck. Damit
      Hilfe trotzdem da ist, steht rechts ein „?", das gleich das passende
      Kapitel der Anleitung oeffnet. */
-  var thema={mdList:'8a', mdStat:'8s', mdKarte:'8k', mdDupe:'8b', mdPruef:'8c', mdMerge:'8d'}[m.id];
+  var thema={mdList:'8a', mdStat:'8s', mdTage:'8t', mdKarte:'8k', mdDupe:'8b', mdPruef:'8c', mdMerge:'8d'}[m.id];
   if(thema){
     var q=document.createElement('button');
     q.type='button'; q.className='seitehilfe'; q.setAttribute('data-ico','help');
@@ -7037,6 +7121,7 @@ var HILFE_META={
   '6':{g:1, i:'kin',     en:'How two people are related',          de:'Wie zwei Personen verwandt sind', ziel:'rel'},
   '8a':{g:2, i:'list',   en:'Find people and families',            de:'Personen und Familien finden', ziel:'miList'},
   '8s':{g:2, i:'stats',  en:'The family in figures',               de:'Die Familie in Zahlen', ziel:'miStat'},
+  '8t':{g:2, i:'calendar',en:'Birthdays, weddings, days of memory',   de:'Geburtstage, Hochzeiten, Gedenktage', ziel:'miTage'},
   '8k':{g:2, i:'map',    en:'Where the family lived',              de:'Wo die Familie gelebt hat', ziel:'miKarte'},
   '8b':{g:2, i:'dupes',  en:'People entered twice',                de:'Doppelt Erfasste finden', ziel:'miDupe'},
   '8c':{g:2, i:'check',  en:'Find what cannot fit',                de:'Unstimmiges finden', ziel:'miPruef'},
@@ -7239,7 +7324,9 @@ window.SHELL = {
   treeOpen:function(id){ if(treeOpenCb) treeOpenCb(id); else if(treeGoCb) treeGoCb(id); },
   /* 4.9: eine Person ansehen, ohne die Mitte zu wechseln - dieselbe Ansicht von ueberall */
   onPersonZeigen:function(fn){ personZeigenCb=fn; },
-  personZeigen:function(id){ if(personZeigenCb) personZeigenCb(id); },
+  /* zurueck: was der Pfeil bzw. die Zurueck-Taste danach tun soll (4.10: wieder
+     in die Liste) - nur auf dem Handy, wo die Person die Liste verdeckt */
+  personZeigen:function(id, zurueck){ if(personZeigenCb) personZeigenCb(id, zurueck); },
   onRelGo:function(fn){ relGoCb=fn; },
   relGo:function(id){ if(relGoCb) relGoCb(id); },
   uiGet:uiGet, uiSet:uiSet, uiForget:uiForget
@@ -8042,6 +8129,8 @@ function abschnitt(titel, inhalt, cls){
 function kartenMalen(){
   var box=$('trKarten'); if(ansichtLeer(box)) return;
   var f=FOCUS, h='', eltern=FP.parentsOf(f);
+  /* 4.10: Ist heute ein Gedenktag, steht oben ein ruhiger Hinweis */
+  if(window.GEDENK) h+=GEDENK.hinweis();
   h+=abschnitt(L('Parents'), eltern.length ? eltern.map(function(e){ return karte(e); }).join('')
                                             : leerKarte(L('Parents not recorded')), 'zwei');
   h+=karteFokus(f);
@@ -8121,6 +8210,8 @@ document.querySelectorAll('#trAnsicht button').forEach(function(b){
 ['trKarten'].forEach(function(k){
   $(k).addEventListener('click', function(ev){
     if(ev.target.closest('[data-erste]')){ newPerson(); return; }
+    if(ev.target.closest('[data-tage]')){ GEDENK.oeffnen(); return; }
+    if(ev.target.closest('[data-tageweg]')){ GEDENK.ausblenden(); var g=$(k).querySelector('.ghinweis'); if(g) g.remove(); return; }
     var t=ev.target.closest('[data-zu],[data-bearb]'); if(!t) return;
     /* wie das Antippen eines Kastens bis 4.8: erst die Angaben zum Lesen,
        darin „Bearbeiten" */
@@ -8236,7 +8327,10 @@ var trail=[];
 SHELL.onTreeGo(function(id){ setFocus(id); });
 SHELL.onTreeOpen(function(id){ setFocus(id); if(FP.person(id)) setDrawer(true); });
 SHELL.onTab(function(t){ if(t!=='tree') frischAufraeumen(null); });
-SHELL.onPersonZeigen(function(id){ if(!FP.person(id)) return; SEL=id; BEARB=null; openPanel(id); setDrawer(true); });
+SHELL.onPersonZeigen(function(id, zurueck){ if(!FP.person(id)) return; SEL=id; BEARB=null; openPanel(id); setDrawer(true);
+  ZURUECK = (zurueck && isDrawer()) ? zurueck : null; });
+/* Wer den Reiter wechselt, will nicht mehr zurueck in die Liste */
+SHELL.onTab(function(n){ if(n!=='tree') ZURUECK=null; });
 
 function setFocus(id, remember){
   if(!FP.person(id)) return;
@@ -8270,6 +8364,8 @@ function deselectPerson(){
   frischAufraeumen(null);
 }
 var drawerMode=false;
+/* 4.10: Wohin der Pfeil zurueck fuehrt, wenn die Person aus der Liste kam */
+var ZURUECK=null;
 function isDrawer(){
   try{ return window.matchMedia('(max-width:860px)').matches; }catch(e){ return false; }
 }
@@ -8280,11 +8376,15 @@ function setDrawer(open){
      auf der grossen Karte doppelt - dort blendet sie sich dann aus */
   $('panelTree').classList.toggle('seiteOffen', open);
   if(open && !war) $('trSide').scrollTop=0;
-  if(!open) GEZEIGT='';
+  if(!open){ GEZEIGT=''; ZURUECK=null; }
   if(!isDrawer()){ drawerMode=false; return; }
   if(open && !drawerMode){
     drawerMode=true;
-    SHELL.openOverlay('trSide', function(){ drawerMode=false; $('trSide').classList.remove('open'); $('panelTree').classList.remove('seiteOffen'); frischAufraeumen(null); });
+    SHELL.openOverlay('trSide', function(){ drawerMode=false; $('trSide').classList.remove('open'); $('panelTree').classList.remove('seiteOffen'); frischAufraeumen(null);
+      /* Android-Zurueck: aus der Liste gekommen -> wieder in die Liste */
+      /* sofort, nicht verzoegert: so uebernimmt die Liste den frei gewordenen
+         Verlaufseintrag, und das naechste Zurueck stimmt */
+      var z=ZURUECK; ZURUECK=null; if(z) z(); });
   } else if(!open && drawerMode){
     drawerMode=false;
     SHELL.closeOverlay('trSide');
@@ -8296,7 +8396,9 @@ function setDrawer(open){
 $('trDrawerClose').onclick=function(){
   var b=$('trSideBody'), off=$('pEditOff');
   if(off && BEARB && b.getAttribute('data-pid')===BEARB){ off.click(); return; }
-  deselectPerson(); };
+  var z=ZURUECK; ZURUECK=null;
+  deselectPerson();
+  if(z) z(); };
 $('trBtnPanel').onclick=function(){
   var id=(SEL && FP.person(SEL)) ? SEL : FOCUS;
   if(id){ BEARB=id; openPanel(id); }
@@ -12526,7 +12628,14 @@ function tun(was, id, fid){
   if(was==='baum'){ zu(); SHELL.showTab('tree'); SHELL.treeGo(id); }
   /* 4.9h: die Person auch in die Mitte - auf dem PC stehen Stammbaum und
      Personenansicht nebeneinander und muessen dieselbe Person zeigen */
-  else if(was==='zeigen'){ zu(); SHELL.showTab('tree'); SHELL.treeGo(id); SHELL.personZeigen(id); }
+  else if(was==='zeigen'){
+    /* 4.10: Auf dem Handy liegt die Person ueber allem; der Pfeil zurueck
+       fuehrt dann wieder in die Liste - mit derselben Suche an derselben
+       Stelle. Am PC stehen Stammbaum und Person nebeneinander. */
+    var mb=$('mdList').querySelector('.modalbody');
+    var st={ansicht:ANSICHT, gezeigt:GEZEIGT, scroll:mb?mb.scrollTop:0, tab:SHELL.currentTab()};
+    zu(); SHELL.showTab('tree'); SHELL.treeGo(id);
+    SHELL.personZeigen(id, function(){ wiederOeffnen(st); }); }
   else if(was==='tafel'){ zu(); SHELL.showTab('chart'); SHELL.showInChart(id); }
   else if(was==='ahnen'){ zu(); SHELL.showTab('chart'); SHELL.showInAncestors(id); }
   else if(was==='verw'){ zu(); SHELL.showTab('rel'); SHELL.relGo(id); }
@@ -12586,6 +12695,13 @@ function oeffnen(welche, zweck){
   SHELL.openModal('mdList');
 }
 
+function wiederOeffnen(st){
+  if(st.tab && st.tab!=='tree' && st.tab!==SHELL.currentTab()) SHELL.showTab(st.tab);
+  oeffnen(st.ansicht);
+  if(st.gezeigt>GEZEIGT){ GEZEIGT=st.gezeigt; zeichne(); }
+  var mb=$('mdList').querySelector('.modalbody');
+  if(mb){ mb.scrollTop=st.scroll; requestAnimationFrame(function(){ mb.scrollTop=st.scroll; }); }
+}
 function aufsetzen(){
   var mi=$('miList');
   if(mi) mi.onclick=function(){ SHELL.closeDataMenu && SHELL.closeDataMenu(); oeffnen('p'); };
@@ -13884,6 +14000,8 @@ function aufsetzen(){
 
 return {
   REGELN:REGELN, suchen:suchen, anwenden:anwenden, platzText:platzText,
+  /* 4.10: dieselbe Zaehlung fuer die Gedenktage */
+  platzTage:function(){ return platzKombis(FP.indi()); },
   boot:aufsetzen,
   /* nur fuer die Testreihe */
   _tage:tage, _teile:teile, _unscharf:unscharf, _lesbar:lesbar,
@@ -14412,6 +14530,227 @@ return {
    vierter Reiter - man sieht es sich gelegentlich an, man arbeitet
    nicht darin.
    =================================================================== */
+/* ===================================================================
+   GEDENKTAGE (4.10)
+   Wer hat heute oder in den naechsten 30 Tagen Jahrestag? Geburt, Hochzeit
+   und Tod der Vorfahren mit „vor N Jahren", bei Lebenden der Geburtstag
+   („wird N") und der Hochzeitstag. Es zaehlen nur genaue Daten (Tag, Monat,
+   Jahr, ohne „etwa", „vor", „zwischen"). Ein Tag, der in der Datei weit
+   oefter vorkommt als der Zufall zulaesst (meist der 1. Januar, den viele
+   Programme schreiben, wenn nur das Jahr bekannt ist), gilt als Platzhalter
+   und zaehlt nicht - dieselbe Zaehlung wie bei „Daten pruefen". In einer
+   Datei ohne diese Haeufung zaehlt der 1. Januar wie jeder andere Tag.
+   Als lebend gilt wie in der Statistik, wer ohne Sterbeangabe in den letzten
+   110 Jahren geboren ist; alle anderen fallen unter „Verstorbene".
+   =================================================================== */
+var GEDENK=(function(){
+var $=FP.$, esc=FP.esc;
+function de(){ return I18N.lang()==='de'; }
+function T(en,dt){ return de()?dt:en; }
+var MON={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
+var TAGE=30, GRENZE=110, LS_AUS='anceslio.tage.aus', CACHE=null, ZEIGE=100, ALLE=false;
+/* 4.10: Filter, gemerkt fuer die App (nicht je Datei). Der Hinweis im
+   Stammbaum ist anfangs aus - bei einer grossen Familie gibt es fast jeden
+   Tag einen Gedenktag, und der Stammbaum soll ruhig bleiben. */
+var LS_FILTER='anceslio.tage.filter';
+var FI={tage:30, leb:true, vor:true, rund:false, stamm:'', hinweis:false};
+try{ var _fi=JSON.parse(localStorage.getItem(LS_FILTER)||'null'); if(_fi && typeof _fi==='object') for(var _k in FI) if(_k in _fi) FI[_k]=_fi[_k]; }catch(e){}
+function filterMerken(){ try{ localStorage.setItem(LS_FILTER, JSON.stringify(FI)); }catch(e){} }
+function passt(e){
+  var leb=(e.art==='L' || e.art==='H');
+  if(leb && !FI.leb) return false;
+  if(!leb && !FI.vor) return false;
+  if(FI.rund && rund(e.jahre)<1) return false;
+  if(FI.stamm){ var P=FP.indi(); if(!e.ids.some(function(id){ return P[id] && String(P[id].stamm||'').trim()===FI.stamm; })) return false; }
+  if(e.ab>FI.tage) return false;
+  return true;
+}
+function staemme(){
+  var P=FP.indi(), m={}; for(var id in P){ var st=String(P[id].stamm||'').trim(); if(st) m[st]=1; }
+  return Object.keys(m).sort(function(a,b){ return a.localeCompare(b); });
+}
+/* Platzhaltertage dieser Datei (gezaehlt wie bei „Daten pruefen"), neu nach jeder Aenderung */
+var PLATZ=null;
+function platz(){ if(!PLATZ){ try{ PLATZ=PRUEF.platzTage(); }catch(e){ PLATZ={satz:{}, liste:[]}; } } return PLATZ; }
+function genau(ged){
+  var m=/^\s*(\d{1,2})\s+([A-Za-z]{3})\s+(\d{3,4})\s*$/.exec(String(ged||'')); if(!m) return null;
+  var mo=MON[m[2].toUpperCase()]; if(mo==null) return null;
+  var t=+m[1], j=+m[3]; if(t<1 || t>31) return null;
+  if(platz().satz[t+'.'+(mo+1)]) return null;
+  return {t:t, m:mo, j:j};
+}
+function schalt(j){ return (j%4===0 && j%100!==0) || j%400===0; }
+/* Am 29. Februar Geborene feiern in anderen Jahren am 28. */
+function tagIm(jahr, d){
+  var t=d.t; if(d.m===1 && t===29 && !schalt(jahr)) t=28;
+  var x=new Date(jahr, d.m, t); return x.getMonth()===d.m ? x : null;
+}
+function heute0(){ var h=new Date(); return new Date(h.getFullYear(), h.getMonth(), h.getDate()); }
+function schluessel(d){ return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function liste(von, tage){
+  von=von||heute0(); if(tage==null) tage=TAGE;
+  var P=FP.indi(), F=FP.fam(), jetzt=von.getFullYear(), out=[];
+  function lebt(p, g){ return !p.deathDate && !p.dead && g && g.j>=jetzt-GRENZE; }
+  function nimm(d, art, ids){
+    var x=tagIm(jetzt, d); if(!x) return;
+    if(x<von){ x=tagIm(jetzt+1, d); if(!x) return; }
+    var ab=Math.round((x-von)/864e5); if(ab<0 || ab>tage) return;
+    var n=x.getFullYear()-d.j; if(n<=0) return;
+    out.push({art:art, ids:ids, datum:x, ab:ab, jahre:n, jahr:d.j});
+  }
+  for(var id in P){
+    var p=P[id], g=genau(p.birthDate), t=genau(p.deathDate);
+    if(g) nimm(g, lebt(p,g)?'L':'B', [id]);
+    if(t) nimm(t, 'D', [id]);
+  }
+  for(var fid in F){
+    var f=F[fid], h=genau(f.marrDate); if(!h) continue;
+    var ids=[f.husb, f.wife].filter(function(x){ return x && P[x]; }); if(!ids.length) continue;
+    var beide=ids.every(function(x){ return lebt(P[x], genau(P[x].birthDate)); });
+    nimm(h, beide?'H':'M', ids);
+  }
+  out.sort(function(a,b){ return a.ab-b.ab || rund(b.jahre)-rund(a.jahre) || a.jahr-b.jahr; });
+  return out;
+}
+/* runde Jahrestage zuerst */
+function rund(n){ return n%100===0 ? 3 : (n%50===0 ? 2 : (n%25===0 || n%10===0 ? 1 : 0)); }
+function heute(){
+  var k=schluessel(heute0());
+  if(!CACHE || CACHE.k!==k) CACHE={k:k, l:liste(heute0(), 0)};
+  return CACHE.l;
+}
+function nm(id){ return FP.fullName(FP.person(id)); }
+function namen(e){ return e.ids.map(nm).join(T(' and ',' und ')); }
+/* was fuer ein Tag: kurze Zeile unter dem Namen */
+function zeile(e){
+  var n=e.jahre;
+  if(e.art==='L') return T('Birthday · turns '+n, 'Geburtstag · wird '+n);
+  if(e.art==='H') return T(n+(n===1?' year':' years')+' married', n+'. Hochzeitstag');
+  var was={B:T('Born','Geburt'), M:T('Wedding','Hochzeit'), D:T('Died','Todestag')}[e.art];
+  return was+' · '+T(n+(n===1?' year ago':' years ago'), 'vor '+n+(n===1?' Jahr':' Jahren'));
+}
+/* der Satz fuer den Hinweis in den Karten */
+function satz(e){
+  var n=e.jahre, a='<b>'+esc(namen(e))+'</b>';
+  if(e.art==='L') return T('It is '+a+'’s birthday today – turning '+n+'.', a+' hat heute Geburtstag und wird '+n+'.');
+  if(e.art==='H') return T(a+' were married '+n+' years ago today.', a+' feiern heute den '+n+'. Hochzeitstag.');
+  var vor=T(n+(n===1?' year':' years')+' ago today', 'Heute vor '+n+(n===1?' Jahr':' Jahren'));
+  if(e.art==='B') return T(vor+', '+a+' was born.', vor+' wurde '+a+' geboren.');
+  if(e.art==='D') return T(vor+', '+a+' died.', vor+' starb '+a+'.');
+  return T(vor+', '+a+' were married.', vor+' heirateten '+a+'.');
+}
+function aus(){ try{ return localStorage.getItem(LS_AUS)===schluessel(heute0()); }catch(e){ return false; } }
+function ausblenden(){ try{ localStorage.setItem(LS_AUS, schluessel(heute0())); }catch(e){} }
+/* Hinweis oben in den Karten - nur wenn heute etwas ist und er nicht weggetippt wurde */
+function hinweis(){
+  if(!FI.hinweis || aus() || !FP.hasData()) return '';
+  var l=heute().filter(passt); if(!l.length) return '';
+  var mehr=l.length-1;
+  return '<div class="ghinweis" role="note"><span class="gic" data-ico="calendar" aria-hidden="true"></span>'+
+    '<span class="gtx">'+satz(l[0])+(mehr ? ' <small>'+T('and '+mehr+' more','und '+mehr+' weitere')+'</small>' : '')+'</span>'+
+    '<span class="gknoepfe"><button type="button" class="btn" data-tage="1">'+esc(T('Anniversaries','Gedenktage'))+' ›</button>'+
+    '<button type="button" class="gweg" data-tageweg="1" title="'+esc(T('Hide for today','Für heute ausblenden'))+'" aria-label="'+
+    esc(T('Hide for today','Für heute ausblenden'))+'" data-ico="close"></button></span></div>';
+}
+function datumKurz(d){
+  try{ return d.toLocaleDateString(de()?'de-DE':'en-GB', {day:'numeric', month:'short'}); }catch(e){ return d.getDate()+'.'+(d.getMonth()+1)+'.'; }
+}
+function eintrag(e){
+  var r=rund(e.jahre);
+  return '<button type="button" class="pk zeile gtag" data-zeig="'+esc(e.ids[0])+'">'+
+    '<span class="gdat">'+esc(datumKurz(e.datum))+'</span>'+
+    '<span class="gtx"><b>'+esc(namen(e))+'</b><small>'+esc(zeile(e))+'</small></span>'+
+    (r>=1 && e.art!=='L' && e.art!=='H' ? '<span class="pkb">'+e.jahre+T(' years',' Jahre')+'</span>' : '')+'</button>';
+}
+function zeichnen(){
+  var alle=liste(), l=alle.filter(passt), h=[], heuteL=l.filter(function(e){ return e.ab===0; }), bald=l.filter(function(e){ return e.ab>0; });
+  h.push('<p class="wlead">'+esc(T('Birthdays and wedding anniversaries of the living, and the days on which the deceased were born, married or died.',
+    'Geburtstage und Hochzeitstage der Lebenden, dazu die Tage, an denen Verstorbene geboren wurden, geheiratet haben oder gestorben sind.'))+'</p>');
+  /* Filter: Zeitraum, wer, nur runde, Stamm */
+  var st=staemme();
+  function chip(k, txt){ return '<button type="button" class="kchip'+(FI[k]?' on':'')+'" data-fi="'+k+'" aria-pressed="'+(FI[k]?'true':'false')+'">'+esc(txt)+'</button>'; }
+  h.push('<div class="tfilter">'+
+    '<div class="segw" role="group" aria-label="'+esc(T('Period','Zeitraum'))+'">'+
+      [[0,T('Today','Heute')],[7,T('7 days','7 Tage')],[30,T('30 days','30 Tage')]].map(function(z){
+        return '<button type="button" data-fitage="'+z[0]+'" class="'+(FI.tage===z[0]?'on':'')+'" aria-pressed="'+(FI.tage===z[0]?'true':'false')+'">'+esc(z[1])+'</button>'; }).join('')+
+    '</div>'+
+    chip('leb', T('The living','Lebende'))+chip('vor', T('The deceased','Verstorbene'))+chip('rund', T('Round only','Nur runde'))+
+    (st.length ? '<select id="tageStamm" aria-label="'+esc(T('Lineage','Stamm'))+'"><option value="">'+esc(T('All lineages','Alle Stämme'))+'</option>'+
+      st.map(function(x){ return '<option'+(x===FI.stamm?' selected':'')+'>'+esc(x)+'</option>'; }).join('')+'</select>' : '')+
+    '</div>');
+  h.push('<section class="ksec"><h2>'+esc(T('Today','Heute'))+' · '+esc(datumKurz(heute0()))+'</h2><div class="kl">'+
+    (heuteL.length ? heuteL.map(eintrag).join('') : '<div class="pk leer"><span class="pkn">'+esc(T('No anniversary today.','Heute kein Gedenktag.'))+'</span></div>')+'</div></section>');
+  if(FI.tage>0){
+    /* Grosse Dateien haben in 30 Tagen leicht tausend Jahrestage - erst die
+       naechsten 100, der Rest auf Wunsch */
+    var zeig=ALLE ? bald : bald.slice(0, ZEIGE);
+    h.push('<section class="ksec"><h2>'+esc(T('The next '+FI.tage+' days','Die nächsten '+FI.tage+' Tage'))+'</h2><div class="kl">'+
+      (bald.length ? zeig.map(eintrag).join('') : '<div class="pk leer"><span class="pkn">'+esc(T('Nothing in this period.','In diesem Zeitraum nichts.'))+'</span></div>')+'</div>'+
+      (zeig.length<bald.length ? '<button type="button" class="btn" id="tageAlle">'+esc(T('Show all '+bald.length,'Alle '+bald.length+' zeigen'))+'</button>' : '')+'</section>');
+  }
+  /* Hinweis im Stammbaum: anfangs aus */
+  h.push('<label class="schalter tschalter"><input type="checkbox" id="tageHinweis"'+(FI.hinweis?' checked':'')+'><span class="st"><b>'+
+    esc(T('Note in the tree','Hinweis im Stammbaum'))+'</b><small>'+
+    esc(T('On a day with an anniversary that matches these filters, a short note appears above the cards.',
+          'An einem Tag mit einem Gedenktag, der zu diesen Filtern passt, steht oben in den Karten ein kurzer Hinweis.'))+'</small></span></label>');
+  h.push('<p class="wruhe"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.5"/></svg><span>'+
+    esc(regelText())+'</span></p>');
+  $('tageBody').innerHTML=h.join('');
+}
+/* Der Satz unter der Liste: welche Daten zaehlen - je nach Datei */
+var MN_DE=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+    MN_EN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function regelText(){
+  var l=platz().liste;
+  if(!l.length) return T('All exact dates with day, month and year count – 1 January too, because in this file it does not appear unusually often.',
+                        'Es zählen alle genauen Daten mit Tag, Monat und Jahr – auch der 1. Januar, denn in dieser Datei kommt er nicht gehäuft vor.');
+  var en=l.map(function(q){ var tm=q.tag.split('.'); return tm[0]+' '+MN_EN[tm[1]-1]+' ('+q.n+' times)'; }).join(', '),
+      dt=l.map(function(q){ var tm=q.tag.split('.'); return tm[0]+'. '+MN_DE[tm[1]-1]+' ('+q.n.toLocaleString('de-DE')+'-mal)'; }).join(', ');
+  var erw=Math.max(1, l[0].erwartet);
+  return T('Only exact dates count. In this file '+en+' appears far more often than chance allows (about '+erw+
+           ' would be expected) – the mark of a placeholder for a known year. As in “Check data”, such a date counts as a bare year and is left out here.',
+           'Es zählen nur genaue Daten. In dieser Datei steht der '+dt+' weit häufiger, als der Zufall zulässt (zu erwarten wären etwa '+erw+
+           ') – so sieht ein Platzhalter für ein bekanntes Jahr aus. Wie bei „Daten prüfen“ gilt ein solches Datum als bloße Jahresangabe und fehlt hier.');
+}
+function neuZeichnen(){ var mb=$('mdTage').querySelector('.modalbody'), y=mb?mb.scrollTop:0; ALLE=false; zeichnen(); if(mb) mb.scrollTop=y; }
+function oeffnen(){
+  SHELL.closeDataMenu && SHELL.closeDataMenu();
+  if(!FP.hasData() || !FP.count()){ SHELL.toast(T('Open a file first.','Erst eine Datei öffnen.')); return; }
+  ALLE=false; zeichnen();
+  SHELL.openModal('mdTage');
+}
+function aufsetzen(){
+  $('miTage').onclick=oeffnen;
+  $('tageClose').onclick=function(){ SHELL.closeModal('mdTage'); };
+  FP.on(function(){ CACHE=null; PLATZ=null; });
+  /* Ein Tipp fuehrt zur Person; auf dem Handy bringt der Pfeil zurueck hierher */
+  $('tageBody').addEventListener('change', function(ev){
+    if(ev.target.id==='tageStamm'){ FI.stamm=ev.target.value; filterMerken(); neuZeichnen(); }
+    else if(ev.target.id==='tageHinweis'){ FI.hinweis=ev.target.checked; filterMerken(); try{ FP.rerender(); }catch(e){} }
+  });
+  $('tageBody').addEventListener('click', function(ev){
+    var fb=ev.target.closest('[data-fi]');
+    if(fb){ var k=fb.getAttribute('data-fi'); FI[k]=!FI[k];
+      /* mindestens eine Gruppe bleibt an */
+      if(!FI.leb && !FI.vor){ if(k==='leb') FI.vor=true; else FI.leb=true; }
+      filterMerken(); neuZeichnen(); return; }
+    var ft=ev.target.closest('[data-fitage]');
+    if(ft){ FI.tage=+ft.getAttribute('data-fitage'); filterMerken(); neuZeichnen(); return; }
+    if(ev.target.closest('#tageAlle')){ var mb0=$('mdTage').querySelector('.modalbody'), y=mb0.scrollTop; ALLE=true; zeichnen(); mb0.scrollTop=y; return; }
+    var b=ev.target.closest('[data-zeig]'); if(!b) return;
+    var id=b.getAttribute('data-zeig'); if(!FP.person(id)) return;
+    var mb=$('mdTage').querySelector('.modalbody'), st={scroll:mb?mb.scrollTop:0, tab:SHELL.currentTab()};
+    SHELL.closeModal('mdTage'); SHELL.showTab('tree'); SHELL.treeGo(id);
+    SHELL.personZeigen(id, function(){
+      if(st.tab && st.tab!=='tree' && st.tab!==SHELL.currentTab()) SHELL.showTab(st.tab);
+      var alle=ALLE; oeffnen(); if(alle){ ALLE=true; zeichnen(); }
+      var m=$('mdTage').querySelector('.modalbody'); if(m) m.scrollTop=st.scroll; });
+  });
+}
+return { boot:aufsetzen, oeffnen:oeffnen, liste:liste, heute:heute, hinweis:hinweis, ausblenden:ausblenden, _genau:genau, _regel:regelText,
+  filter:function(){ return JSON.parse(JSON.stringify(FI)); } };
+})();
+
 var STAT=(function(){
 var $=FP.$, esc=FP.esc;
 function de(){ return I18N.lang()==='de'; }
@@ -15190,6 +15529,7 @@ DUPE.boot();
 PRUEF.boot();
 LISTE.boot();
 STAT.boot();
+GEDENK.boot();
 KARTE.boot();
 ABGLEICH.boot();
 SHELL.boot();
