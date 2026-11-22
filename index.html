@@ -912,7 +912,10 @@ body.fullscreen #fullExit{display:flex}
    stay black on white for every export. Only the screen gets a dark version. */
 :root[data-theme="dark"] #stageWrap{background:#181511}
 :root[data-theme="dark"] #stage rect.pbox{fill:#231f19; stroke:#7d8a85}
-:root[data-theme="dark"] #stage rect.pbox.fb{fill:var(--fd)}
+:root[data-theme="dark"] #stage rect.pbox.fb{fill:var(--f); stroke:#9a917f}
+:root[data-theme="dark"] #stage text.fbt{fill:#1d1a16}
+.schalter .st .ortehinweis{display:block; font-style:normal; font-size:12.5px; line-height:1.35; color:var(--warn); margin-top:3px}
+.schalter .st .ortehinweis[hidden]{display:none}
 :root[data-theme="dark"] #stage .legende rect{stroke:#7d8a85}
 :root[data-theme="dark"] #stage line{stroke:#7d8a85}
 :root[data-theme="dark"] #stage text{fill:#efe8dc}
@@ -2355,7 +2358,7 @@ svg.logo{display:inline-block; flex:0 0 auto; vertical-align:middle}
           </select>
           </label>
         </div>
-        <label class="schalter"><input type="checkbox" id="optOrte"><span class="st"><b><span data-lang="en">Places</span><span data-lang="de">Orte</span></b><small><span data-lang="en">place of birth and death after the date</span><span data-lang="de">Geburts- und Sterbeort hinter dem Datum</span></small></span></label>
+        <label class="schalter"><input type="checkbox" id="optOrte"><span class="st"><b><span data-lang="en">Places</span><span data-lang="de">Orte</span></b><small><span data-lang="en">place of birth and death after the date</span><span data-lang="de">Geburts- und Sterbeort hinter dem Datum</span></small><em class="ortehinweis" id="orteHinweis" hidden></em></span></label>
         <label class="schalter"><input type="checkbox" id="optBeruf"><span class="st"><b><span data-lang="en">Occupation</span><span data-lang="de">Beruf</span></b><small><span data-lang="en">one more line in every box</span><span data-lang="de">eine Zeile mehr in jedem Kasten</span></small></span></label>
         <label class="schalter"><input type="checkbox" id="optFirstName" checked><span class="st"><b><span data-lang="en">First given name only</span><span data-lang="de">Nur erster Vorname</span></b><small><span data-lang="en">Titles such as “Dr.” stay</span><span data-lang="de">Titel wie „Dr.“ bleiben stehen</span></small></span></label>
         <label class="schalter nurNach"><input type="checkbox" id="optAgeSort" checked><span class="st"><b><span data-lang="en">Children by age</span><span data-lang="de">Kinder nach Alter</span></b><small><span data-lang="en">otherwise in the order of the file</span><span data-lang="de">sonst in der Reihenfolge der Datei</span></small></span></label>
@@ -3744,8 +3747,9 @@ window.I18N={
           <li>Adjust the <b>presentation</b>: box width, text size, &bdquo;first given name only&ldquo; and
           &bdquo;children by age&ldquo;. <b>Colour</b>: black and white, by sex or by lineage (the eight largest lineages get
           their own colour, a legend below the chart explains them; PDF, SVG and PNG are in colour too). <b>Dates</b> in full
-          or years only, <b>Places</b> of birth and death after the date, <b>Occupation</b> as an extra line. A date you
-          overwrote by hand stays as you wrote it. The <b><span data-ico="layout" aria-hidden="true"></span> Print preset (A3)</b> button sets the compact, highly
+          or years only, <b>Places</b> of birth and death after the date, <b>Occupation</b> as an extra line (if nobody in the
+          chart has a place recorded, a note under the switch says so). A date you overwrote by hand stays as you wrote it.
+          In the dark view coloured boxes stay light, as on paper. The <b><span data-ico="layout" aria-hidden="true"></span> Print preset (A3)</b> button sets the compact, highly
           legible combination in one go.</li>
           <li><b>Export</b> as <b>PDF</b> (page size selectable, &bdquo;Auto&ldquo; picks the best fit), as
           <b>SVG</b> for further work in a graphics program, or as <b>PNG</b> for quick sharing.</li>
@@ -4273,8 +4277,9 @@ window.I18N={
           und &bdquo;Kinder nach Alter&ldquo;. <b>Farbe</b>: schwarz-wei&szlig;, nach Geschlecht oder nach Stamm (die acht
           gr&ouml;&szlig;ten St&auml;mme bekommen eine eigene Farbe, eine Legende unter der Tafel erkl&auml;rt sie; auch PDF, SVG
           und PNG sind dann farbig). <b>Lebensdaten</b> ausf&uuml;hrlich oder nur Jahre, <b>Orte</b> von Geburt und Tod
-          hinter dem Datum, <b>Beruf</b> als eigene Zeile. Ein von Hand &uuml;berschriebenes Datum bleibt, wie Sie es
-          eingetragen haben. Die Schaltfl&auml;che <b><span data-ico="layout" aria-hidden="true"></span> Druckvorlage (A3)</b> setzt die
+          hinter dem Datum, <b>Beruf</b> als eigene Zeile (ist bei niemandem in der Tafel ein Ort eingetragen,
+          sagt das ein Hinweis unter dem Schalter). Ein von Hand &uuml;berschriebenes Datum bleibt, wie Sie es
+          eingetragen haben. In der dunklen Ansicht bleiben farbige K&auml;sten hell wie auf Papier. Die Schaltfl&auml;che <b><span data-ico="layout" aria-hidden="true"></span> Druckvorlage (A3)</b> setzt die
           kompakte, gut lesbare Kombination in einem Zug.</li>
           <li><b>Exportieren</b> als <b>PDF</b> (Seitengr&ouml;&szlig;e w&auml;hlbar, &bdquo;Automatisch&ldquo; sucht
           die beste Passung), als <b>SVG</b> zur Weiterarbeit in einem Grafikprogramm oder als <b>PNG</b> zum schnellen
@@ -9427,16 +9432,13 @@ function datumText(v){
   return String(j);
 }
 function ortKurz(v){ return String(v||'').split(',')[0].trim(); }
-/* Farbe eines Kastens: null = weiss. f fuer Papier, fd fuer die dunkle Ansicht */
+/* Farbe eines Kastens: null = weiss. Auch in der dunklen Ansicht bleiben farbige
+   Kaesten hell wie auf Papier, mit dunkler Schrift - abgedunkelte Toene waren auf
+   dem dunklen Grund kaum zu unterscheiden. */
 var STAMM_FARBEN=['#f6e3c3','#d9ead3','#d6e4f0','#f2d7d5','#e5dbef','#fbefc4','#d5ece9','#ead9c8'];
-var STAMM_RANG={}, FARB_GENUTZT={};
-function dunkel(hex){
-  var a=parseInt(hex.slice(1),16), b=0x231f19, k=0.68;
-  function m(sh){ return Math.round(((a>>sh)&255)*(1-k)+((b>>sh)&255)*k); }
-  return '#'+((1<<24)+(m(16)<<16)+(m(8)<<8)+m(0)).toString(16).slice(1);
-}
+var STAMM_RANG={}, FARB_GENUTZT={}, ORT_N=0;
 function stammRang(){
-  STAMM_RANG={}; FARB_GENUTZT={};
+  STAMM_RANG={}; FARB_GENUTZT={}; ORT_N=0;
   if(FARBE!=='stamm') return;
   var n={}; for(var id in DB.indi){ var st=String(DB.indi[id].stamm||'').trim(); if(st) n[st]=(n[st]||0)+1; }
   Object.keys(n).sort(function(a,b){ return n[b]-n[a] || a.localeCompare(b); })
@@ -9476,13 +9478,14 @@ function personLines(id, ovr){
   else if(p.deathDate) death='+'+datumText(p.deathDate);
   else if(p.dead) death='+';
   else death='';
+  var ortDa=false;
   /* 4.11: Orte hinter dem Datum - nur an selbst gerechneten Zeilen, ein
      von Hand ueberschriebener Text bleibt genau so, wie er eingetragen ist */
   if(ORTE && rec){
-    if(!(ovr.birth!=null&&ovr.birth!=='') && ortKurz(p.birthPlace)) birth=(birth||'*')+' '+ortKurz(p.birthPlace);
-    if(!(ovr.death!=null&&ovr.death!=='') && ortKurz(p.deathPlace)) death=(death||'+')+' '+ortKurz(p.deathPlace);
+    if(!(ovr.birth!=null&&ovr.birth!=='') && ortKurz(p.birthPlace)){ birth=(birth||'*')+' '+ortKurz(p.birthPlace); ortDa=true; }
+    if(!(ovr.death!=null&&ovr.death!=='') && ortKurz(p.deathPlace)){ death=(death||'+')+' '+ortKurz(p.deathPlace); ortDa=true; }
   }
-  return {surname:surname, given:given, birth:birth, death:death, code:(ovr.code||''),
+  return {ortDa:ortDa, surname:surname, given:given, birth:birth, death:death, code:(ovr.code||''),
           occ:(BERUF && rec ? String(p.occ||'').trim() : ''), id:(rec?id:null)};
 }
 
@@ -9773,12 +9776,13 @@ function drawPersonBox(g, x, ytop, lines, w){
   if(!lines) return;
   var fb=farbeVon(lines.id), ra={x:x, y:ytop, width:(w||BOX_W), height:BOX_H, fill:fb||'#fff', stroke:'#000',
              'stroke-width':0.7, 'class':fb?'pbox fb':'pbox'};
-  if(fb) ra.style='--f:'+fb+';--fd:'+dunkel(fb);
+  if(fb) ra.style='--f:'+fb;
   el('rect',ra, g);
-  var tx=x+5, ty=ytop+FONT_SZ+2.4, mw=(w||BOX_W)-10;
+  if(lines.ortDa) ORT_N++;
+  var tx=x+5, ty=ytop+FONT_SZ+2.4, mw=(w||BOX_W)-10, to=fb?{'class':'fbt'}:null;
   [lines.surname,lines.given,ORTE?kuerzen(lines.birth,mw):lines.birth,ORTE?kuerzen(lines.death,mw):lines.death].concat(BERUF?[kuerzen(lines.occ,mw)]:[]).forEach(function(ln){
-    if(ln) txt(tx,ty,ln,FONT_SZ,g); ty+=LINE_H; });
-  if(lines.code) txt(tx, ytop+BOX_H-4, lines.code, FONT_SZ*0.86, g);
+    if(ln) txt(tx,ty,ln,FONT_SZ,g,to); ty+=LINE_H; });
+  if(lines.code) txt(tx, ytop+BOX_H-4, lines.code, FONT_SZ*0.86, g, to);
 }
 function drawRefBox(g,x,ytop,lines,w){
   var W=w||REF_W;
@@ -9960,6 +9964,15 @@ function setzeGens(n){
   needFit=true; safeRender(); fitZoom();
 }
 /* 4.11: Bei farbigen Kästen steht unter der Tafel, was die Farben bedeuten */
+/* 4.11: Ist „Orte“ an, aber bei niemandem in der Tafel ein Ort eingetragen, sagt
+   die App das - sonst sieht es aus, als taete der Schalter nichts. */
+function orteHinweis(){
+  var h=$('orteHinweis'); if(!h) return false;
+  var leer = ORTE && !!CUR_W && ORT_N===0;
+  h.hidden=!leer;
+  h.textContent = leer ? TT('Nobody in this chart has a place of birth or death recorded.','In dieser Tafel ist bei niemandem ein Geburts- oder Sterbeort eingetragen.') : '';
+  return leer;
+}
 function legende(svg){
   var ks=Object.keys(FARB_GENUTZT).sort();
   if(FARBE==='sw' || !ks.length || !CUR_W) return;
@@ -9985,7 +9998,7 @@ function render(){
     svg.style.width=svg.style.height=''; svg.style.margin='0';
     var sw=$('stageWrap'); if(sw){ sw.scrollLeft=0; sw.scrollTop=0; }
     if(hint) hint.style.display = Object.keys(DB.indi||{}).length ? 'block' : 'none';
-    zeigeGenWahl();
+    zeigeGenWahl(); orteHinweis();
     return;
   }
   if(hint) hint.style.display='none';
@@ -10012,7 +10025,7 @@ function render(){
   svg.setAttribute('width',W); svg.setAttribute('height',H);
   svg.setAttribute('viewBox','0 0 '+W+' '+H);
   drawTree(root, svg, W, titleCx);
-  legende(svg);
+  legende(svg); orteHinweis();
   applyZoom();
 }
 
@@ -10139,7 +10152,7 @@ function renderAhnen(svg){
     var y0=H-MARGIN-(tl.length-1)*TITLE_LH;
     tl.forEach(function(ln,i){ txt(W-MARGIN, y0+i*TITLE_LH, ln, TITLE_FS, svg, {'text-anchor':'end','font-weight':'bold'}); });
   }
-  legende(svg);
+  legende(svg); orteHinweis();
   applyZoom();
 }
 /* Umschalten zwischen den beiden Tafeln */
@@ -10818,7 +10831,8 @@ function darstellungSetzen(v){
 }
 $('optFarbe').onchange=function(e){ FARBE=e.target.value; safeRender(); };
 $('optDatum').onchange=function(e){ DATUM=e.target.value; safeRender(); };
-$('optOrte').onchange=function(e){ ORTE=e.target.checked; safeRender(); };
+$('optOrte').onchange=function(e){ ORTE=e.target.checked; safeRender();
+  if(orteHinweis()) SHELL.toast(TT('No places in this chart – nobody shown has a place of birth or death recorded.','Keine Orte in dieser Tafel – bei den gezeigten Personen ist kein Geburts- oder Sterbeort eingetragen.')); };
 $('optBeruf').onchange=function(e){ BERUF=e.target.checked; applyMetrics(); safeRender(); };
 $('optAgeSort').onchange=function(){ if(SELECTED) openPanel(SELECTED); safeRender(); };
 
