@@ -506,6 +506,23 @@ body.startet #startbild{display:flex; position:fixed; inset:0; z-index:999; flex
 .strow.ohne:hover{background:none}
 .strow.ohne b{color:var(--muted)}
 #statAlle{margin-top:12px}
+.modalbox .sth3,.modalbox .stteil h3{margin:16px 0 2px; padding:0; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.04em}
+@media(min-width:561px){.sttiles.drei{grid-template-columns:repeat(3,1fr)}}
+.stzwei{display:grid; grid-template-columns:1fr 1fr; column-gap:22px}
+@media(max-width:560px){.stzwei{grid-template-columns:1fr}}
+.strow.stp .stn small{display:block; font-size:12.5px; color:var(--muted); margin-top:2px}
+.strow.stp{grid-template-columns:1fr auto}
+.stmon{display:grid; grid-template-columns:repeat(12,1fr); gap:4px; align-items:end; margin:12px 0 4px}
+.stms{display:flex; flex-direction:column; align-items:center; gap:4px; background:none; border:none; padding:4px 0;
+  font:inherit; color:var(--ink); cursor:pointer; border-radius:8px; min-width:0}
+.stms:hover{background:var(--hl)}
+.stms b{font-size:11px; font-weight:600; color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+.stmb{display:flex; align-items:flex-end; width:70%; max-width:26px; height:90px; background:var(--line); border-radius:4px; overflow:hidden}
+.stmb span{display:block; width:100%; background:var(--gold)}
+.stms small{font-size:11.5px; color:var(--muted)}
+.listausw{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  margin:0 0 10px; padding:8px 10px 8px 12px; background:var(--hl); border-radius:10px; font-size:14px}
+.listausw[hidden]{display:none}
 
 /* ---------- Familienkarte (4.7) ----------
    Ein großes Fenster; auf dem Handy der ganze Bildschirm. Oben die Filter,
@@ -895,6 +912,8 @@ body.fullscreen #fullExit{display:flex}
    stay black on white for every export. Only the screen gets a dark version. */
 :root[data-theme="dark"] #stageWrap{background:#181511}
 :root[data-theme="dark"] #stage rect.pbox{fill:#231f19; stroke:#7d8a85}
+:root[data-theme="dark"] #stage rect.pbox.fb{fill:var(--fd)}
+:root[data-theme="dark"] #stage .legende rect{stroke:#7d8a85}
 :root[data-theme="dark"] #stage line{stroke:#7d8a85}
 :root[data-theme="dark"] #stage text{fill:#efe8dc}
 :root[data-theme="dark"] #stage .unit.sel rect.pbox{stroke:var(--gold); stroke-width:1.8}
@@ -1282,6 +1301,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   #main,#trMain{display:block !important; height:auto !important}
   #stageWrap{background:#fff !important}
   #stage rect.pbox{fill:#fff !important; stroke:#000 !important}
+  #stage rect.pbox.fb{fill:var(--f) !important}
   #stage line{stroke:#000 !important}
   #stage text{fill:#000 !important}
   #stageWrap,#trStageWrap{position:static !important; overflow:visible !important; height:auto !important}
@@ -2319,6 +2339,24 @@ svg.logo{display:inline-block; flex:0 0 auto; vertical-align:middle}
           </select>
           </label>
         </div>
+        <!-- 4.11: Farbe, Lebensdaten, Orte und Beruf -->
+        <div class="zweispalt">
+          <label class="feld"><span data-i18n="Colour">Colour</span>
+            <select id="optFarbe" aria-label="Colour">
+            <option value="sw" selected data-i18n="black and white">black and white</option>
+            <option value="geschlecht" data-i18n="by sex">by sex</option>
+            <option value="stamm" data-i18n="by lineage">by lineage</option>
+          </select>
+          </label>
+          <label class="feld"><span data-i18n="Dates">Dates</span>
+            <select id="optDatum" aria-label="Dates">
+            <option value="voll" selected data-i18n="in full">in full</option>
+            <option value="jahre" data-i18n="years only">years only</option>
+          </select>
+          </label>
+        </div>
+        <label class="schalter"><input type="checkbox" id="optOrte"><span class="st"><b><span data-lang="en">Places</span><span data-lang="de">Orte</span></b><small><span data-lang="en">place of birth and death after the date</span><span data-lang="de">Geburts- und Sterbeort hinter dem Datum</span></small></span></label>
+        <label class="schalter"><input type="checkbox" id="optBeruf"><span class="st"><b><span data-lang="en">Occupation</span><span data-lang="de">Beruf</span></b><small><span data-lang="en">one more line in every box</span><span data-lang="de">eine Zeile mehr in jedem Kasten</span></small></span></label>
         <label class="schalter"><input type="checkbox" id="optFirstName" checked><span class="st"><b><span data-lang="en">First given name only</span><span data-lang="de">Nur erster Vorname</span></b><small><span data-lang="en">Titles such as “Dr.” stay</span><span data-lang="de">Titel wie „Dr.“ bleiben stehen</span></small></span></label>
         <label class="schalter nurNach"><input type="checkbox" id="optAgeSort" checked><span class="st"><b><span data-lang="en">Children by age</span><span data-lang="de">Kinder nach Alter</span></b><small><span data-lang="en">otherwise in the order of the file</span><span data-lang="de">sonst in der Reihenfolge der Datei</span></small></span></label>
         <label class="schalter nurAhnen"><input type="checkbox" id="optKekule" checked><span class="st"><b><span data-lang="en">Ancestor numbers</span><span data-lang="de">Ahnennummern</span></b><small><span data-lang="en">1 starting person, 2 father, 3 mother …</span><span data-lang="de">1 Ausgangsperson, 2 Vater, 3 Mutter …</span></small></span></label>
@@ -2706,6 +2744,7 @@ svg.logo{display:inline-block; flex:0 0 auto; vertical-align:middle}
     <h3><span class="listTitel"><span data-lang="en">People and families</span><span data-lang="de">Personen und Familien</span></span><span class="wahlTitel" data-i18n="Find a person">Find a person</span></h3>
     <div class="modalbody" id="listBody">
       <p id="listWahl" class="listwahl"></p>
+      <p id="listAusw" class="listausw" hidden></p>
       <div class="dupetabs">
         <button class="btn small on" id="listTabP"></button>
         <button class="btn small" id="listTabF"></button>
@@ -3265,6 +3304,8 @@ var DE = {
 'Save SVG':'SVG speichern','Save PNG':'PNG speichern',
 '💾 Save project':'💾 Projekt speichern','Open project':'Projekt öffnen',
 'First given name only':'Nur erster Vorname',
+'Colour':'Farbe','black and white':'schwarz-weiß','by sex':'nach Geschlecht','by lineage':'nach Stamm',
+'Dates':'Lebensdaten','in full':'ausführlich','years only':'nur Jahre',
 'Children by age':'Kinder nach Alter',
 'Boxes:':'Kästen:','Text:':'Text:',
 'Box width':'Kastenbreite',
@@ -3701,7 +3742,10 @@ window.I18N={
           <b>all generations</b> gives you the complete chart at any time. The choice is remembered per root person
           and travels with the project file.</li>
           <li>Adjust the <b>presentation</b>: box width, text size, &bdquo;first given name only&ldquo; and
-          &bdquo;children by age&ldquo;. The <b><span data-ico="layout" aria-hidden="true"></span> Print preset (A3)</b> button sets the compact, highly
+          &bdquo;children by age&ldquo;. <b>Colour</b>: black and white, by sex or by lineage (the eight largest lineages get
+          their own colour, a legend below the chart explains them; PDF, SVG and PNG are in colour too). <b>Dates</b> in full
+          or years only, <b>Places</b> of birth and death after the date, <b>Occupation</b> as an extra line. A date you
+          overwrote by hand stays as you wrote it. The <b><span data-ico="layout" aria-hidden="true"></span> Print preset (A3)</b> button sets the compact, highly
           legible combination in one go.</li>
           <li><b>Export</b> as <b>PDF</b> (page size selectable, &bdquo;Auto&ldquo; picks the best fit), as
           <b>SVG</b> for further work in a graphics program, or as <b>PNG</b> for quick sharing.</li>
@@ -3776,6 +3820,14 @@ window.I18N={
         holds, how many generations the longest line spans, and the range of years of birth. Below that you see
         how many people are living and deceased, men and women, and how many belong to each lineage. Tap a
         lineage and the list opens with just its people.</p>
+        <p>Further down: the <b>lifespan</b> (on average, for those who reached 18, the oldest), <b>families and
+        marriage</b> (children per family, the largest family, age at first marriage of men and women), <b>births</b>
+        per century (or per decade for a shorter span) and by month, and the most common <b>first names</b>,
+        <b>surnames</b> and <b>places</b>. Tap a row and the list shows exactly those people, with a line saying where
+        they come from; <b>Clear selection</b> shows everyone again. A person in the oldest opens in the tree.</p>
+        <p>Ages are counted from the years of birth and death, to the day where both dates are exact; &bdquo;before&ldquo;,
+        &bdquo;after&ldquo; and &bdquo;between&ldquo; do not count. Days that the file uses as a placeholder for a bare year
+        (as in <b>Check data</b>, usually 1 January) count as a year only and are left out of the months.</p>
         <p>Counted as living is anyone without a death entry who was born within the last 110 years. Whoever is
         older and has no death entry is counted as <b>not known</b> &ndash; an ancestor born in 1748 is not alive,
         even if the file does not say when he died.</p>
@@ -4218,7 +4270,11 @@ window.I18N={
           jederzeit die vollst&auml;ndige Tafel. Die Einstellung merkt sich die App je Wurzelperson und speichert sie mit in
           die Projektdatei.</li>
           <li>Die <b>Darstellung</b> anpassen: Kastenbreite, Schriftgr&ouml;&szlig;e, &bdquo;nur erster Vorname&ldquo;
-          und &bdquo;Kinder nach Alter&ldquo;. Die Schaltfl&auml;che <b><span data-ico="layout" aria-hidden="true"></span> Druckvorlage (A3)</b> setzt die
+          und &bdquo;Kinder nach Alter&ldquo;. <b>Farbe</b>: schwarz-wei&szlig;, nach Geschlecht oder nach Stamm (die acht
+          gr&ouml;&szlig;ten St&auml;mme bekommen eine eigene Farbe, eine Legende unter der Tafel erkl&auml;rt sie; auch PDF, SVG
+          und PNG sind dann farbig). <b>Lebensdaten</b> ausf&uuml;hrlich oder nur Jahre, <b>Orte</b> von Geburt und Tod
+          hinter dem Datum, <b>Beruf</b> als eigene Zeile. Ein von Hand &uuml;berschriebenes Datum bleibt, wie Sie es
+          eingetragen haben. Die Schaltfl&auml;che <b><span data-ico="layout" aria-hidden="true"></span> Druckvorlage (A3)</b> setzt die
           kompakte, gut lesbare Kombination in einem Zug.</li>
           <li><b>Exportieren</b> als <b>PDF</b> (Seitengr&ouml;&szlig;e w&auml;hlbar, &bdquo;Automatisch&ldquo; sucht
           die beste Passung), als <b>SVG</b> zur Weiterarbeit in einem Grafikprogramm oder als <b>PNG</b> zum schnellen
@@ -4307,6 +4363,15 @@ window.I18N={
         welche Geburtsjahre sie umfasst. Darunter steht, wie viele Personen lebend und verstorben sind, wie viele
         M&auml;nner und Frauen, und wie viele zu jedem Stamm geh&ouml;ren. Wer einen Stamm antippt, bekommt die
         Liste mit genau seinen Personen.</p>
+        <p>Weiter unten: die <b>Lebensdauer</b> (im Schnitt, bei allen, die 18 wurden, das h&ouml;chste Alter),
+        <b>Familien und Heirat</b> (Kinder je Familie, die gr&ouml;&szlig;te Familie, Alter von M&auml;nnern und Frauen bei der
+        ersten Heirat), die <b>Geburten</b> je Jahrhundert (bei k&uuml;rzerer Spanne je Jahrzehnt) und nach Monat sowie die
+        h&auml;ufigsten <b>Vornamen</b>, <b>Nachnamen</b> und <b>Orte</b>. Ein Tipp auf eine Zeile zeigt in der Liste genau
+        diese Personen, mit einer Zeile, woher sie kommen; <b>Auswahl aufheben</b> zeigt wieder alle. Eine Person bei den
+        &Auml;ltesten &ouml;ffnet sich im Stammbaum.</p>
+        <p>Das Alter wird aus Geburts- und Sterbejahr gerechnet, taggenau, wo beide Daten genau sind; &bdquo;vor&ldquo;,
+        &bdquo;nach&ldquo; und &bdquo;zwischen&ldquo; z&auml;hlen nicht. Tage, die die Datei als Platzhalter f&uuml;r ein blo&szlig;es
+        Jahr nutzt (wie bei <b>Daten pr&uuml;fen</b>, meist der 1. Januar), gelten nur als Jahr und fehlen bei den Monaten.</p>
         <p>Als lebend z&auml;hlt, wer ohne Sterbeangabe in den letzten 110 Jahren geboren ist. Wer &auml;lter ist und
         keine Sterbeangabe hat, steht unter <b>unbekannt</b> &ndash; ein Vorfahr von 1748 lebt nicht mehr, auch
         wenn die Datei nicht sagt, wann er gestorben ist.</p>
@@ -4630,7 +4695,7 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='4.10';
+var APPVERSION='4.11';
 
 /* ====================================================================
    Welche Kodierung hat die Datei?
@@ -9351,19 +9416,74 @@ function firstGiven(g){
   return out.join(' ');
 }
 function firstNameOn(){ var e=$('optFirstName'); return e&&e.checked; }
+/* 4.11: „nur Jahre" kuerzt das Datum auf das Jahr, „etwa" bleibt als „um" */
+function datumText(v){
+  if(DATUM!=='jahre') return fmtDate(v);
+  var j=FP.yearOf(v); if(j==null) return fmtDate(v);
+  var t=String(v).toUpperCase();
+  if(/\b(ABT|CAL|EST)\b/.test(t)) return TT('c. ','um ')+j;
+  if(/\bBEF\b/.test(t)) return TT('before ','vor ')+j;
+  if(/\bAFT\b/.test(t)) return TT('after ','nach ')+j;
+  return String(j);
+}
+function ortKurz(v){ return String(v||'').split(',')[0].trim(); }
+/* Farbe eines Kastens: null = weiss. f fuer Papier, fd fuer die dunkle Ansicht */
+var STAMM_FARBEN=['#f6e3c3','#d9ead3','#d6e4f0','#f2d7d5','#e5dbef','#fbefc4','#d5ece9','#ead9c8'];
+var STAMM_RANG={}, FARB_GENUTZT={};
+function dunkel(hex){
+  var a=parseInt(hex.slice(1),16), b=0x231f19, k=0.68;
+  function m(sh){ return Math.round(((a>>sh)&255)*(1-k)+((b>>sh)&255)*k); }
+  return '#'+((1<<24)+(m(16)<<16)+(m(8)<<8)+m(0)).toString(16).slice(1);
+}
+function stammRang(){
+  STAMM_RANG={}; FARB_GENUTZT={};
+  if(FARBE!=='stamm') return;
+  var n={}; for(var id in DB.indi){ var st=String(DB.indi[id].stamm||'').trim(); if(st) n[st]=(n[st]||0)+1; }
+  Object.keys(n).sort(function(a,b){ return n[b]-n[a] || a.localeCompare(b); })
+    .forEach(function(st,i){ STAMM_RANG[st]=i; });
+}
+function farbeVon(id){
+  if(FARBE==='sw' || !id || !DB.indi[id]) return null;
+  var p=DB.indi[id], f=null, k=null, lbl=null;
+  if(FARBE==='geschlecht'){
+    if(p.sex==='M'){ f='#dbe6f1'; k='1m'; lbl=TT('men','Männer'); }
+    else if(p.sex==='F'){ f='#f3dde4'; k='2w'; lbl=TT('women','Frauen'); }
+    else { k='3u'; lbl=TT('sex not recorded','Geschlecht ohne Angabe'); }
+  } else {
+    var st=String(p.stamm||'').trim();
+    if(!st){ k='z'; lbl=TT('without lineage','ohne Stamm'); }
+    else if(STAMM_RANG[st]<STAMM_FARBEN.length){ f=STAMM_FARBEN[STAMM_RANG[st]]; k='a'+(100+STAMM_RANG[st]); lbl=st; }
+    else { f='#e6e6e6'; k='y'; lbl=TT('other lineages','weitere Stämme'); }
+  }
+  FARB_GENUTZT[k]={f:f, lbl:lbl};
+  return f;
+}
+/* Wo der Platz fest ist, wird ein zu langer Ort oder Beruf mit „…" gekuerzt */
+function kuerzen(str, maxW){
+  if(!str || AUTO_W || textWidthPx(str,FONT_SZ,false)<=maxW) return str;
+  while(str.length>1 && textWidthPx(str+'…',FONT_SZ,false)>maxW) str=str.slice(0,-1);
+  return str.replace(/\s+$/,'')+'…';
+}
 function personLines(id, ovr){
   var rec=DB.indi[id], p=rec||{};
   var surname = (ovr.surname!=null&&ovr.surname!=='') ? ovr.surname : (p.surname||'');
   var autoGiven0 = firstNameOn() ? firstGiven(p.given||'') : (p.given||'');
   var autoGiven = autoGiven0 || (!rec ? '(unknown)' : '');
   var given = (ovr.given!=null&&ovr.given!=='') ? ovr.given : autoGiven;
-  var birth = (ovr.birth!=null&&ovr.birth!=='') ? ovr.birth : (p.birthDate? '*'+fmtDate(p.birthDate):'');
+  var birth = (ovr.birth!=null&&ovr.birth!=='') ? ovr.birth : (p.birthDate? '*'+datumText(p.birthDate):'');
   var death;
   if(ovr.death!=null&&ovr.death!=='') death=ovr.death;
-  else if(p.deathDate) death='+'+fmtDate(p.deathDate);
+  else if(p.deathDate) death='+'+datumText(p.deathDate);
   else if(p.dead) death='+';
   else death='';
-  return {surname:surname, given:given, birth:birth, death:death, code:(ovr.code||'')};
+  /* 4.11: Orte hinter dem Datum - nur an selbst gerechneten Zeilen, ein
+     von Hand ueberschriebener Text bleibt genau so, wie er eingetragen ist */
+  if(ORTE && rec){
+    if(!(ovr.birth!=null&&ovr.birth!=='') && ortKurz(p.birthPlace)) birth=(birth||'*')+' '+ortKurz(p.birthPlace);
+    if(!(ovr.death!=null&&ovr.death!=='') && ortKurz(p.deathPlace)) death=(death||'+')+' '+ortKurz(p.deathPlace);
+  }
+  return {surname:surname, given:given, birth:birth, death:death, code:(ovr.code||''),
+          occ:(BERUF && rec ? String(p.occ||'').trim() : ''), id:(rec?id:null)};
 }
 
 /* ---------------- build the tree ---------------- */
@@ -9441,14 +9561,16 @@ var BOX_W=124, BOX_H=66, SIB_GAP=16, LEVEL_GAP=48, MARGIN=30;
 var REF_W=2*BOX_W;
 var FONT_SZ=8.6, LINE_H=10.4;
 var _measCtx=null, _measCache={};
-function applyMetrics(){ LINE_H=FONT_SZ*1.21; BOX_H=Math.round(LINE_H*5+6);
+/* 4.11: Farbe der Kästen, Form der Lebensdaten, Orte und Beruf */
+var FARBE='sw', DATUM='voll', ORTE=false, BERUF=false;
+function applyMetrics(){ LINE_H=FONT_SZ*1.21; BOX_H=Math.round(LINE_H*(BERUF?6:5)+6);
   SIB_GAP=Math.max(8,Math.round(BOX_W*0.13)); LEVEL_GAP=Math.round(BOX_H*0.72); _measCache={}; }
 var AUTO_W=true;
 function boxWidthFor(lines){
   if(!lines) return 0;
   if(!AUTO_W) return BOX_W;
   var w=0;
-  [lines.surname,lines.given,lines.birth,lines.death].forEach(function(s){
+  [lines.surname,lines.given,lines.birth,lines.death,lines.occ].forEach(function(s){
     if(s) w=Math.max(w, textWidthPx(s,FONT_SZ,false)); });
   if(lines.code) w=Math.max(w, textWidthPx(lines.code, FONT_SZ*0.86, false));
   return Math.max(Math.round(BOX_W*0.55), Math.min(Math.round(BOX_W*3), Math.ceil(w+11)));
@@ -9649,10 +9771,12 @@ function txt(x,y,str,size,parent,opt){
 }
 function drawPersonBox(g, x, ytop, lines, w){
   if(!lines) return;
-  el('rect',{x:x, y:ytop, width:(w||BOX_W), height:BOX_H, fill:'#fff', stroke:'#000',
-             'stroke-width':0.7, 'class':'pbox'}, g);
-  var tx=x+5, ty=ytop+FONT_SZ+2.4;
-  [lines.surname,lines.given,lines.birth,lines.death].forEach(function(ln){
+  var fb=farbeVon(lines.id), ra={x:x, y:ytop, width:(w||BOX_W), height:BOX_H, fill:fb||'#fff', stroke:'#000',
+             'stroke-width':0.7, 'class':fb?'pbox fb':'pbox'};
+  if(fb) ra.style='--f:'+fb+';--fd:'+dunkel(fb);
+  el('rect',ra, g);
+  var tx=x+5, ty=ytop+FONT_SZ+2.4, mw=(w||BOX_W)-10;
+  [lines.surname,lines.given,ORTE?kuerzen(lines.birth,mw):lines.birth,ORTE?kuerzen(lines.death,mw):lines.death].concat(BERUF?[kuerzen(lines.occ,mw)]:[]).forEach(function(ln){
     if(ln) txt(tx,ty,ln,FONT_SZ,g); ty+=LINE_H; });
   if(lines.code) txt(tx, ytop+BOX_H-4, lines.code, FONT_SZ*0.86, g);
 }
@@ -9835,9 +9959,26 @@ function setzeGens(n){
   settings(ROOT)[istAhnen()?'gensA':'gens'] = n;
   needFit=true; safeRender(); fitZoom();
 }
+/* 4.11: Bei farbigen Kästen steht unter der Tafel, was die Farben bedeuten */
+function legende(svg){
+  var ks=Object.keys(FARB_GENUTZT).sort();
+  if(FARBE==='sw' || !ks.length || !CUR_W) return;
+  var fs=FONT_SZ*1.05, lh=Math.round(fs*1.9), q=Math.round(fs*1.1), x=MARGIN, y=CUR_H-MARGIN/2+lh*0.4, rows=1;
+  var g=el('g',{'class':'legende'},svg);
+  ks.forEach(function(k){
+    var e=FARB_GENUTZT[k], w=q+6+textWidthPx(e.lbl,fs,false)+22;
+    if(x>MARGIN && x+w>CUR_W-MARGIN){ x=MARGIN; y+=lh; rows++; }
+    el('rect',{x:x, y:y-q+1, width:q, height:q, fill:e.f||'#fff', stroke:'#000', 'stroke-width':0.6}, g);
+    txt(x+q+6, y, e.lbl, fs, g);
+    x+=w;
+  });
+  CUR_H=Math.ceil(y+MARGIN);
+  svg.setAttribute('height',CUR_H); svg.setAttribute('viewBox','0 0 '+CUR_W+' '+CUR_H);
+}
 function render(){
   var svg=$('stage');
   svg.innerHTML='';
+  stammRang();
   var hint=$('emptyHint');
   if(!ROOT || !DB.indi[ROOT]){
     CUR_W=CUR_H=0; svg.removeAttribute('width'); svg.removeAttribute('height'); svg.removeAttribute('viewBox');
@@ -9871,6 +10012,7 @@ function render(){
   svg.setAttribute('width',W); svg.setAttribute('height',H);
   svg.setAttribute('viewBox','0 0 '+W+' '+H);
   drawTree(root, svg, W, titleCx);
+  legende(svg);
   applyZoom();
 }
 
@@ -9901,7 +10043,7 @@ function ahnenBauen(G){
       var s=settings(id);
       n.lines=personLines(id, s.ovr);
       if(seen[id]){
-        n.lines={surname:n.lines.surname, given:n.lines.given, birth:n.lines.birth, death:n.lines.death,
+        n.lines={surname:n.lines.surname, given:n.lines.given, birth:n.lines.birth, death:n.lines.death, occ:n.lines.occ, id:n.lines.id,
                  code:TT('see no. ','siehe Nr. ')+seen[id]};
         n.w=boxWidthFor(n.lines); n.doppelt=true;
         return n;
@@ -9997,6 +10139,7 @@ function renderAhnen(svg){
     var y0=H-MARGIN-(tl.length-1)*TITLE_LH;
     tl.forEach(function(ln,i){ txt(W-MARGIN, y0+i*TITLE_LH, ln, TITLE_FS, svg, {'text-anchor':'end','font-weight':'bold'}); });
   }
+  legende(svg);
   applyZoom();
 }
 /* Umschalten zwischen den beiden Tafeln */
@@ -10512,7 +10655,9 @@ $('btnPdf').onclick=function(){
         if(e.getAttribute('fill')==='transparent') continue;
         var x=+e.getAttribute('x'), y=+e.getAttribute('y'), w=+e.getAttribute('width'), h=+e.getAttribute('height');
         var lw=parseFloat(e.getAttribute('stroke-width')||'0'), hasStroke=!!e.getAttribute('stroke');
-        out.push('1 1 1 rg','0 0 0 RG', n(Math.max(lw*L.S,0.3))+' w',
+        var fh=/^#([0-9a-f]{6})$/i.exec(e.getAttribute('fill')||''), rg='1 1 1 rg';
+        if(fh){ var fv=parseInt(fh[1],16); rg=[(fv>>16)&255,(fv>>8)&255,fv&255].map(function(c){ return n(c/255); }).join(' ')+' rg'; }
+        out.push(rg,'0 0 0 RG', n(Math.max(lw*L.S,0.3))+' w',
           n(X(x))+' '+n(Y(y+h))+' '+n(w*L.S)+' '+n(h*L.S)+' re '+(hasStroke?'B':'f'));
       } else if(tag==='line'){
         var lw2=parseFloat(e.getAttribute('stroke-width')||'0.7');
@@ -10591,6 +10736,7 @@ function rememberChart(){
     SHELL.uiSet('chart', { root:ROOT_N, rootA:ROOT_A, aWahl:!A_AUTO, mode:MODE, kekule:KEKULE, leer:LEER,
       settings:SET, title:(ROOT_N && SET[ROOT_N] && SET[ROOT_N].title) || (istAhnen()?'':SHEET_TITLE),
       firstName:$('optFirstName').checked, ageSort:$('optAgeSort').checked,
+      farbe:FARBE, datum:DATUM, orte:ORTE, beruf:BERUF,
       pdfFormat:$('pdfFormat').value, boxWidth:BOX_W, autoWidth:AUTO_W, fontSize:FONT_SZ });
   }, 250);
 }
@@ -10601,6 +10747,7 @@ function restoreChart(){
   $('sheetTitle').value=SHEET_TITLE;
   if(typeof v.firstName==='boolean') $('optFirstName').checked=v.firstName;
   if(typeof v.ageSort==='boolean') $('optAgeSort').checked=v.ageSort;
+  darstellungSetzen(v);
   if(v.pdfFormat) $('pdfFormat').value=v.pdfFormat;
   if(v.boxWidth){ BOX_W=+v.boxWidth; REF_W=2*BOX_W; }
   AUTO_W = v.autoWidth!==false;
@@ -10621,6 +10768,7 @@ $('btnSave').onclick=function(){
   if(istAhnen()) ROOT_A=ROOT; else ROOT_N=ROOT;
   var proj={ ged:FP.serialize(), root:ROOT_N, rootA:ROOT_A, mode:MODE, kekule:KEKULE, leer:LEER, settings:SET,
     firstName:$('optFirstName').checked, ageSort:$('optAgeSort').checked,
+    farbe:FARBE, datum:DATUM, orte:ORTE, beruf:BERUF,
     pdfFormat:$('pdfFormat').value, boxWidth:BOX_W, autoWidth:AUTO_W, fontSize:FONT_SZ, title:SHEET_TITLE };
   SHELL.download(new Blob([JSON.stringify(proj)],{type:'application/json'}), baseName()+'.json');
 };
@@ -10637,6 +10785,7 @@ $('projFile').addEventListener('change', function(e){
       if(proj.root && SHEET_TITLE && !(SET[proj.root]||{}).title) settings(proj.root).title=SHEET_TITLE;
       $('optFirstName').checked=!!proj.firstName;
       $('optAgeSort').checked=proj.ageSort!==false;
+      darstellungSetzen(proj);
       if(proj.pdfFormat) $('pdfFormat').value=proj.pdfFormat;
       if(proj.boxWidth){ BOX_W=+proj.boxWidth; REF_W=2*BOX_W; }
       AUTO_W = proj.autoWidth!==false;
@@ -10658,6 +10807,19 @@ $('projFile').addEventListener('change', function(e){
   e.target.value='';
 });
 $('optFirstName').onchange=function(){ safeRender(); };
+/* 4.11: Farbe, Lebensdaten, Orte, Beruf - aeltere Projektdateien ohne diese
+   Angaben behalten das bisherige Aussehen */
+function darstellungSetzen(v){
+  FARBE = (v.farbe==='geschlecht' || v.farbe==='stamm') ? v.farbe : 'sw';
+  DATUM = v.datum==='jahre' ? 'jahre' : 'voll';
+  ORTE = !!v.orte; BERUF = !!v.beruf;
+  $('optFarbe').value=FARBE; $('optDatum').value=DATUM; $('optOrte').checked=ORTE; $('optBeruf').checked=BERUF;
+  applyMetrics();
+}
+$('optFarbe').onchange=function(e){ FARBE=e.target.value; safeRender(); };
+$('optDatum').onchange=function(e){ DATUM=e.target.value; safeRender(); };
+$('optOrte').onchange=function(e){ ORTE=e.target.checked; safeRender(); };
+$('optBeruf').onchange=function(e){ BERUF=e.target.checked; applyMetrics(); safeRender(); };
 $('optAgeSort').onchange=function(){ if(SELECTED) openPanel(SELECTED); safeRender(); };
 
 /* ---------------- hook into the central data store ---------------- */
@@ -12385,6 +12547,10 @@ function T(en,dt){ return de()?dt:en; }
 var DECKEL_P=400, DECKEL_F=150;
 function deckel(){ return ANSICHT==='p' ? DECKEL_P : DECKEL_F; }
 var ANSICHT='p', GEZEIGT=DECKEL_P, OFFEN=null;
+/* 4.11: eine feste Auswahl aus der Statistik (Vorname, Ort, Jahrhundert …).
+   Sie gilt zusaetzlich zu Suche und Filtern, bis man sie aufhebt oder die
+   Liste von anderswo neu oeffnet. */
+var AUSWAHL=null;
 
 function stammListe(){
   var sel=$('listStamm'), I=FP.indi(), seen={}, vals=[];
@@ -12438,6 +12604,7 @@ function trefferP(){
      Funktion wie in den vier anderen Feldern, damit „Ashford" hier
      nicht etwas anderes bedeutet als im Stammbaum. */
   var pool=FP.index().filter(function(e){
+    if(AUSWAHL && !AUSWAHL.ids[e.id]) return false;
     if(stamm && (I[e.id]||{}).stamm!==stamm) return false;
     return jahrPasst(e.year, g);
   });
@@ -12494,6 +12661,7 @@ function trefferF(){
   var toks=$('listQ').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
   var stamm=$('listStamm').value, g=jahre();
   return famIndex().filter(function(f){
+    if(AUSWAHL && !f.paar.concat(f.kinder).some(function(x){ return x && AUSWAHL.ids[x]; })) return false;
     if(stamm && f.staemme.indexOf(stamm)<0) return false;
     if((g.von!=null || g.bis!=null) && !f.jahre.some(function(j){ return jahrPasst(j,g); })) return false;
     for(var i=0;i<toks.length;i++) if(f.search.indexOf(toks[i])<0) return false;
@@ -12548,7 +12716,15 @@ function zeileFamilie(f){
   return f.html;
 }
 
+function auswahlZeigen(){
+  var a=$('listAusw'); if(!a) return;
+  if(!AUSWAHL || ZWECK){ a.hidden=true; a.innerHTML=''; return; }
+  a.hidden=false;
+  a.innerHTML='<span>'+esc(T('From the statistics: ','Aus der Statistik: '))+'<b>'+esc(AUSWAHL.titel)+'</b></span>'+
+    '<button type="button" class="btn small" id="listAuswWeg">'+esc(T('Clear selection','Auswahl aufheben'))+'</button>';
+}
 function zeichne(){
+  auswahlZeigen();
   var box=$('listRows'), treffer = ANSICHT==='p' ? trefferP() : trefferF();
   var teil=treffer.slice(0, GEZEIGT);
   box.innerHTML = treffer.length
@@ -12682,6 +12858,7 @@ function oeffnen(welche, zweck){
     SHELL.toast(T('Open a file first.','Erst eine Datei öffnen.')); return;
   }
   ZWECK=zweck||null;
+  if(ZWECK) AUSWAHL=null;
   $('mdList').classList.toggle('waehlen', !!ZWECK);
   $('listWahl').textContent = ZWECK ? T(WAHL[ZWECK][0], WAHL[ZWECK][1]) : '';
   if(ZWECK) welche='p';
@@ -12704,9 +12881,11 @@ function wiederOeffnen(st){
 }
 function aufsetzen(){
   var mi=$('miList');
-  if(mi) mi.onclick=function(){ SHELL.closeDataMenu && SHELL.closeDataMenu(); oeffnen('p'); };
+  if(mi) mi.onclick=function(){ SHELL.closeDataMenu && SHELL.closeDataMenu(); AUSWAHL=null; oeffnen('p'); };
   var z=$('dataCount');
-  if(z) z.onclick=function(){ if(FP.hasData() && FP.count()) oeffnen('p'); };
+  if(z) z.onclick=function(){ if(FP.hasData() && FP.count()){ AUSWAHL=null; oeffnen('p'); } };
+  $('listAusw').addEventListener('click', function(ev){
+    if(ev.target.closest('#listAuswWeg')){ AUSWAHL=null; GEZEIGT=deckel(); zeichne(); } });
   $('listClose').onclick=zu;
   $('listTabP').onclick=function(){ ANSICHT='p'; GEZEIGT=deckel();
     this.classList.add('on'); $('listTabF').classList.remove('on'); zeichne(); };
@@ -12749,6 +12928,7 @@ function aufsetzen(){
 /* aus der Statistik: die Personen eines Stamms. Suche und Jahre werden
    geleert, sonst sähe man nur einen Teil und wüsste nicht, warum. */
 function zeigeStamm(v){
+  AUSWAHL=null;
   oeffnen('p');
   if(!$('mdList').classList.contains('show')) return;
   $('listQ').value=''; $('listClear').classList.remove('show');
@@ -12757,7 +12937,16 @@ function zeigeStamm(v){
   GEZEIGT=deckel(); zeichne(); filterZeigen(true);
 }
 
-return { boot:aufsetzen, oeffnen:oeffnen, waehlen:waehlen, stamm:zeigeStamm, _filterZahl:filterZahl, _deckel:function(){ return {p:DECKEL_P, f:DECKEL_F}; } };
+/* 4.11: aus der Statistik genau diese Personen (ids), mit einer Zeile, woher */
+function zeigeAuswahl(ids, titel){
+  var m={}; (ids||[]).forEach(function(x){ m[x]=1; });
+  AUSWAHL={ids:m, titel:titel};
+  $('listQ').value=''; $('listClear').classList.remove('show');
+  $('listFrom').value=''; $('listTo').value=''; $('listStamm').value='';
+  oeffnen('p');
+}
+return { boot:aufsetzen, oeffnen:oeffnen, waehlen:waehlen, stamm:zeigeStamm, auswahl:zeigeAuswahl,
+  _auswahl:function(){ return AUSWAHL ? {n:Object.keys(AUSWAHL.ids).length, titel:AUSWAHL.titel} : null; }, _filterZahl:filterZahl, _deckel:function(){ return {p:DECKEL_P, f:DECKEL_F}; } };
 })();
 </script>
 <script>
@@ -14824,6 +15013,187 @@ function abschnitt(titel, rechts, inhalt){
   return '<div class="ksec"><div class="khd"><b>'+esc(titel)+'</b>'+(rechts?'<span>'+esc(rechts)+'</span>':'')+'</div>'+inhalt+'</div>';
 }
 
+/* ---------------- 4.11: mehr Statistik ----------------
+   Alles aus den vorhandenen Angaben gerechnet, nichts geschätzt:
+   Lebensalter, die Ältesten, Kinder je Familie, Heiratsalter, Geburten
+   je Jahrhundert und nach Monat, häufigste Vor- und Nachnamen und Orte.
+   Ein Tipp auf eine Zeile zeigt genau diese Personen in der Liste. */
+var MK={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
+var PLATZNAME=/^(unbekannt|unknown|n\.?n\.?|nn|\?+|-+)$/i;
+/* Ein Datum zerlegen. „vor", „nach", „zwischen" taugen für kein Alter. */
+function dat(v){
+  var t=String(v||'').toUpperCase().trim(); if(!t) return null;
+  if(/\b(BEF|AFT|BET|FROM|TO|AND)\b/.test(t)) return null;
+  var j=FP.yearOf(t); if(j==null) return null;
+  var m=/(?:^|\s)(\d{1,2})\s+([A-Z]{3})\s+\d{3,4}\s*$/.exec(t), m2=/(?:^|\s)([A-Z]{3})\s+\d{3,4}\s*$/.exec(t);
+  var d={j:j, m:null, t:null, ca:/\b(ABT|CAL|EST)\b/.test(t)};
+  if(m && MK[m[2]]!=null){ d.m=MK[m[2]]; d.t=+m[1]; }
+  else if(m2 && MK[m2[1]]!=null) d.m=MK[m2[1]];
+  return d;
+}
+function genauerTag(d, platz){ return d && d.t!=null && !d.ca && !platz[d.t+'.'+(d.m+1)]; }
+/* Alter in ganzen Jahren; taggenau nur, wenn beide Daten es sind */
+function alterZw(g, t, platz){
+  if(!g || !t) return null;
+  var a=t.j-g.j;
+  if(genauerTag(g,platz) && genauerTag(t,platz) && (t.m<g.m || (t.m===g.m && t.t<g.t))) a--;
+  return (a>=0 && a<=120) ? a : null;
+}
+function vorname(p){
+  var w=String(p.given||'').replace(/["„“”'()*_]/g,' ').trim().split(/\s+/)[0]||'';
+  w=w.replace(/[.,;:]+$/,'');
+  return (w.length<2 || PLATZNAME.test(w)) ? '' : w;
+}
+function ortVon(v){ var o=String(v||'').split(',')[0].trim(); return (o.length<2 || PLATZNAME.test(o)) ? '' : o; }
+function zaehlen(map, schl, zeig, id){
+  if(!schl) return; var k=schl.toLowerCase();
+  var e=map[k] || (map[k]={name:zeig, ids:[]}); e.ids.push(id);
+}
+function spitze(map, n){
+  return Object.keys(map).map(function(k){ return map[k]; })
+    .sort(function(a,b){ return b.ids.length-a.ids.length || a.name.localeCompare(b.name, de()?'de':'en'); }).slice(0,n);
+}
+function mehr(){
+  var I=FP.indi(), F=FP.fam(), ids=Object.keys(I);
+  var platz={}; try{ platz=PRUEF.platzTage().satz||{}; }catch(e){}
+  var r={alter:[], erw:[], gruppe:{}, mon:[], monIds:[], vnM:{}, vnW:{}, nn:{}, go:{}, so:{},
+         heiratM:[], heiratW:[], fam:0, kinder:0, ohneKind:0, gross:null, platz:platz, jahre:[]};
+  for(var i=0;i<12;i++){ r.mon.push(0); r.monIds.push([]); }
+  var von=null, bis=null;
+  ids.forEach(function(id){ var y=FP.yearOf(I[id].birthDate); if(y!=null){ if(von==null||y<von) von=y; if(bis==null||y>bis) bis=y; } });
+  /* Jahrzehnte, wenn die Familie nicht mehr als 150 Jahre umspannt, sonst Jahrhunderte */
+  r.schritt = (von!=null && bis-von<=150) ? 10 : 100;
+  ids.forEach(function(id){
+    var p=I[id], g=dat(p.birthDate), t=dat(p.deathDate), a=alterZw(g,t,platz);
+    if(a!=null){ r.alter.push({id:id, a:a, g:g.j, t:t.j}); if(a>=18) r.erw.push(a); }
+    if(g){
+      var k=Math.floor(g.j/r.schritt)*r.schritt, e=r.gruppe[k]||(r.gruppe[k]={von:k, ids:[], alter:[]});
+      e.ids.push(id); if(a!=null) e.alter.push(a);
+      if(g.m!=null && !g.ca && !(g.t!=null && platz[g.t+'.'+(g.m+1)])){ r.mon[g.m]++; r.monIds[g.m].push(id); }
+    }
+    var vn=vorname(p);
+    if(p.sex==='M') zaehlen(r.vnM, vn, vn, id); else if(p.sex==='F') zaehlen(r.vnW, vn, vn, id);
+    var nn=String(p.surname||'').trim(); if(!PLATZNAME.test(nn)) zaehlen(r.nn, nn, nn, id);
+    zaehlen(r.go, ortVon(p.birthPlace), ortVon(p.birthPlace), id);
+    zaehlen(r.so, ortVon(p.deathPlace), ortVon(p.deathPlace), id);
+    /* Heiratsalter: die früheste eingetragene Heirat */
+    if(g && (p.fams||[]).length){
+      var hj=null; p.fams.forEach(function(fid){ var f=F[fid], h=f && dat(f.marrDate); if(h && (hj==null || h.j<hj)) hj=h.j; });
+      if(hj!=null){ var ha=hj-g.j; if(ha>=12 && ha<=90) (p.sex==='M'?r.heiratM:(p.sex==='F'?r.heiratW:[])).push(ha); }
+    }
+  });
+  for(var fid in F){
+    var f=F[fid], ki=(f.children||[]).filter(function(x){ return I[x]; });
+    if(!(f.husb&&I[f.husb]) && !(f.wife&&I[f.wife])) continue;
+    r.fam++; r.kinder+=ki.length; if(!ki.length) r.ohneKind++;
+    if(ki.length && (!r.gross || ki.length>r.gross.n)) r.gross={fid:fid, n:ki.length, id:(f.husb&&I[f.husb])?f.husb:f.wife};
+  }
+  r.alter.sort(function(a,b){ return b.a-a.a || a.g-b.g; });
+  return r;
+}
+function schnitt(l){ if(!l.length) return null; var s=0; for(var i=0;i<l.length;i++) s+=l[i]; return s/l.length; }
+function eins(x){ return x==null ? '–' : (Math.round(x*10)/10).toLocaleString(de()?'de-DE':'en-GB'); }
+function jahr0(x){ return x==null ? '–' : String(Math.round(x)); }
+/* Auswahlen für die Liste, je Zeichnen neu */
+var AUS={}, AUSN=0;
+function aus(ids, titel){ var k='a'+(AUSN++); AUS[k]={ids:ids, titel:titel}; return k; }
+function gruppenName(k, schritt){
+  if(schritt===10) return k+T('s','er');
+  return de() ? (Math.floor(k/100)+1)+'. Jh.' : k+'s';
+}
+function reihe(name, n, max, k, rechts){
+  return '<button class="strow" data-aus="'+k+'"><span class="stn">'+esc(name)+'</span><b>'+esc(rechts!=null?rechts:zahl(n))+'</b>'+
+    '<span class="stfill"><span style="width:'+Math.max(2, n*100/max).toFixed(2)+'%"></span></span></button>';
+}
+function liste10(titel, l, was){
+  if(!l.length) return '';
+  var max=l[0].ids.length;
+  return '<div class="stteil"><h3>'+esc(titel)+'</h3><div class="strows">'+l.map(function(e){
+    return reihe(e.name, e.ids.length, max, aus(e.ids, was+' „'+e.name+'“'));
+  }).join('')+'</div></div>';
+}
+function personZeile(e){
+  var p=FP.person(e.id);
+  return '<button class="strow stp" data-pers="'+esc(e.id)+'"><span class="stn">'+esc(FP.fullName(p))+
+    '<small>'+e.g+'–'+e.t+'</small></span><b>'+e.a+T(' years',' Jahre')+'</b></button>';
+}
+function zeichnenMehr(){
+  var m=mehr(), h='', i;
+  AUS={}; AUSN=0;
+  /* Lebensdauer */
+  if(m.alter.length){
+    var alle=m.alter.map(function(x){ return x.a; });
+    h+=abschnitt(T('Lifespan','Lebensdauer'), T('from '+zahl(m.alter.length)+' people','aus '+zahl(m.alter.length)+' Personen'),
+      '<div class="sttiles drei">'+
+        kachel(eins(schnitt(alle)), T('years on average','Jahre im Schnitt'), T('everyone with birth and death','alle mit Geburt und Tod'))+
+        kachel(eins(schnitt(m.erw)), T('years on average','Jahre im Schnitt'), T('those who reached 18','wer 18 wurde'))+
+        kachel(String(m.alter[0].a), T('years: the greatest age','Jahre: das höchste Alter'), '')+
+      '</div>'+
+      '<h3 class="sth3">'+esc(T('Average age by '+(m.schritt===10?'decade':'century')+' of birth','Im Schnitt nach '+(m.schritt===10?'Jahrzehnt':'Jahrhundert')+' der Geburt'))+'</h3>'+
+      '<div class="strows">'+(function(){
+        var gs=Object.keys(m.gruppe).map(function(k){ return m.gruppe[k]; }).filter(function(g){ return g.alter.length>=3; })
+          .sort(function(a,b){ return a.von-b.von; });
+        var mx=Math.max.apply(null, gs.map(function(g){ return schnitt(g.alter); }).concat([1]));
+        return gs.map(function(g){
+          var ids=m.alter.filter(function(x){ return Math.floor(x.g/m.schritt)*m.schritt===g.von; }).map(function(x){ return x.id; });
+          var nm=gruppenName(g.von, m.schritt);
+          return reihe(nm+' · '+zahl(g.alter.length)+' '+T('people','Personen'), schnitt(g.alter), mx,
+            aus(ids, T('born in the ','geboren im ')+nm+T(', with birth and death',', mit Geburt und Tod')), eins(schnitt(g.alter))+T(' yrs',' J.'));
+        }).join('');
+      })()+'</div>'+
+      '<h3 class="sth3">'+esc(T('The oldest','Die Ältesten'))+'</h3><div class="strows">'+m.alter.slice(0,5).map(personZeile).join('')+'</div>'+
+      '<p class="sthint">'+esc(T('Counted from the years of birth and death; to the day where both dates are exact. Placeholder days (as in “Check data”) count as a bare year.',
+        'Gerechnet aus Geburts- und Sterbejahr, taggenau, wo beide Daten genau sind. Platzhaltertage (wie bei „Daten prüfen“) zählen als bloßes Jahr.'))+'</p>');
+  }
+  /* Familien und Heirat */
+  if(m.fam){
+    h+=abschnitt(T('Families and marriage','Familien und Heirat'), '',
+      '<div class="sttiles">'+
+        kachel(eins(m.kinder/m.fam), T('children per family','Kinder je Familie'), T(zahl(m.ohneKind)+' without children recorded', zahl(m.ohneKind)+' ohne eingetragene Kinder'))+
+        kachel(m.gross?String(m.gross.n):'–', T('children, the largest family','Kinder, die größte Familie'), '')+
+        kachel(m.heiratM.length?jahr0(schnitt(m.heiratM)):'–', T('men: age at first marriage','Männer: Alter bei der ersten Heirat'), T('from '+zahl(m.heiratM.length),'aus '+zahl(m.heiratM.length)))+
+        kachel(m.heiratW.length?jahr0(schnitt(m.heiratW)):'–', T('women: age at first marriage','Frauen: Alter bei der ersten Heirat'), T('from '+zahl(m.heiratW.length),'aus '+zahl(m.heiratW.length)))+
+      '</div>'+
+      (m.gross ? (function(){ var f=FP.fam()[m.gross.fid], I=FP.indi();
+        var paar=[f.husb,f.wife].filter(function(x){ return x && I[x]; }).map(function(x){ return FP.fullName(I[x]); }).join(T(' and ',' und '));
+        return '<div class="strows"><button class="strow stp" data-pers="'+esc(m.gross.id)+'"><span class="stn">'+esc(paar)+
+          '<small>'+esc(T('the largest family','die größte Familie'))+'</small></span><b>'+m.gross.n+T(' children',' Kinder')+'</b></button></div>'; })() : ''));
+  }
+  /* Geburten je Jahrhundert / Jahrzehnt */
+  var gs=Object.keys(m.gruppe).map(function(k){ return m.gruppe[k]; }).sort(function(a,b){ return a.von-b.von; });
+  if(gs.length){
+    var mx=Math.max.apply(null, gs.map(function(g){ return g.ids.length; }));
+    h+=abschnitt(m.schritt===10 ? T('Births per decade','Geburten je Jahrzehnt') : T('Births per century','Geburten je Jahrhundert'), '',
+      '<div class="strows">'+gs.map(function(g){ var nm=gruppenName(g.von, m.schritt);
+        return reihe(nm, g.ids.length, mx, aus(g.ids, T('born in the ','geboren im ')+nm)); }).join('')+'</div>');
+  }
+  /* Geburten nach Monat */
+  var summe=m.mon.reduce(function(a,b){ return a+b; },0);
+  if(summe>=12){
+    var mm=Math.max.apply(null, m.mon), MN=de() ? ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'] : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+        LANG=de() ? ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'] : ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var pl=Object.keys(m.platz);
+    h+=abschnitt(T('Births by month','Geburten nach Monat'), T('from '+zahl(summe)+' dates','aus '+zahl(summe)+' Daten'),
+      '<div class="stmon" role="img" aria-label="'+esc(m.mon.map(function(n,i){ return LANG[i]+': '+n; }).join(', '))+'">'+m.mon.map(function(n,i){
+        return '<button type="button" class="stms" data-aus="'+aus(m.monIds[i], T('born in ','geboren im ')+LANG[i])+'" title="'+esc(LANG[i]+': '+n)+'">'+
+          '<b>'+zahl(n)+'</b><span class="stmb"><span style="height:'+(mm?Math.max(2,n*100/mm):0).toFixed(1)+'%"></span></span><small>'+MN[i]+'</small></button>';
+      }).join('')+'</div>'+
+      (pl.length ? '<p class="sthint">'+esc(T('Only dates with a month. Placeholder days of this file are left out: ','Nur Daten mit Monat. Platzhaltertage dieser Datei fehlen: ')+
+        pl.map(function(k){ var x=k.split('.'); return de() ? x[0]+'. '+LANG[x[1]-1] : x[0]+' '+LANG[x[1]-1]; }).join(', ')+'.')+'</p>' : ''));
+  }
+  /* Namen und Orte */
+  var vm=spitze(m.vnM,10), vw=spitze(m.vnW,10), nn=spitze(m.nn,10), go=spitze(m.go,10), so=spitze(m.so,10);
+  if(vm.length || vw.length)
+    h+=abschnitt(T('Most common first names','Häufigste Vornamen'), '', '<div class="stzwei">'+
+      liste10(T('Men','Männer'), vm, T('first name','Vorname'))+liste10(T('Women','Frauen'), vw, T('first name','Vorname'))+'</div>'+
+      '<p class="sthint">'+esc(T('The first of the given names counts.','Es zählt der erste Vorname.'))+'</p>');
+  if(nn.length) h+=abschnitt(T('Most common surnames','Häufigste Nachnamen'), '', liste10('', nn, T('surname','Nachname')));
+  if(go.length || so.length)
+    h+=abschnitt(T('Most common places','Häufigste Orte'), '', '<div class="stzwei">'+
+      liste10(T('Born in','Geboren in'), go, T('born in','geboren in'))+liste10(T('Died in','Gestorben in'), so, T('died in','gestorben in'))+'</div>'+
+      '<p class="sthint">'+esc(T('The part before the first comma counts as the place.','Als Ort zählt der Teil vor dem ersten Komma.'))+'</p>');
+  return h;
+}
 function zeichnen(){
   var r=rechnen(), h='';
   var spanne = r.von==null ? '–' : (r.von===r.bis ? String(r.von) : r.von+'–'+r.bis);
@@ -14859,6 +15229,7 @@ function zeichnen(){
       '</div>'+
       (st.length>ZEIGE && !ALLE ? '<button class="btn small" id="statAlle">'+esc(T('Show all '+st.length,'Alle '+st.length+' zeigen'))+'</button>' : ''));
   }
+  h+=zeichnenMehr();
   $('statBody').innerHTML=h;
 }
 
@@ -14880,6 +15251,17 @@ function aufsetzen(){
        durcheinander, und so führt „Schließen" in der Liste dorthin
        zurück, wo man herkam. */
     if(z) LISTE.stamm(z.getAttribute('data-stamm'));
+    /* 4.11: genau diese Personen in der Liste (legt sich ebenfalls darüber) */
+    var a=ev.target.closest('[data-aus]');
+    if(a && AUS[a.getAttribute('data-aus')]){ var e=AUS[a.getAttribute('data-aus')]; if(e.ids.length) LISTE.auswahl(e.ids, e.titel); return; }
+    /* eine Person: im Stammbaum, auf dem Handy führt der Pfeil zurück hierher */
+    var pp=ev.target.closest('[data-pers]');
+    if(pp){ var id=pp.getAttribute('data-pers'); if(!FP.person(id)) return;
+      var y=$('statBody').scrollTop, tab=SHELL.currentTab();
+      SHELL.closeModal('mdStat'); SHELL.showTab('tree'); SHELL.treeGo(id);
+      SHELL.personZeigen(id, function(){
+        if(tab && tab!=='tree' && tab!==SHELL.currentTab()) SHELL.showTab(tab);
+        oeffnen(); $('statBody').scrollTop=y; }); }
   });
   /* ändert sich die Datei, solange das Fenster offen ist, zieht es mit */
   FP.on(function(){
@@ -14887,7 +15269,7 @@ function aufsetzen(){
     if(FP.hasData() && FP.count()) zeichnen(); else SHELL.closeModal('mdStat');
   });
 }
-return { boot:aufsetzen, oeffnen:oeffnen, _rechnen:rechnen };
+return { boot:aufsetzen, oeffnen:oeffnen, _rechnen:rechnen, _mehr:mehr, _dat:dat };
 })();
 </script>
 <script>
