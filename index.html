@@ -912,11 +912,10 @@ body.fullscreen #fullExit{display:flex}
    stay black on white for every export. Only the screen gets a dark version. */
 :root[data-theme="dark"] #stageWrap{background:#181511}
 :root[data-theme="dark"] #stage rect.pbox{fill:#231f19; stroke:#7d8a85}
-:root[data-theme="dark"] #stage rect.pbox.fb{fill:var(--f); stroke:#9a917f}
-:root[data-theme="dark"] #stage text.fbt{fill:#1d1a16}
+:root[data-theme="dark"] #stage rect.pbox.fb{fill:var(--d)}
 .schalter .st .ortehinweis{display:block; font-style:normal; font-size:12.5px; line-height:1.35; color:var(--warn); margin-top:3px}
 .schalter .st .ortehinweis[hidden]{display:none}
-:root[data-theme="dark"] #stage .legende rect{stroke:#7d8a85}
+:root[data-theme="dark"] #stage .legende rect{stroke:#7d8a85; fill:var(--d)}
 :root[data-theme="dark"] #stage line{stroke:#7d8a85}
 :root[data-theme="dark"] #stage text{fill:#efe8dc}
 :root[data-theme="dark"] #stage .unit.sel rect.pbox{stroke:var(--gold); stroke-width:1.8}
@@ -1305,6 +1304,7 @@ body.fullscreen #toast{bottom:calc(18px + env(safe-area-inset-bottom))}
   #stageWrap{background:#fff !important}
   #stage rect.pbox{fill:#fff !important; stroke:#000 !important}
   #stage rect.pbox.fb{fill:var(--f) !important}
+  #stage .legende rect{fill:var(--f) !important; stroke:#000 !important}
   #stage line{stroke:#000 !important}
   #stage text{fill:#000 !important}
   #stageWrap,#trStageWrap{position:static !important; overflow:visible !important; height:auto !important}
@@ -3745,11 +3745,11 @@ window.I18N={
           <b>all generations</b> gives you the complete chart at any time. The choice is remembered per root person
           and travels with the project file.</li>
           <li>Adjust the <b>presentation</b>: box width, text size, &bdquo;first given name only&ldquo; and
-          &bdquo;children by age&ldquo;. <b>Colour</b>: black and white, by sex or by lineage (the eight largest lineages get
+          &bdquo;children by age&ldquo;. <b>Colour</b>: black and white, by sex or by lineage (the eight lineages most frequent in the chart get
           their own colour, a legend below the chart explains them; PDF, SVG and PNG are in colour too). <b>Dates</b> in full
           or years only, <b>Places</b> of birth and death after the date, <b>Occupation</b> as an extra line (if nobody in the
           chart has a place recorded, a note under the switch says so). A date you overwrote by hand stays as you wrote it.
-          In the dark view coloured boxes stay light, as on paper. The <b><span data-ico="layout" aria-hidden="true"></span> Print preset (A3)</b> button sets the compact, highly
+          On screen in the dark view the colours are muted to suit the app; PDF, SVG and PNG always use the light colours on white. Lineage colours go to the lineages that appear most often in the chart shown. A name too long for the widest box ends with &bdquo;&hellip;&ldquo;. The <b><span data-ico="layout" aria-hidden="true"></span> Print preset (A3)</b> button sets the compact, highly
           legible combination in one go.</li>
           <li><b>Export</b> as <b>PDF</b> (page size selectable, &bdquo;Auto&ldquo; picks the best fit), as
           <b>SVG</b> for further work in a graphics program, or as <b>PNG</b> for quick sharing.</li>
@@ -4275,11 +4275,11 @@ window.I18N={
           die Projektdatei.</li>
           <li>Die <b>Darstellung</b> anpassen: Kastenbreite, Schriftgr&ouml;&szlig;e, &bdquo;nur erster Vorname&ldquo;
           und &bdquo;Kinder nach Alter&ldquo;. <b>Farbe</b>: schwarz-wei&szlig;, nach Geschlecht oder nach Stamm (die acht
-          gr&ouml;&szlig;ten St&auml;mme bekommen eine eigene Farbe, eine Legende unter der Tafel erkl&auml;rt sie; auch PDF, SVG
+          h&auml;ufigsten St&auml;mme der Tafel bekommen eine eigene Farbe, eine Legende unter der Tafel erkl&auml;rt sie; auch PDF, SVG
           und PNG sind dann farbig). <b>Lebensdaten</b> ausf&uuml;hrlich oder nur Jahre, <b>Orte</b> von Geburt und Tod
           hinter dem Datum, <b>Beruf</b> als eigene Zeile (ist bei niemandem in der Tafel ein Ort eingetragen,
           sagt das ein Hinweis unter dem Schalter). Ein von Hand &uuml;berschriebenes Datum bleibt, wie Sie es
-          eingetragen haben. In der dunklen Ansicht bleiben farbige K&auml;sten hell wie auf Papier. Die Schaltfl&auml;che <b><span data-ico="layout" aria-hidden="true"></span> Druckvorlage (A3)</b> setzt die
+          eingetragen haben. In der dunklen Ansicht sind die Farben auf dem Bildschirm ged&auml;mpft und passen zur App; PDF, SVG und PNG haben immer die hellen Farben auf Wei&szlig;. Die Stammfarben gehen an die St&auml;mme, die in der gezeigten Tafel am h&auml;ufigsten vorkommen. Ein Name, der auch in den breitesten Kasten nicht passt, endet mit &bdquo;&hellip;&ldquo;. Die Schaltfl&auml;che <b><span data-ico="layout" aria-hidden="true"></span> Druckvorlage (A3)</b> setzt die
           kompakte, gut lesbare Kombination in einem Zug.</li>
           <li><b>Exportieren</b> als <b>PDF</b> (Seitengr&ouml;&szlig;e w&auml;hlbar, &bdquo;Automatisch&ldquo; sucht
           die beste Passung), als <b>SVG</b> zur Weiterarbeit in einem Grafikprogramm oder als <b>PNG</b> zum schnellen
@@ -9432,37 +9432,45 @@ function datumText(v){
   return String(j);
 }
 function ortKurz(v){ return String(v||'').split(',')[0].trim(); }
-/* Farbe eines Kastens: null = weiss. Auch in der dunklen Ansicht bleiben farbige
-   Kaesten hell wie auf Papier, mit dunkler Schrift - abgedunkelte Toene waren auf
-   dem dunklen Grund kaum zu unterscheiden. */
-var STAMM_FARBEN=['#f6e3c3','#d9ead3','#d6e4f0','#f2d7d5','#e5dbef','#fbefc4','#d5ece9','#ead9c8'];
-var STAMM_RANG={}, FARB_GENUTZT={}, ORT_N=0;
-function stammRang(){
-  STAMM_RANG={}; FARB_GENUTZT={}; ORT_N=0;
+/* Farbe eines Kastens. f: helle Farbe fuer Papier (PDF, SVG, PNG, Druck und die
+   helle Ansicht); d: gedeckter Ton fuer die dunkle Ansicht, passend zu den Farben
+   der App und mit heller Schrift. null = ohne Farbe (weiss bzw. dunkel). */
+var FARBE_M={f:'#dbe6f1', d:'#2e4358'}, FARBE_W={f:'#f3dde4', d:'#583444'}, FARBE_REST={f:'#e6e6e6', d:'#3b3630'};
+var STAMM_FARBEN=[{f:'#f6e3c3', d:'#5c4524'},{f:'#d9ead3', d:'#33492f'},{f:'#d6e4f0', d:'#2e4358'},{f:'#f2d7d5', d:'#593330'},
+                  {f:'#e5dbef', d:'#45385a'},{f:'#fbefc4', d:'#57501f'},{f:'#d5ece9', d:'#244b47'},{f:'#ead9c8', d:'#4f3b2a'}];
+var STAMM_RANG={}, FARB_GENUTZT={}, ORT_N=0, SICHT={};
+function stammRang(){ STAMM_RANG={}; FARB_GENUTZT={}; ORT_N=0; SICHT={}; }
+/* 4.11: Die Stammfarben gehen an die Staemme, die in DIESER Tafel am haeufigsten
+   vorkommen - nicht an die groessten der ganzen Datei. Sonst war in einer
+   Ahnentafel fast alles grau („weitere Staemme"). SICHT sammelt personLines
+   beim Aufbau der Tafel; verteilt wird vor dem Zeichnen. */
+function farbenVerteilen(){
+  STAMM_RANG={};
   if(FARBE!=='stamm') return;
-  var n={}; for(var id in DB.indi){ var st=String(DB.indi[id].stamm||'').trim(); if(st) n[st]=(n[st]||0)+1; }
+  var n={}; for(var id in SICHT){ var p=DB.indi[id]; var st=p?String(p.stamm||'').trim():''; if(st) n[st]=(n[st]||0)+1; }
   Object.keys(n).sort(function(a,b){ return n[b]-n[a] || a.localeCompare(b); })
     .forEach(function(st,i){ STAMM_RANG[st]=i; });
 }
 function farbeVon(id){
   if(FARBE==='sw' || !id || !DB.indi[id]) return null;
-  var p=DB.indi[id], f=null, k=null, lbl=null;
+  var p=DB.indi[id], c=null, k=null, lbl=null;
   if(FARBE==='geschlecht'){
-    if(p.sex==='M'){ f='#dbe6f1'; k='1m'; lbl=TT('men','Männer'); }
-    else if(p.sex==='F'){ f='#f3dde4'; k='2w'; lbl=TT('women','Frauen'); }
+    if(p.sex==='M'){ c=FARBE_M; k='1m'; lbl=TT('men','Männer'); }
+    else if(p.sex==='F'){ c=FARBE_W; k='2w'; lbl=TT('women','Frauen'); }
     else { k='3u'; lbl=TT('sex not recorded','Geschlecht ohne Angabe'); }
   } else {
     var st=String(p.stamm||'').trim();
     if(!st){ k='z'; lbl=TT('without lineage','ohne Stamm'); }
-    else if(STAMM_RANG[st]<STAMM_FARBEN.length){ f=STAMM_FARBEN[STAMM_RANG[st]]; k='a'+(100+STAMM_RANG[st]); lbl=st; }
-    else { f='#e6e6e6'; k='y'; lbl=TT('other lineages','weitere Stämme'); }
+    else if(STAMM_RANG[st]!=null && STAMM_RANG[st]<STAMM_FARBEN.length){ c=STAMM_FARBEN[STAMM_RANG[st]]; k='a'+(100+STAMM_RANG[st]); lbl=st; }
+    else { c=FARBE_REST; k='y'; lbl=TT('other lineages','weitere Stämme'); }
   }
-  FARB_GENUTZT[k]={f:f, lbl:lbl};
-  return f;
+  FARB_GENUTZT[k]={c:c, lbl:lbl};
+  return c;
 }
-/* Wo der Platz fest ist, wird ein zu langer Ort oder Beruf mit „…" gekuerzt */
+/* Was nicht in den Kasten passt (feste Breite, oder ein sehr langer Name ueber
+   der Hoechstbreite), wird mit „…" gekuerzt, statt ueber den Rand zu laufen */
 function kuerzen(str, maxW){
-  if(!str || AUTO_W || textWidthPx(str,FONT_SZ,false)<=maxW) return str;
+  if(!str || textWidthPx(str,FONT_SZ,false)<=maxW) return str;
   while(str.length>1 && textWidthPx(str+'…',FONT_SZ,false)>maxW) str=str.slice(0,-1);
   return str.replace(/\s+$/,'')+'…';
 }
@@ -9485,6 +9493,7 @@ function personLines(id, ovr){
     if(!(ovr.birth!=null&&ovr.birth!=='') && ortKurz(p.birthPlace)){ birth=(birth||'*')+' '+ortKurz(p.birthPlace); ortDa=true; }
     if(!(ovr.death!=null&&ovr.death!=='') && ortKurz(p.deathPlace)){ death=(death||'+')+' '+ortKurz(p.deathPlace); ortDa=true; }
   }
+  if(rec) SICHT[id]=1;
   return {ortDa:ortDa, surname:surname, given:given, birth:birth, death:death, code:(ovr.code||''),
           occ:(BERUF && rec ? String(p.occ||'').trim() : ''), id:(rec?id:null)};
 }
@@ -9576,7 +9585,7 @@ function boxWidthFor(lines){
   [lines.surname,lines.given,lines.birth,lines.death,lines.occ].forEach(function(s){
     if(s) w=Math.max(w, textWidthPx(s,FONT_SZ,false)); });
   if(lines.code) w=Math.max(w, textWidthPx(lines.code, FONT_SZ*0.86, false));
-  return Math.max(Math.round(BOX_W*0.55), Math.min(Math.round(BOX_W*3), Math.ceil(w+11)));
+  return Math.max(Math.round(BOX_W*0.55), Math.min(Math.max(Math.round(BOX_W*3), 400), Math.ceil(w+11)));
 }
 function refWidthFor(lines){
   if(!AUTO_W) return 2*BOX_W;
@@ -9774,15 +9783,15 @@ function txt(x,y,str,size,parent,opt){
 }
 function drawPersonBox(g, x, ytop, lines, w){
   if(!lines) return;
-  var fb=farbeVon(lines.id), ra={x:x, y:ytop, width:(w||BOX_W), height:BOX_H, fill:fb||'#fff', stroke:'#000',
-             'stroke-width':0.7, 'class':fb?'pbox fb':'pbox'};
-  if(fb) ra.style='--f:'+fb;
+  var fc=farbeVon(lines.id), ra={x:x, y:ytop, width:(w||BOX_W), height:BOX_H, fill:fc?fc.f:'#fff', stroke:'#000',
+             'stroke-width':0.7, 'class':fc?'pbox fb':'pbox'};
+  if(fc) ra.style='--f:'+fc.f+';--d:'+fc.d;
   el('rect',ra, g);
   if(lines.ortDa) ORT_N++;
-  var tx=x+5, ty=ytop+FONT_SZ+2.4, mw=(w||BOX_W)-10, to=fb?{'class':'fbt'}:null;
-  [lines.surname,lines.given,ORTE?kuerzen(lines.birth,mw):lines.birth,ORTE?kuerzen(lines.death,mw):lines.death].concat(BERUF?[kuerzen(lines.occ,mw)]:[]).forEach(function(ln){
-    if(ln) txt(tx,ty,ln,FONT_SZ,g,to); ty+=LINE_H; });
-  if(lines.code) txt(tx, ytop+BOX_H-4, lines.code, FONT_SZ*0.86, g, to);
+  var tx=x+5, ty=ytop+FONT_SZ+2.4, mw=(w||BOX_W)-10;
+  [lines.surname,lines.given,lines.birth,lines.death].concat(BERUF?[lines.occ]:[]).forEach(function(ln){
+    if(ln) txt(tx,ty,kuerzen(ln,mw),FONT_SZ,g); ty+=LINE_H; });
+  if(lines.code) txt(tx, ytop+BOX_H-4, lines.code, FONT_SZ*0.86, g);
 }
 function drawRefBox(g,x,ytop,lines,w){
   var W=w||REF_W;
@@ -9981,7 +9990,8 @@ function legende(svg){
   ks.forEach(function(k){
     var e=FARB_GENUTZT[k], w=q+6+textWidthPx(e.lbl,fs,false)+22;
     if(x>MARGIN && x+w>CUR_W-MARGIN){ x=MARGIN; y+=lh; rows++; }
-    el('rect',{x:x, y:y-q+1, width:q, height:q, fill:e.f||'#fff', stroke:'#000', 'stroke-width':0.6}, g);
+    el('rect',{x:x, y:y-q+1, width:q, height:q, fill:e.c?e.c.f:'#fff', stroke:'#000', 'stroke-width':0.6,
+      style:'--f:'+(e.c?e.c.f:'#fff')+';--d:'+(e.c?e.c.d:'#231f19')}, g);
     txt(x+q+6, y, e.lbl, fs, g);
     x+=w;
   });
@@ -10007,7 +10017,9 @@ function render(){
   if(sr.gens==null) sr.gens=autoGens();
   GEN_LIMIT=sr.gens||0;
   zeigeGenWahl();
+  SICHT={};
   var roots=buildPersonNodes(ROOT,0,{});
+  farbenVerteilen();
   var root = roots.length===1 ? roots[0] : {kind:'virtual', bloodId:null, depth:0, children:roots};
   firstPass(root); secondPass(root, MARGIN+root.extL, 0);
   var md=maxDepth(root);
@@ -10103,7 +10115,9 @@ function renderAhnen(svg){
   if(sr.gensA==null) sr.gensA=AHNEN_STD;
   GEN_LIMIT=sr.gensA||AHNEN_STD;
   zeigeGenWahl();
+  SICHT={};
   var wurzel=ahnenBauen(GEN_LIMIT), alle=[];
+  farbenVerteilen();
   ahnenLegen(wurzel);
   ahnenSetzen(wurzel, MARGIN, alle);
   var gmax=0; alle.forEach(function(n){ if(n.g>gmax) gmax=n.g; });
