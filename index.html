@@ -1668,6 +1668,7 @@ body.tastatur #tabbar{display:none !important}
 #trSide .pkopf{display:flex; align-items:center; gap:14px; margin:4px 0 14px}
 #trSide .pkopf .pav{flex:0 0 56px}
 #trSide .pkopf .pkt{display:flex; flex-direction:column; gap:2px; min-width:0}
+#trSide .pkopf .pgenannt{font-size:14px; color:var(--muted); font-style:italic}
 #trSide .pkopf h3{margin:0; font-size:22px; line-height:1.2; color:var(--ink); overflow-wrap:anywhere}
 #trSide .pkopf small{font-size:15px; color:var(--muted)}
 /* 4.9f: zwei gleich breite Spalten wie im Entwurf; die Startperson als
@@ -3393,7 +3394,7 @@ var DE = {
 'Further details from the file are kept.':'Weitere Angaben dazu aus der Datei bleiben erhalten.',
 'Record not found in the file':'Dieser Satz fehlt in der Datei',
 'Shared record':'Gemeinsamer Satz', 'read only here':'hier nur lesbar',
-'Other names':'Weitere Namen', 'aka':'auch',
+'Other names':'Weitere Namen', 'aka':'auch', 'called':'genannt',
 'Person':'Person', 'Done':'Fertig', 'Born':'Geboren', 'Died':'Gestorben', 'date unknown':'Datum unbekannt',
 'No details yet.':'Noch keine Angaben.', 'On events':'An Ereignissen',
 'Birth':'Geburt', 'Baptism':'Taufe', 'Death':'Tod', 'Burial':'Beerdigung', 'Cremation':'Einäscherung',
@@ -3658,6 +3659,14 @@ window.I18N={
         <b><span data-ico="target" aria-hidden="true"></span></b> in its corner moves that person to the centre. At the bottom
         are zoom, <b>Fit</b> and full screen, as in the Chart tab; drag with a finger or the mouse to pan. The whole
         line of descendants or ancestors is shown by the <b>Chart</b> tab.</p>
+        <h5>Ordinals, epithets and nicknames</h5>
+        <p>An <b>ordinal</b> (&bdquo;Otto I.&ldquo;, &bdquo;XXV.&ldquo;) and an <b>epithet</b> (&bdquo;the Great&ldquo;, in German
+        &bdquo;der Gro&szlig;e&ldquo;) belong to the name, whether the file has them in the given name or separately
+        (GEDCOM <code>NSFX</code> and <code>NICK</code>). A <b>nickname</b> such as &bdquo;Lisi&ldquo; appears in the person
+        view as &bdquo;called Lisi&ldquo;. The search finds all of them, and Roman and Arabic numbers find each other:
+        &bdquo;XXV&ldquo; finds 25 and the other way round. In the duplicate search the same ordinal with the same
+        given name counts strongly, a different ordinal (Otto I. and Otto II.) rules a pair out. Everything is written
+        back to the file unchanged.</p>
         <h5>Finding a person</h5>
         <p>Every search box in the app works the same way, and each says so. A person is found by
         <b>given and family name</b> &ndash; further names from the file included &ndash;, by <b>birth and
@@ -4175,6 +4184,14 @@ window.I18N={
         Person in die Mitte. Unten stehen wie bei der Tafel Zoom, <b>Einpassen</b> und Vollbild; mit dem Finger oder
         der Maus l&auml;sst sich der Ausschnitt verschieben. Die ganze Linie der Nachfahren oder Ahnen zeigt der
         Reiter <b>Tafel</b>.</p>
+        <h5>Z&auml;hlung, Beiname und Kosename</h5>
+        <p>Eine <b>Z&auml;hlung</b> (&bdquo;Otto I.&ldquo;, &bdquo;XXV.&ldquo;) und ein <b>Beiname</b> (&bdquo;der Gro&szlig;e&ldquo;)
+        geh&ouml;ren zum Namen &ndash; ob sie in der Datei im Vornamen stehen oder getrennt (GEDCOM <code>NSFX</code> und
+        <code>NICK</code>). Ein <b>Kosename</b> wie &bdquo;Lisi&ldquo; steht in der Personenansicht als &bdquo;genannt
+        Lisi&ldquo;. Die Suche findet alles davon, und r&ouml;mische und arabische Zahlen finden sich gegenseitig:
+        &bdquo;XXV&ldquo; findet 25 und umgekehrt. In der Dublettensuche z&auml;hlt dieselbe Z&auml;hlung beim selben
+        Vornamen stark, eine verschiedene (Otto I. und Otto II.) schlie&szlig;t ein Paar aus. Alles wird unver&auml;ndert in
+        die Datei zur&uuml;ckgeschrieben.</p>
         <h5>Eine Person finden</h5>
         <p>Jedes Suchfeld der App arbeitet gleich, und jedes sagt es auch. Eine Person wird gefunden &uuml;ber
         <b>Vor- und Nachnamen</b> &ndash; auch weitere Namen aus der Datei &ndash;, &uuml;ber <b>Geburt und
@@ -4700,7 +4717,7 @@ window.I18N={
    Jetzt wird sie eingesetzt, und die Prüfreihe vergleicht sie mit der
    Nummer, mit der das Android-Paket gebaut wird. Dieses var steht
    bewusst ausserhalb der beiden Kapseln, damit beide es sehen. */
-var APPVERSION='4.11';
+var APPVERSION='4.12';
 
 /* ====================================================================
    Welche Kodierung hat die Datei?
@@ -4961,7 +4978,14 @@ function parseGedcom(text){
       if(sub){
         if(sub===rec.nameSub && lvl===2 && tag==='GIVN') rec.given=val;
         else if(sub===rec.nameSub && lvl===2 && tag==='SURN') rec.surname=val;
-        else sub.push(raw);
+        else {
+          /* 4.12: Namenszusatz (Zaehlung, „XXV.") und Beiname/Kosename
+             (NICK) des ersten Namens werden gelesen; die Zeilen selbst
+             bleiben unveraendert in nameSub und werden so zurueckgeschrieben. */
+          if(sub===rec.nameSub && lvl===2 && tag==='NSFX' && rec.nsfx==null && val.trim()) rec.nsfx=val.trim();
+          else if(sub===rec.nameSub && lvl===2 && tag==='NICK' && rec.nick==null && val.trim()) rec.nick=val.trim();
+          sub.push(raw);
+        }
       }
       else if(ev==='BIRT'){ if(tag==='DATE') rec.birthDate=val; else if(tag==='PLAC') rec.birthPlace=val; else rec.birtSub.push(raw); }
       else if(ev==='DEAT'){ if(tag==='DATE'){ rec.deathDate=val; rec.dead=true; } else if(tag==='PLAC') rec.deathPlace=val; else rec.deatSub.push(raw); }
@@ -5288,9 +5312,13 @@ function entryFor(id){
      in der Zeile, sonst waere ein Treffer darueber unerklaerlich. */
   var alt=weitereNamen(id).map(function(x){ return x.name; })
     .filter(function(n,i,a){ return n!==name && a.indexOf(n)===i; });
+  var kose=namensTeile(p).kose;
+  if(kose) meta.push(L('called')+' '+kose);
   if(alt.length) meta.push(L('aka')+' '+alt.join(', '));
+  /* 4.12: Kosename und die Zaehlung in beiden Schreibweisen (XXV / 25) */
+  var nt=namensTeile(p), zs=nt.zahl ? ' '+roemisch(nt.zahl)+' '+nt.zahl : '';
   return { id:id, name:name, meta:meta.join(' · '), year:by,
-    search:(name+' '+alt.join(' ')+' '+gedToText(p.birthDate)+' '+(by||'')+' '+
+    search:(name+' '+alt.join(' ')+(nt.kose?' '+nt.kose:'')+zs+' '+gedToText(p.birthDate)+' '+(by||'')+' '+
             gedToText(p.deathDate)+' '+(dy||'')+' '+
             (p.birthPlace||'')+' '+(p.deathPlace||'')+' #'+id).toLowerCase() };
 }
@@ -5324,9 +5352,71 @@ function touchIndex(id){
   INDEX.splice(slotFor(entry),0,entry);
   reposition();
 }
+/* ---------- 4.12: Zaehlung, Beiname, Kosename ----------
+   Zaehlung: „Otto I.", „Gebhard XXV." - im Vornamen (roemisch mit Punkt) oder
+   getrennt als NSFX (roemisch oder arabisch). Auch eine Stammlisten-Nummer
+   im Vornamen („Konrad 7") zaehlt als Zaehlung.
+   Beiname: „der Große" - im Vornamen oder als NICK, beginnt mit der/die/das.
+   Kosename: jeder andere NICK („Lisi"); er steht nur in der Personenansicht
+   als „genannt …", nicht im Namen. */
+var ROEM_W={I:1,V:5,X:10,L:50,C:100,D:500,M:1000};
+function roemWert(t){
+  t=String(t||'').toUpperCase();
+  if(!/^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/.test(t) || !t) return null;
+  var n=0, i; for(i=0;i<t.length;i++){ var a=ROEM_W[t[i]], b=ROEM_W[t[i+1]]||0; n+= a<b ? -a : a; }
+  return n;
+}
+function roemisch(n){
+  var w=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']], s='';
+  for(var i=0;i<w.length;i++) while(n>=w[i][0]){ s+=w[i][1]; n-=w[i][0]; }
+  return s;
+}
+/* Wert einer Zaehlung: „XXV." -> 25, „25." -> 25, sonst null */
+function zaehlWert(t, auchOhnePunkt){
+  t=String(t||'').trim(); if(!t) return null;
+  var m=/^(\d{1,3})\.?$/.exec(t); if(m) return +m[1] || null;
+  m=/^([IVXLCDM]+)(\.?)$/i.exec(t); if(!m) return null;
+  if(t!==t.toUpperCase()) return null;                     /* „Vi", „Ida" sind Namen */
+  if(!m[2] && !auchOhnePunkt) return null;                 /* im Vornamen nur mit Punkt */
+  /* einzelne Buchstaben nur I, V, X - „C." oder „M." ist eher ein Anfangsbuchstabe */
+  if(m[1].length===1 && 'IVX'.indexOf(m[1])<0) return null;
+  return roemWert(m[1]);
+}
+function istBeiname(t){ return /^(der|die|das)\s+\S/i.test(String(t||'').trim()); }
+function normWort(t){ return String(t||'').toLowerCase().replace(/[.,]/g,'').replace(/\s+/g,' ').trim(); }
+function namensTeile(p){
+  var g=String((p&&p.given)||'').trim(), w=g ? g.split(/\s+/) : [], rest=[], zahl=null, zahlText='', bei='', i;
+  for(i=0;i<w.length;i++){
+    var t=w[i];
+    if(/^(der|die|das)$/i.test(t) && i>0 && w[i+1]){ bei=w.slice(i).join(' '); break; }
+    var z = i>0 ? zaehlWert(t, false) : null;
+    /* Stammlisten-Nummer: eine Zahl ohne Punkt („Konrad 7") */
+    if(z==null && i>0 && /^\d{1,3}$/.test(t)) z=+t||null;
+    if(z!=null && zahl==null){ zahl=z; zahlText=t; continue; }
+    rest.push(t);
+  }
+  var nsfx=String((p&&p.nsfx)||'').trim(), nz=zaehlWert(nsfx, true);
+  var nick=String((p&&p.nick)||'').trim();
+  var o={vor:rest.join(' '), zahl:zahl, zahlText:zahlText, bei:bei, kose:'', nsfx:'', nickBei:''};
+  /* NSFX nur zeigen, wenn er nicht schon im Vornamen steht */
+  if(nsfx){
+    if(nz!=null && zahl==null){ o.zahl=nz; o.nsfx=nsfx; }
+    else if(nz==null && normWort(g).indexOf(normWort(nsfx))<0) o.nsfx=nsfx;
+  }
+  if(nick){
+    if(istBeiname(nick)){ if(normWort(g).indexOf(normWort(nick))<0){ o.nickBei=nick; if(!o.bei) o.bei=nick; } }
+    else o.kose=nick;
+  }
+  return o;
+}
+/* Vorname, wie er angezeigt wird: Vornamen, Zaehlung, Beiname */
+function vornameAnzeige(p){
+  var g=String((p&&p.given)||'').trim(), t=namensTeile(p);
+  return [g, t.nsfx, t.nickBei].filter(Boolean).join(' ');
+}
 function fullName(p){
   if(!p) return '(unknown)';
-  var n=(p.given||'').trim();
+  var n=vornameAnzeige(p);
   if(p.surname) n+=(n?' ':'')+p.surname;
   return n||L('(no name)');
 }
@@ -6194,6 +6284,7 @@ window.FP = {
   addPartner:addPartner, removePartner:removePartner, setMarriage:setMarriage,
   addChildToFam:addChildToFam, removeChildFromFam:removeChildFromFam, ensureOwnFamily:ensureOwnFamily,
   gedToText:gedToText, textToGed:textToGed, yearOf:yearOf, esc:esc, $:$,
+  namensTeile:namensTeile, vornameAnzeige:vornameAnzeige, zaehlWert:zaehlWert, roemisch:roemisch,
   version:function(){ return APPVERSION; },
   /* ---------- Eine Suche fuer fuenf Felder ----------
      Stammbaum, Nachfahrentafel, Verwandtschaft (zweimal), Personenwahl
@@ -7540,7 +7631,7 @@ function fit(s,size,bold,max){
 }
 
 /* ---------- display text ---------- */
-function givenOf(p){ return (p.given||'').trim(); }
+function givenOf(p){ return FP.vornameAnzeige(p); }
 function surnameOf(p){ return (p.surname||'').trim(); }
 function datesOf(p){
   var b=p.birthDate?('*'+FP.gedToText(p.birthDate)):'';
@@ -8844,12 +8935,15 @@ function belegHtml(it){
   var t = it.fehlt ? '<i>'+L('Record not found in the file')+'</i>' : (verlinke(it.text) || '<i>…</i>');
   return t+(it.page ? '<span class="muted"> · </span>'+verlinke(it.page) : '');
 }
+/* 4.12: Kosename als „genannt …“ */
+function genanntText(k){ return I18N.lang()==='de' ? 'genannt „'+k+'“' : 'called “'+k+'”'; }
 function ansicht(id){
   var p=FP.person(id), box=$('trSideBody');
   var fams=FP.famsOf(id), parents=FP.parentsOf(id), h='';
   /* 4.9 wie im Entwurf: Kuerzel, Name, Jahre; darunter dieselben Wege von
      ueberall - aus den Karten, dem Baum und der Personenliste */
   h+='<div class="pkopf"><span class="pav'+(kuerzel(p).length>2?' drei':'')+'">'+esc(kuerzel(p))+'</span><span class="pkt"><h3>'+esc(FP.fullName(p))+'</h3>'+
+     (FP.namensTeile(p).kose ? '<span class="pgenannt">'+esc(genanntText(FP.namensTeile(p).kose))+'</span>' : '')+
      '<small>'+esc(lebensJahre(p))+'</small></span></div>';
   /* 4.9f: ein ruhiges Raster wie im Entwurf - zwei gleich breite Spalten,
      ohne Symbole; „Tafel" zeigt die Person in der Tafel, die gerade
@@ -9477,7 +9571,11 @@ function kuerzen(str, maxW){
 function personLines(id, ovr){
   var rec=DB.indi[id], p=rec||{};
   var surname = (ovr.surname!=null&&ovr.surname!=='') ? ovr.surname : (p.surname||'');
-  var autoGiven0 = firstNameOn() ? firstGiven(p.given||'') : (p.given||'');
+  /* 4.12: Zaehlung und Beiname bleiben auch bei „nur erster Vorname" stehen */
+  var nt=FP.namensTeile(p);
+  var autoGiven0 = firstNameOn()
+    ? [firstGiven(nt.vor), nt.zahlText||nt.nsfx, nt.bei].filter(Boolean).join(' ')
+    : FP.vornameAnzeige(p);
   var autoGiven = autoGiven0 || (!rec ? '(unknown)' : '');
   var given = (ovr.given!=null&&ovr.given!=='') ? ovr.given : autoGiven;
   var birth = (ovr.birth!=null&&ovr.birth!=='') ? ovr.birth : (p.birthDate? '*'+datumText(p.birthDate):'');
@@ -10939,7 +11037,7 @@ function buildGraph(){
   var indi={}, parents={}, children={}, spouses={}, id, fid;
   for(id in I){
     var p=I[id];
-    indi[id]={id:id, given:p.given, surname:p.surname, sex:p.sex,
+    indi[id]={id:id, given:FP.vornameAnzeige(p), surname:p.surname, sex:p.sex,
               birth:p.birthDate, birthPlace:p.birthPlace, death:p.deathDate};
     parents[id]=[]; children[id]=[]; spouses[id]=new Set();
   }
@@ -11657,12 +11755,15 @@ function ruesten(P){
   var out={};
   for(var id in P){
     var p=P[id];
-    var roh=entfalte(p.given).replace(/\(.*?\)/g,' ').replace(/[^a-z\s\-]/g,' ')
+    /* 4.12: Zaehlung („Otto I.", NSFX „XXV.", Stammlisten-Nummer) und
+       Beiname („der Große") werden vor dem Vergleich abgetrennt */
+    var nt=FP.namensTeile(p);
+    var roh=entfalte(nt.vor).replace(/\(.*?\)/g,' ').replace(/[^a-z\s\-]/g,' ')
              .split(/[\s\-]+/).filter(function(t){ return t.length>1; });
     var set={}, i;
     for(i=0;i<roh.length;i++) set[VAR[roh[i]]||roh[i]]=1;
     var kern=nachnameKern(p.surname);
-    var zahl=String(p.given||'').match(/(?:^|\s)(\d{1,2})(?:\s|$)/);
+    var zahl=nt.zahl!=null ? [null, String(nt.zahl)] : null;
     out[id]={
       id:id, p:p,
       kern:kern, code:koelner(kern),
@@ -11694,6 +11795,7 @@ var GRUND={
   vorMeist:['given names largely match','Vornamen weitgehend gleich'],
   vorEin:['one given name in common','ein Vorname gemeinsam'],
   vorBuch:['same initial','gleicher Anfangsbuchstabe'],
+  zahlGleich:['same ordinal','gleiche Zählung'],
   gebGleich:['same date of birth','Geburtsdatum taggenau gleich'],
   gebUeber:['dates of birth overlap','Geburtszeiträume überschneiden sich'],
   gebNah:['born within a few years','Geburt wenige Jahre auseinander'],
@@ -11810,6 +11912,11 @@ function punkte(a,b,R,F,bestaetigt,intern){
   else if(a.vroh.length && b.vroh.length && a.vroh[0].charAt(0)===b.vroh[0].charAt(0)){
     s+=5; gr.push(g('vorBuch'));
   }
+  /* 4.12: Gleiche Zaehlung (Otto I. / Otto I., Gebhard XXV. / Gebhard 25)
+     ist ein starkes Zeichen - aber nur beim selben Rufnamen: Heinrich II.
+     und Friedrich II. teilen nur die Zahl. Verschiedene Zaehlung schliesst
+     oben schon aus. */
+  if(a.zahl && b.zahl && a.zahl===b.zahl && a.verst && a.verst===b.verst){ s+=25; gr.push(g('zahlGleich')); }
   /* Geburt */
   if(a.gb && b.gb && tagNr(a.gb)===tagNr(b.gb)){ s+=35; gr.push(g('gebGleich')); }
   else if(ueber(a.zb,b.zb)){ s+=25; gr.push(g('gebUeber')); }
